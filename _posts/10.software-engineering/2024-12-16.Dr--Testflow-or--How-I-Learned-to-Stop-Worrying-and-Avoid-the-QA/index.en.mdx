@@ -1,0 +1,136 @@
+---
+title: 'Dr. Testflow or: How I Learned to Stop Worrying and Avoid the QA'
+date: '2024-12-16'
+excerpt: >
+  Unit tests are for sore losers — you know, people who can't write normal code straight away and waste time writing unit tests instead of adding value. But how to avoid things blowing up in your face is the million-dollar question.
+image: 'oscar-avalos-on-unsplash.webp'
+---
+
+It all started with a joke: unit tests are for sore losers --- you know,
+people who can't write normal code straight away and waste time writing
+unit tests instead of adding value.
+
+I personally don't like unit tests and believe they are a waste of time,
+but how to avoid things blowing up in your face is the million-dollar
+question.
+
+But jokes aside, jokes convey information amazingly well --- they
+provoke thought and are fun. Bear with me. Below are a few statements
+that are true and false at the same time (the infamous "it depends").
+We'll get to the nuances in a bit.
+
+### Unit tests are a waste of time
+
+#### Functional and E2E tests do the same, but better
+
+Simply put, one E2E test spans multiple units, testing all of them
+simultaneously.
+
+#### Unit tests give a false sense of security
+
+Especially with test coverage metrics, which some people love so much.
+Does 100% test coverage guarantee absolutely bug-free software? Stay
+tuned --- the truth will shock you.
+
+#### Programmers cannot test their own software
+
+I don't have meaningful statistical evidence, so I'll leave you with
+anecdotal evidence, one solid "trust me, bro," and a challenge.
+
+### The challenge
+
+Below is the _plus_2(num)_ function --- let's say it's JavaScript, for
+giggles. The function takes the number _num_ and adds 2.\
+How would you test it? Please think of it before continue.
+
+```javascript
+plus_2(2) === 4;
+```
+
+What else?
+
+```javascript
+plus_2(-2); // how do we handle negative numbers
+plus_2(0); // zero is always an edge-case
+plus_2(0.12345678910111213); // are we losing precision?
+plus_2(9_007_199_254_740_991); // how do we handle the overflow
+plus_2(NaN);
+plus_2(+Infinity);
+plus_2(-Infinity);
+plus_2(-0); // negative zero, because floating point is such a delight
+plus_2(undefined);
+plus_2(true);
+plus_2(null);
+plus_2('5');
+plus_2(() => 3);
+plus_2(-[]); // in the spirit of WAT??!!!
+```
+
+Okay, I'll stop here.
+A few observations:
+You didn't see it coming, did you?
+Extensive testing is exhausting, and this is a stupidly simple function, barely part of any real logic.
+
+Let's get back to the jokes-not-jokes above.
+
+Wouldn't it be better to cover less esoteric use cases of this function
+and many others with E2E?
+
+Even this scale of testing doesn't guarantee high-quality software. Unit
+A could be tested, and unit B could be tested, but what about all the
+combinations of A and B? This is the exact problem with 100% test
+coverage. Yes, every branch of the program was executed at least once,
+but there can still be illegal combinations of branches, like race
+conditions.
+
+Were you able to come up with similar test coverage? Please let me know.
+
+So what? Skip unit tests? You must feel that this logic is flawed.
+
+How to balance? The guiding principle is unfortunately experience. This
+is why software development that stays within budget and meets
+milestones and timelines isn't actually widespread.
+
+Here are a few cases where unit tests are a must:
+
+- To increase quality: Some conditions, like _plus_2(NaN)_, are rare
+  and might never be caught in E2E tests. Without unit tests, things
+  will blow up either in production or during future code
+  changes.
+- To test design sanity: The rule of thumb is, if you're struggling to
+  write a unit test suite for a unit (e.g., a class), the unit might not
+  be self-sufficient --- it may just be a part of a larger
+  whole.
+- To speed up the QA process: Large caliber tests can show that
+  _something_ is wrong, but unit tests can help pinpoint the exact
+  issue.
+- To save lives: medical equipment, critical infrastructure, automotive
+  or aviation --- I don't even...
+- Everyday use: Just ask ChatGPT/Copilot/your LLM of choice to create
+  unit tests. They do a decent job most of the time.
+
+By the way, programmers who can test are usually not _only_ programmers.
+Their additional experience as QA, business analysts, DevOps, support
+engineers, or in other roles gives them a broader perspective on their
+software, helping them break away from biases.
+
+### TL;DR
+
+Unit tests are costly: Writing them properly takes time and effort.
+
+Functional and E2E tests lack depth: They don't provide comprehensive coverage.
+
+This article is a meta-joke about QA humor and developer biases.
+
+That's it. Happy coding, and may your software be bug-free!
+
+
+---
+
+Photo by [Oscar Ävalos](https://unsplash.com/@fastermaster0) on [Unsplash](https://unsplash.com/photos/silhouette-of-mountain-during-sunset-w0FvtVztsQE)
+
+By [Iurii Krasnoshchok](https://medium.com/@aka.rider) on [December 16, 2024](https://medium.com/p/4517038e6bba).
+
+[Canonical link](https://medium.com/@aka.rider/dr-testflow-or-how-i-learned-to-stop-worrying-and-avoid-the-qa-4517038e6bba)
+
+Exported from [Medium](https://medium.com) on May 26, 2025.

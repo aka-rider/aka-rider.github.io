@@ -1,0 +1,269 @@
+---
+title: 'A Better Programmer: Part 2  ---  The Conduct of no Regrets'
+date: '2020-03-20'
+excerpt: 'This is how I write code that I adore and never regret --- this is my professional constitution.'
+image: 'https://miro.medium.com/v2/resize:fit:1400/format:webp/1*Th63EaQ_Lq5wYZhct6fUAw.png'
+tags: ['Software Engineering', 'Programming', 'Design']
+---
+
+Hey! Thank you for opening this tab, you are a rockstar!
+
+This is how I write code that I adore and never regret --- this is my
+professional constitution. I guide myself with these bits of advice day
+to day. It may or may not work for you. Please steal my ideas anyway.
+
+In part one[¹] we looked at the hardware legacy that affects our daily
+actions and decisions. The main focus was on the high-level design: how
+to create programs on paper and don't drown in the overwhelming amount
+of details.
+
+Now it is time to write some code and it will be the damn glorious!
+
+### Be vigilant
+
+Good code is a product of a good mental effort but our brain tries to
+trick us into the energy-saving mode all the time. Instead of working on
+a problem we try to recognize a pattern (even if it's not there) and
+provide some immediate answer --- a stereotype. Experts are better at
+pattern recognition and intuitive problem solving, although
+overconfidence never does any good.
+
+#### Start big
+
+Good code is a sane compromise between simplicity, performance,
+user-friendliness, hardware support, legacy, resources --- a thousand
+little things. There will be sacrifices --- conscious or not. Start with
+high-level design, define your priorities and goals. Draw the rest of
+the owl.
+
+Return to this design often. Reality is cruel to our plans for some
+reason --- we need to adjust and repeat.
+
+Simplicity is the ultimate goal but it's the hardest thing to achieve
+(more often than not, I see simple solutions only through my own tears).
+Again, this is the time to be awake and make a decision between
+polishing and readiness. Even if the code was deliberately hacked
+quick'n'dirty, a simplification step may save time on
+debugging --- maybe not.
+
+#### Think about the next person
+
+> Programs must be written for people to read, and only incidentally for
+> machines to execute.
+>
+> ~ Harold Abelson, Structure and Interpretation of Computer Programs
+
+As soon as our code is merged, it starts the life of its own. After a
+weekend, this code turns into something different, even for the author,
+not to mention innocent colleagues. There is no place for surprises. Try
+to imagine a person not familiar with the code tries to modify
+it --- how much pain would it cause, what will break?
+
+Optimize your code for readability: arrange your types, function, and
+lines accordingly. Truly beautiful code is read like a book --- from top
+to bottom, line by line, without crazy jumps over pages.
+
+Beautiful code is the one that easy to read and safe to modify.
+
+#### Consider rewriting a clever code
+
+The clever code also happens to be extremely resistant for changes,
+painfully hard to read understand and debug. Every optimization is
+almost certainly a clever code, and that's why premature optimizations
+are bad --- a definite sacrifice for the benefit that may not even
+exist.
+
+#### Do not chant mantras
+
+In programming, there are plenty of principles: DRY, KISS, SOLID. They
+are helpful unless one follows them blindly. It is important to ask:
+what's behind the principle, what problem it addresses, is it applicable
+in this particular situation, is it aligned with our priorities.
+
+One would preach DRY (Do not Repeat Yourself) then go and eliminate a
+copy-paste using unreadable cowboy-style "clever" code. What causes more
+harm? How safe would it be for the next person to make changes?
+
+I don't mind a copy-paste if it's a conscious trade-off; I would guide
+the next person with comments: what problems are solved and what
+obstacles led to this implementation, and assertions: hey buddy, you
+added a parameter here but not there. Text editors and IDE nowadays also
+know some trick or two.
+
+#### What the hype?
+
+Ask the right questions. What are "best practices" anyway --- best for
+whom? X does it? --- Why? How big is the company? What is the workflow,
+and automation tools? What load, scale, capacity, budget? What problems
+does it try to solve? What are the priorities?
+
+Microservices were invented to scale teams to hundreds and thousands. It
+is expensive shit! I mean, your pet project is rather monolithic --- you
+know it by heart.
+
+So the right question is not "Do we need micro-service architecture?" is
+"Do we have the problem that micro-services solve?"
+
+There is no such thing as "technology X vs Y" without a context.
+Programming language A is better than B --- sure. Better for what? And
+all the questions above.
+
+### Be a samurai --- never write code unless you mean to use it
+
+You have implemented "insert_after" function, now it is time for
+"insert_before" --- but is it used anywhere? If not --- why increase the
+amount of code required to be maintained, reviewed, tested, ported and
+refactored for nothing?
+
+#### Don't try to be a prophet
+
+Don't solve nonexistent problems from the future, be an engineer, solve
+real-life problems your team is struggling with right now. Don't try to
+protect yourself from the future changes --- we don't know the future
+
+> You're going to be writing new code later because you'll be smarter.
+>
+> ~ John Romero, id Software Programming Principles talk, 2016 GDC Europe
+
+No need to keep a code just because it might come in handy, there are
+git and other version control systems made for that. Do not make someone
+(yourself included) to read and understand unused code.
+
+If the codebase is small then future changes are few.
+
+#### Be afraid of flexibility
+
+That flexibility is on the cover of this post. Everything has a price, flexibility in software development is a luxury.
+
+#### Stop writing those libraries already
+
+It is a well-known programmer's fetish --- to create generic code that
+will be used across the whole team, company, World, Universe.
+
+Assume you need to create a TaskQueue, there's an immediate temptation
+to create a generic Task, and generic Queue --- "it will save time in
+the long run" --- no it won't! It just multiplies the amount of work.
+
+One --- we still have the original TaskQueue (it doesn't go anywhere).
+Two --- we also have Task and Queue. Three --- there is an API in
+between. Here is the added cost of abstraction: API is always a
+compromise between ease-of-use, flexibility, performance --- you have
+cursed someone's API just recently because it doesn't fit.
+
+I have some news for you --- none would use your little generic Queue.
+Because every programmer wants to write Queue of her own, because
+assumed items ownership is wrong, because it has no documentation,
+because one doesn't like the API, because memory model is wrong, because
+I need LIFO and your queue is FIFO.
+
+Be humble --- finish that TaskQueue already and go home. Be
+efficient --- find the five different implementations of queues in your
+codebase, discover the reasons behind them, replace them with the one
+that satisfies all cases, removing 90% of code. Be a hero.
+
+**This is the only legitimate way to create libraries and generic
+code.**
+
+Finding a good third-party library is always a good option. What if you
+don't trust these third-parties (like me)? That's even better! Pick the
+most suitable one, review it thoroughly, and make a merge request if
+needed. See what pitfalls have shaped this implementation. There are
+non-obvious reasons rather than "other people are dumb."
+
+### Don't do bugs (I'm dead serious)
+
+> Every line of code is a bug.
+
+Not really, but the correlation is direct, and it's no joke. "Fewer
+lines of code" is the best guidance you can get. From the performance
+perspective, the fastest code is the one that never runs --- so win-win.
+
+No need for LOC hunts, though --- code readability first.
+
+Don't guess and don't gamble. If you're not 100% sure how this
+particular piece works --- just rephrase the code, so you'd really know.
+
+Still not sure? Do science: throw hypothesis, make experiments, validate
+results. In a programming field, we call those experiments "unit tests."
+You may want to keep them around to prevent regression, so other people
+can modify the same piece and know what to expect of it.
+
+There will be bugs, but at least you won't create them half-consciously
+following false assumptions.
+
+#### Tests are not the ultimate answer
+
+Tests are literally more code, hence hello: review, debugging,
+refactoring, porting, and everything else involved with the code. Adding
+a new test should be a deliberate decision. It is too easy to shout
+slogans and follow rules of 100% coverage, but 100% coverage does not
+save from bugs. In some cases, high coverage is a fallacy that hides
+many bugs underneath. Who will test those tests? And so it goes.
+
+Don't get me wrong --- tests are a good thing, just not the silver
+bullet.
+
+Tests slow down a codebase evolution if you want to keep them around.
+Every change in the main code leads to changes in tests, and under such
+conditions, tests' quality tends to fall. It is often much harder to
+refactor tests than the original code --- not a code but a test scenario
+being refactored; sometimes it's wiser to come up with the new test
+scenarios.
+
+At the end of the day, QA processes define a product's quality. But
+tests per se are not the QA.
+
+#### Don't wait until refactoring
+
+Refactoring is like a Jesus of programming --- it will come and wash
+away all our sins.
+
+First of all, it may not, and the truth is Refactoring often leaves a
+code in questionable shape. There is no need to suffer until
+refactoring. Do not wait for the Perfect Solution, make small constant
+changes that improve overall codebase health.
+
+### Be a craftsman --- avoid coding for the sake of coding
+
+> Code is a Tool --- not the Goal.
+
+Our code starts to expire from its birth, it is the application, the
+end-product, the end-users and their problems what matters. The first
+code quality assessment is not a number of lines but how well it solves
+the problem.
+
+Code might not be the prettiest or the most performant while it does the
+job and fits the bill.
+
+### Rules of thumb
+
+#### Be awake
+
+Good code is a product of a mental effort. Evaluate decisions you make,
+do not follow the patterns blindly. Doubt every advice. Ask "Why?" "How
+does it work?" "What problem does it solve?"
+
+A code and technologies don't exist on their own --- there are real-life
+problems behind.
+
+#### Write a code only as a last resort
+
+Oh gosh, we have so many problems in our code, let's solve them by
+writing even more code.
+
+#### Keep an eye on measurable metrics
+
+- Number of function parameters (width of a function)
+- Length of a function in lines of code
+- Nesting level (how far right your code leans)
+- Variable locality: number of lines between variable declaration and its first/last usages
+- Number of "WTF!?" per lines of code
+
+If you like this post, please share it so others may enjoy it.
+
+If you hate this post, please reach me out so we can figure out our
+differences and work on improvements.
+
+1. [A Better Programmer: Part 1 --- Software Design](_posts/10.software-engineering/2020-03-18.A-Better-Programmer--Part-1---Software-Design.md)
+
+Exported from [Medium](https://medium.com) on May 26, 2025.

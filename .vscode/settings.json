@@ -1,0 +1,17 @@
+{
+  "editor.formatOnSave": true,
+  "editor.tabSize": 2,
+  "editor.codeActionsOnSave": {
+    "source.fixAll": "explicit"
+  },
+  "typescript.preferences.importModuleSpecifier": "non-relative",
+  "deepseek.model.name": "deepseek-coder:33b",
+  "github.copilot.chat.agent.thinkingTool": true,
+  "github.copilot.enable": {
+    "plaintext": true,
+    "markdown": true,
+    "scminput": false,
+    "typescriptreact": true,
+    "*": true
+  }
+}

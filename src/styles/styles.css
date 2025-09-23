@@ -1,0 +1,346 @@
+@import 'tailwindcss';
+
+/* Tailwind CSS v4 dark mode configuration */
+@variant dark (.dark &);
+
+@theme {
+  /* Primary color palette - Solarized blue for links and interactive elements */
+  --color-primary-50: oklch(0.97 0.024 213.79);
+  /* very light blue */
+  --color-primary-100: oklch(0.94 0.05 213.79);
+  /* light blue */
+  --color-primary-200: oklch(0.86 0.1 213.79);
+  /* lighter blue */
+  --color-primary-300: oklch(0.76 0.15 213.79);
+  /* light blue */
+  --color-primary-400: oklch(0.7 0.19 213.79);
+  /* medium light blue */
+  --color-primary-500: oklch(0.61 0.22 213.79);
+  /* medium blue */
+  --color-primary-600: oklch(0.52 0.2 213.79);
+  /* primary blue */
+  --color-primary-700: oklch(0.43 0.18 213.79);
+  /* dark blue */
+  --color-primary-800: oklch(0.37 0.15 213.79);
+  /* darker blue */
+  --color-primary-900: oklch(0.31 0.12 213.79);
+  /* very dark blue */
+  --color-primary-950: oklch(0.18 0.07 213.79);
+  /* deepest blue */
+
+  /* Neutral color palette - for backgrounds, borders, non-interactive text */
+  --color-neutral-50: #f8fafc;
+  /* light background */
+  --color-neutral-100: #f1f5f9;
+  /* hover states */
+  --color-neutral-200: #e2e8f0;
+  /* light elements */
+  --color-neutral-300: #cbd5e1;
+  /* borders, muted text */
+  --color-neutral-400: #94a3b8;
+  /* secondary text */
+  --color-neutral-500: #64748b;
+  /* text */
+  --color-neutral-600: #475569;
+  /* borders, emphasis */
+  --color-neutral-700: #334155;
+  /* text, hover */
+  --color-neutral-800: #1e293b;
+  /* dark elements */
+  --color-neutral-900: #0f172a;
+  /* dark background */
+  --color-neutral-950: #020617;
+  /* extra dark */
+
+  /* Extended color palette */
+  --color-dark: #222222;
+}
+
+/* All animations combined */
+@keyframes blink {
+
+  0%,
+  50% {
+    opacity: 0;
+  }
+
+  51%,
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -700px 0;
+  }
+
+  100% {
+    background-position: 700px 0;
+  }
+}
+
+@keyframes flicker {
+
+  0%,
+  19.999%,
+  22%,
+  62.999%,
+  64%,
+  64.999%,
+  70%,
+  100% {
+    opacity: 0.99;
+  }
+
+  20%,
+  21.999%,
+  63%,
+  63.999%,
+  65%,
+  69.999% {
+    opacity: 0.4;
+    filter: none;
+  }
+}
+
+@keyframes noise {
+  0% {
+    transform: translate(0px, 0px);
+    opacity: 0.45;
+  }
+
+  10% {
+    transform: translate(-50px, 50px);
+    opacity: 0.5;
+  }
+
+  20% {
+    transform: translate(75px, -50px);
+    opacity: 0.45;
+  }
+
+  30% {
+    transform: translate(-50px, 50px);
+    opacity: 0.55;
+  }
+
+  40% {
+    transform: translate(50px, -75px);
+    opacity: 0.35;
+  }
+
+  50% {
+    transform: translate(-50px, 100px);
+    opacity: 0.55;
+  }
+
+  60% {
+    transform: translate(-100px, -50px);
+    opacity: 0.55;
+  }
+
+  70% {
+    transform: translate(50px, 50px);
+    opacity: 0.45;
+  }
+
+  80% {
+    transform: translate(50px, -75px);
+    opacity: 0.4;
+  }
+
+  90% {
+    transform: translate(0px, 100px);
+    opacity: 0.45;
+  }
+
+  100% {
+    transform: translate(-50px, 50px);
+    opacity: 0.4;
+  }
+}
+
+/* Animation classes */
+.animate-blink {
+  animation: blink 1s step-end infinite;
+}
+
+.animate-shimmer {
+  animation: shimmer 1.3s linear infinite;
+}
+
+.animate-flicker {
+  animation: flicker 3s linear infinite;
+}
+
+.animate-noise {
+  animation: noise 1.2s steps(8, end) infinite both;
+}
+
+@layer base {
+
+  /* Typography hierarchy - blog.css styles prevail */
+  .h0 {
+    @apply text-3xl font-bold md:text-5xl;
+  }
+
+  h1,
+  .h1 {
+    @apply text-2xl font-bold md:text-4xl;
+    font-family: var(--font-orbitron);
+    letter-spacing: 0.05em;
+    /* Blog padding takes precedence over globals padding */
+    padding-top: 2rem;
+    padding-bottom: 3rem;
+  }
+
+  h2,
+  .h2 {
+    @apply text-xl font-bold md:text-3xl pb-5 pt-5;
+    font-family: var(--font-orbitron);
+    letter-spacing: 0.05em;
+    /* Blog padding takes precedence over globals padding */
+    padding-top: 1rem;
+    padding-bottom: 2rem;
+  }
+
+  h3,
+  .h3 {
+    @apply text-lg font-bold md:text-2xl;
+    letter-spacing: 0.05em;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  h4,
+  .h4 {
+    @apply text-base font-bold md:text-lg;
+    letter-spacing: 0.05em;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+  }
+
+  body,
+  p,
+  .p {
+    @apply text-base;
+    font-family: var(--font-manrope);
+  }
+
+  pre,
+  code {
+    font-family: var(--font-jetbrains-mono);
+    padding-left: 0.5rem;
+    margin: 2rem 0;
+  }
+
+  blockquote {
+    font-style: italic;
+    opacity: 0.8;
+    padding-left: 2rem;
+    margin-left: 0;
+    margin: 1rem 0 1rem 0;
+    position: relative;
+  }
+
+  blockquote::before {
+    content: '"';
+    font-size: 3em;
+    font-weight: bold;
+    @apply text-neutral-400 dark:text-neutral-500;
+    position: absolute;
+    left: -0.25rem;
+    top: -0.25rem;
+    line-height: 1;
+  }
+}
+
+/* rehype-pretty-code dual theme support */
+
+/* Default to light theme */
+html:not(.dark) pre[data-theme],
+html:not(.dark) pre[data-theme] span {
+  color: var(--shiki-light);
+  background-color: var(--shiki-light-bg);
+}
+
+/* Dark theme when .dark class is present */
+html.dark pre[data-theme],
+html.dark pre[data-theme] span {
+  color: var(--shiki-dark);
+  background-color: var(--shiki-dark-bg);
+}
+
+/* Timeline Component Enhanced Animations */
+@keyframes timeline-fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(20px) scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes timeline-slide-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes timeline-pulse {
+
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.8;
+  }
+
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+@keyframes timeline-glow {
+
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3);
+  }
+
+  50% {
+    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1);
+  }
+}
+
+/* Hover-activated animations */
+.timeline-fade-in {
+  animation: timeline-fade-in 0.8s ease-out forwards;
+}
+
+.timeline-pulse {
+  animation: none;
+}
+
+.timeline-glow {
+  animation: none;
+}
+
+/* Only animate on group hover */
+.group:hover .timeline-pulse {
+  animation: timeline-pulse 2s ease-in-out infinite;
+}
+
+.group:hover .timeline-glow {
+  animation: timeline-glow 2s ease-in-out infinite;
+}

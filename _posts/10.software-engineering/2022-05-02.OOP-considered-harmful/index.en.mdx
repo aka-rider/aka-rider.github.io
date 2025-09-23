@@ -1,0 +1,163 @@
+---
+title: 'OOP considered harmful'
+date: '2022-05-02'
+excerpt: >
+  Thank you, awesome reader, for choosing this tab. Bear with me for 3 more minutes, and I promise you, this story will be anything but dull.
+featured: false
+image: 'https://cdn-images-1.medium.com/max/800/0*LqZfwGKKw6XDCsF2.png'
+tags: ['Software Engineering']
+---
+
+Thank you, awesome reader, for choosing this tab. Bear with me for 3 more minutes, and I promise you, this story will be anything but dull.
+
+OOP considered harmful? Maybe you've already agreed whilst clicking the link, maybe you clicked the link just to prove yourself that the author is an idiot. What I'm trying to say, "_OOP_ **_is_** _harmful_" is a point of view. I intend to prove it useful, whether you are a raging OOP zealot, a die-hard math purist or none of the above and just came here to code.
+
+Interestingly, the topic of over-use of classes brought my attention more than a few times over the last day or two, hence my motivation to write this post:
+
+1. I want to read clean, beautiful code
+2. I want the applications I use daily to be bullet-proof reliable
+3. I want to die in glory in a programming Holy War, like references vs. pointers, or imperative vs. declarative, get carried to programmer's Valhalla where I will be greeted by Alan Turing, and Ada Lovelace, and ... you get it.
+
+Modern OOP is a paradigm closely built around a concept of classes.
+
+## First and foremost --- class is an abstraction
+
+Abstractions don't exist in the material world. We simplify real-world complexity, diminishing it to something we can grasp to concentrate our cognitive efforts elsewhere.
+
+There are many abstractions with different levels of complexity.
+
+A **variable** is an abstraction, albeit a very simple one (yes, variables don't exist).
+
+_Now we spend hours and hours trying to figure out the perfect name for a variable (only to hate the name tomorrow and start over again) instead of writing something as simple as_
+
+```assembly
+mov [0xFA42BE6709A0F340], dword 5
+```
+
+_...and move on with our lives. But this is for another Holy War._
+
+Another abstraction that we use subconsciously, and in my opinion it doesn't get enough attention is a **function**.
+
+Now, a class is an abstraction over variables and functions. It's an abstraction over abstraction. Inceptraction.
+
+Let's get back to a function for a minute. Despite the seeming simplicity, functions are far from simple. We are taught these vague guidelines: a good function shouldn't have more than 5 parameters, or a good function should fit on one screen. No clear definition of what is a good function. I saw what these guidelines may lead to --- 25 lines of code, new function, here we come.
+
+At this point, I hope you understand where I'm coming from. If we can not decisively tackle a "simple" function, how can we simultaneously juggle a dozen, all bound not only with input-output but also by the state they cooperatively modify?
+
+Like it wasn't hard enough, what do they teach us? What shall guide us through the fog of complexity to the light? --- Correct! Polymorphism, Inheritance, and Encapsulation.
+
+Are you kidding me? My brain is crumbling and I should get more classes, now with overloads and overrides, and multiple inheritance flavors?
+
+_Why is BasketItem derived from MouseMovementObserverFactory? God, what is MouseMovementObserverFactory? I was promised real-world objects. I was shown Cat, Dog, and Animal._
+
+Don't get me wrong. These are all very useful concepts. They were made to eliminate complexity. They are time-proven. The problem is, OOP adds another layer of complexity by itself.
+
+**We add complexity to remove complexity**. Do you see how this game may easily go wrong?
+
+## To class or not to class?
+
+> I invented the term 'Object-Oriented', and I can tell you I did not have C++ in mind. --- Alan Kay
+
+Designing software using classes is always a losing game. Bringing abstractions before the actual problem is adding costs without benefits.
+
+The rule of thumb is to never start with classes. Write code using only functions, and classes will manifest themselves like a Polaroid picture. If they are needed at all.
+
+_A group of functions receiving the same arguments is a solid candidate for a class._
+
+While designing software, the key question is **not what entities** comprise the system, but **how entities interact**.
+
+Interaction --- is the actual code. Entities, be they classes, objects, or functions --- are boilerplate to enable the code, to help us. Do not allow abstractions to pollute the code. That's how one keeps code clean and simple.
+
+Start with modeling interactions, maybe write some code snippets, and entities will reveal themselves.
+
+If we speak about software design in UML terms, the rule of thumb is --- never use UML class diagrams to design software.
+
+![Example UML class diagram](https://cdn-images-1.medium.com/max/800/0*LqZfwGKKw6XDCsF2.png)
+
+They describe entities, but they don't describe the interaction, so they don't guide towards solid design.
+
+Always use UML sequence (interaction) diagrams to model software.
+
+![Example UML sequence diagram](https://cdn-images-1.medium.com/max/800/0*0ruSLR0OgEiyM2YN.png)
+
+## Inheritance and Polymorphism
+
+Like many cool concepts and algorithms from Computer Science, both inheritance and polymorphism have very limited application in the real world.
+
+I know, I am outraged too --- I thought I would sort double-ended decks in O(log n) using genetic algorithms. Truth is --- nowadays we read and write JSON. _Welcome to the club, pal_.
+
+Important to remember that **Inheritance (IS-A)** is a special case of **Composition (HAS-A)**.
+
+Inheritance:
+
+```cpp
+A: B {
+}
+```
+
+Composition:
+
+```cpp
+A {
+    B b;
+}
+```
+
+This means every inheritance is a composition, while not every composition is an inheritance. So we are narrowing our options down by choosing inheritance.
+
+_Riddles like why is BasketItem derived from MouseMovementObserverFactory appear exactly because of this._
+
+Let's consider a classic Pet Store example: Dog inherits Pet. But why?
+
+Do they really share common methods?
+
+More often than not, what we see all over the actual code:
+
+```javascript
+if (pet.type == Cat) {
+  // do this
+} else if (pet.type == Dog) {
+  // do this other thing
+}
+```
+
+Then somebody adds Goldfish, and everything goes to Hell --- months of heavy refactoring.
+
+Another reason for inheritance is to keep all pets in the same container (map or list). But do we need to? Choosing data structures is the most important decision, that shapes the code around. This makes all the difference between clean and messy code.
+
+Do we really need to search through all pets? Do users really don't care if they want a cat or a dog?
+
+Compare the code:
+
+```javascript
+for (pet in pets) {
+  if (pet.type == Cat) {
+    // but does it purr?
+  }
+}
+```
+
+With:
+
+```javascript
+for (cat in cats) {
+  // purrrrryty code...
+}
+```
+
+## TL;DR
+
+- OOP is a very powerful paradigm but as it comes without usage instruction, more often than not it leads to over-complicated code.
+- Function > Class.
+- Just write code, good abstractions will reveal themselves like Polaroid pictures, classes included.
+- Use UML sequence diagrams to design software, don't use class diagrams at this stage.
+
+The title says OOP while mainly I wrote about classes in popular programming languages.
+
+---
+
+By [Iurii Krasnoshchok](https://medium.com/@aka.rider) on [May 2, 2022](https://medium.com/p/68e2aa136ff9).
+
+[Canonical link](https://medium.com/@aka.rider/oop-considered-harmful-68e2aa136ff9)
+
+Exported from Medium on May 26, 2025.

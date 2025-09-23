@@ -1,0 +1,305 @@
+---
+title: 'Makefiles for Python and beyond'
+date: '2020-02-28'
+image: 'makefile-python-ducttape.webp'
+---
+
+Makefiles are quite unpopular in the dynamic languages world.
+Some Python and JavaScript developers consider GNU make an ancient, deprecated, outdated, and dying tool, used by some dinosaurs.
+
+The truth is: make is a wonderful and often misunderstood tool. It is fairly simple yet very powerful.
+Hell, source-based Linux distros and BSD operating systems heavily rely on make.
+
+There are many application for Makefiles outside of C/C++ world, and I think that make deserves more attention and love.
+
+
+## Why does Python even need a Makefile?
+
+The short answer is: to avoid the “It worked on my machine” situation.
+Python does a very good job to abstract OS layer, although Python application still needs some kind of packaging before it can be distributed, or deployed to a server.
+
+In general, Makefile is a good alternative to a bunch of bash scripts used to automate tedious tasks.
+
+First of all, instead of remembering and typing ill `./do_this_one_thing.sh` `./do_the_other_one` (was it dash or underscore?), you can confidently strike:
+
+```bash
+$ make one two.
+```
+
+But that’s a joke, of course.
+
+The real reason is: as soon as there is more than one bash script, the hidden dependencies may arrive. You have to run `script_1` before running `script_2`.
+Another problem is copy-paste code (each bash file tends to hold the same paths, artifacts names, and whatnot).
+
+## Make for the rescue
+
+Feel free to skip this intro if you’re already familiar with make.
+
+All make does is tracks files’ dependency graph, and “last modified” timestamps of the files. If one of dependencies timestamp is greater than the one of the original file, the original file needs to be rebuilt.
+
+Every time, one file has to be built from another, make is a good alternative for the job. You may think of building a .jpg from .dot files, or .mpeg4 from video, audio and subtitles files, or .html files build from .j2 or .pug templates. Python itself does the very same thing with .pyc files.
+
+A Makefile consists of “rules” in the following form:
+
+```make
+target: dependency1, dependency2, …
+<TAB>recipe line
+<TAB>recipe line
+…
+```
+
+target is a file needs to be built; dependency1 and dependency2 are source files used to build the target, and recipe is a shell command used as a build step.
+
+If you want to just copy a file, you may write something like:
+
+```make
+dist/config.yaml: src/config.yaml
+    cp -f src/config.yaml dist/config.yaml
+```
+
+What is all this have to do with Python again?
+
+Okay, let us make a simple application.
+
+Let’s say we want to make an application that shows random cat gifs (*the example is shamelessly hijacked from the glorious* [Elm tutorial](https://elm-lang.org/examples/cat-gifs))
+
+```python
+# App to render random cat gifs for the great good
+from http.server import HTTPServer, BaseHTTPRequestHandler
+from io import BytesIO
+import requests
+class Handler(BaseHTTPRequestHandler):
+    template = '''
+<!DOCTYPE HTML>
+<html>
+<head><meta charset="UTF-8"><title>Cats</title></head>
+<body>{body}</body>
+</html>'''
+    def do_GET(self):
+        url = 'https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=cat'
+        r = requests.get(url)
+        self.send_response(r.status_code)
+        self.end_headers()
+        if r.status_code == 200:
+            data = r.json()
+            body = '<img src="{imgurl}"/>'.format(imgurl=data['data']['image_url'])
+            content = Handler.template.format(body=body)
+        else:
+            body = '<h1>HTTP - {code}</h1>'.format(code=r.status_code)
+            content = Handler.template.format(body=body)
+        self.wfile.write(content.encode('utf-8'))
+port = 8000
+httpd = HTTPServer(('localhost', port), Handler)
+print("Open http://localhost:{}/ to see something cool".format(port))
+httpd.serve_forever()
+```
+
+So now you want to show this application to your buddies. No — the **whole World** must to see it in its magnificence.
+
+The application should render something like this:
+
+![random cat gif](cat.gif)
+
+The only problem is:
+
+```bash
+Traceback (most recent call last):
+ File “./app.py”, line 3, in <module>
+ import requests
+ ModuleNotFoundError: No module named ‘requests’
+```
+
+Okay, apparently simple `python3 app.py` may not work.
+
+Let’s make a virtual environment, and install requests module in it. requirements.txt file with the long list of all the requirements:
+
+```txt
+requests
+```
+
+Long, long list.
+
+(Trying to pull out real-world example out of the thin air here).
+
+And the virtual environment itself:
+
+```bash
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+```
+
+We may even want to save this into some `build.sh` file.
+
+Now all we need is:
+
+```bash
+./venv/bin/python3 app.py
+```
+
+And we also may want to save this one-liner into some `run.sh`.
+
+So this is the very common situation I was talking about in the beginning: we need to run build.sh before run.sh, and this dependency is hidden and nowhere stated.
+
+Let’s see if this make stuff will be more clear.
+
+The first rule in our Makefile will be the virtual environment, but `venv` is a directory, and we need a plain file, so let’s take any file from the “ venv”. For instance, `venv/bin/activate` will do:
+
+
+```make
+venv/bin/activate: requirements.txt
+    python3 -m venv venv
+    ./venv/bin/pip install -r requirements.txt
+```
+
+Now if we run make in the project’s directory, we’ll get virtual environment build with requests installed. We had it before, with bash, but now dependency is tracked, so running make the second time will give us:
+
+```bash
+$ make
+make: `venv/bin/activate’ is up to date.
+```
+
+If we will edit `requirements.txt` — add or remove dependencies, make will rebuild the virtual environment for us automagically:
+
+```bash
+$ touch requirements.txt  # simulate edit
+$ make
+python3 -m venv venv
+./venv/bin/pip install -r requirements.txt
+Requirement already satisfied: requests in ./venv/lib/python3.7/site-packages…
+```
+
+Now, let’s make the second target called run to run our application:
+
+```make
+run: venv/bin/activate
+    ./venv/bin/python3 app.py
+```
+
+run explicitly depends on the virtual environment target, so now you only have to type make run and dependencies will be created or updated before running the application.
+
+So far so good, but we need to go deeper.
+
+First of all, we don’t have the file named run; make thinks that this file will be created after executing the recipe, so it all works. Although, if someone would decide to created a file named run the behavior of make would become unexpected.
+
+Let’s fix it by explicitly saying that we don’t expect a file to be produced.
+
+```make
+.PHONY: run
+```
+
+Now run is a phony target, and it will be re-evaluated every time it is called (that’s exactly what we need).
+
+We may want to add the clean target to remove what we don’t need:
+
+```make
+clean:
+    rm -rf venv
+    find . -type f -name ‘*.pyc’ -delete
+```
+
+Don’t forget that the clean target also doesn’t produce a file:
+
+```
+.PHONY: run clean
+```
+
+By default, running make without arguments will execute the first rule from the Makefile. It is considered a good style to define an entry target called all that should define a default behavior. In our case, it will create the virtual environment.
+
+```make
+all: venv/bin/activate
+```
+
+And again:
+
+```
+.PHONY: all run clean
+```
+
+## Want more make?
+
+This is where some people draw the line in the sand, but make also has variables, functions, and macros.
+
+Variables are really simple:
+
+```make
+NAME := VALUE
+```
+
+defines a variable, that can be refered by `${NAME}` or `$(NAME)`
+
+There is also some useful shortcuts:
+
+```make
+NAME ?= VALUE
+```
+
+Assign `VALUE` to the variable `NAME` if it’s **not yet defined**.
+
+This is especially useful because you may define variables while executing make:
+
+```bash
+$ make BUILD=RELEASE ENVIRONMENT=PRODUCTION
+```
+
+There is also a possibility to declare an alias, like this:
+
+```make
+NAME = VALUE
+```
+
+In this case, right hand side will be evaluated every time variable is accessed.
+
+This can be explained easily by the following example
+
+```make
+v1 := $(shell ls)
+v2 = $(shell ls)
+```
+
+Both variables hold the result of the shell ls command execution, but v1 will be evaluated only once, and will never show any new files.
+
+By the way, shell is a make functions. Hooray, we’ve also learned the make functions!
+
+Let’s wrap up everything we’ve learned just now:
+
+```make
+# define the name of the virtual environment directory
+VENV := venv
+
+# default target, when make executed without arguments
+all: venv
+
+$(VENV)/bin/activate: requirements.txt
+	python3 -m venv $(VENV)
+	./$(VENV)/bin/pip install -r requirements.txt
+
+# venv is a shortcut target
+venv: $(VENV)/bin/activate
+
+run: venv
+	./$(VENV)/bin/python3 app.py
+
+clean:
+	rm -rf $(VENV)
+	find . -type f -name '*.pyc' -delete
+
+.PHONY: all venv run clean
+```
+
+Easy, right?
+
+## What else?
+
+You may want to add your favorite linter and formatter: `pep8`, `yapf`, `pyflakes` — you name it. You can generate gRPC or swagger stub, you can generate documentation from `.rst` or `.md` files.
+
+### A shiny new hammer
+
+Why not use make for everything? Literally everything?!
+
+It is very good tool for tracking dependencies between files with benefits, but when targets are dynamics, like docker images, or deployments… Well, things may get ugly and unpredictable. Builds may be haunted.
+
+<TLDR title='Makefiles still rocks!' />
+
+Feel free to use make outside of the C/C++ world having fun joy and pleasure.
+
+Every time a file needs to be created from other files, GNU make is a good candidate for the job.

@@ -1,0 +1,215 @@
+---
+title: 'A Better Programmer: Part 1 --- Software Design'
+date: '2020-03-18'
+excerpt: 'This is my mental toolbox and my approach to design software and fight complexity.'
+image: 'https://cdn-images-1.medium.com/max/800/1*xaovhVlmuRxQj1vZkDJL5A.png'
+tags: ['Software Engineering', 'Programming', 'Design']
+---
+
+Hey! Thank you for opening this tab among the gazillion others, you are awesome!
+
+I describe computers from an oversimplified perspective, to explain how hardware affects code and programming concepts we live with.
+
+This is my mental toolbox and my approach to design software and fight complexity. It may or may not work for you.
+
+Please enjoy reading and steal my ideas.
+
+---
+
+Have you ever seen a total mess of code?
+
+Have you ever pounded a table with your fist, thinking of slow and painful death to the author of this brain-damaged cancer-giving parody of a code?
+
+Have you been the author?
+
+Me and you, we both have. Software development is a complex craft, business pushes its agenda, deadlines, fatigue --- don't get me started on this.
+
+None of us would start writing a program thinking: "I'm gonna make the spaghettiest piece of unreadable crap ever." Well, most of us won't I guess.
+
+So it tends to happen by itself? Where shall we start?
+
+## 1. The Legacy
+
+In the XXI century, we create abstractions over abstractions to create ever-more sophisticated software that would run on machines designed in 1936.
+
+You may think that if your platform is high-level enough, like browser, JVM, BEAM, or Haskell runtime, then hardware doesn't affect you. Oh, but it does.
+
+A terminal we print "Hello, world" into is there because elderly computers used a typewriter with a paper roll as an output device. "Carriage return," ladies and gentlemen --- just imagine this "ding" sound for a moment. Let it sink in. Let it ring.
+
+You know first-hand how legacy increases complexity. We create abstractions to hide legacy.
+
+![Cut the onion of abstractions. Try not to cry. Cry a lot.](https://cdn-images-1.medium.com/max/800/1*xaovhVlmuRxQj1vZkDJL5A.png)
+
+The only way to design _bulletproof_ software is to KNOW HOW S\*IT WORKS. (Hereinafter, the term 'S\*IT' stands for Systems multiplied by Information Technology)
+
+It's all fragile! You will lose my data if you assume that "backup to NAS" (your language runtime → C language runtime → syscall → OS kernel → page cache → filesystem driver → [all TCP/IP network stack] → network card driver → network card → physical transport → network card → network card driver → [all TCP/IP network stack] → Hypervisor kernel (yet another OS) → firmware (yet another OS) → page cache → filesystem driver → RAID software → RAID controller → HDD firmware → HDD) "just works!"
+
+(I know, I skipped most steps for simplicity)
+
+### Good news everyone
+
+It pays off almost immediately. You don't need to spend sleepless weeks trying to debug network packets loss and connectivity problems if you know how TCP/IP works. You don't need to redesign the application from scratch because of the false assumptions.
+
+There's no need to be an expert in everything --- it is important to have understanding. Think of martian robot vs. HTML widget --- different meanings of _complexity_, _reliability_, and different level of details. (I don't know what's easier though --- martian robot, or HTML widget that works in all browsers).
+
+It's not much (if you ignore most of the bone-crushing details). We need to learn and recognize typical concepts: problems and solutions --- everything is on repeat. The same if-else exists in every programming language (maybe in a slightly different form). The same hardware interrupts created by every device.
+
+Computers are primitive. They can only calculate formulas, as a human being with abacus --- just faster. Numbers in numbers out. Monitor, mouse, headphones, and other devices convert numbers from/to something meaningful to humans. Everything is predictable --- randomness is a problem by itself. Modern computers contain more abacuses than old ones but the principle stays.
+
+### Bad news
+
+We have to make it work in software.
+
+Even the best of us make dangerous bugs regularly. In the most extreme cases, people die (ex.: Therac-25 radiation therapy machine, bugs in rockets, aviation, and military equipment).
+
+Whether we want it or not, we face the leaky abstractions every day --- often in a form of "WAT?!" And it stays "WAT?!" until we're absolutely clear what's going on.
+
+## 2. High-level design
+
+The more information we have the better design we can create. The fewer assumptions mean fewer iterations, less work wasted. If we are sure we can validate ideas on the fly, in our minds or on paper.
+
+There is only one problem: details obstruct the design --- they prevent us from seeing the big picture.
+
+Free flow between aerial and microscopic views is the key to a beautiful design.
+
+## What is RAM?
+
+A Random Access Memory is a bunch of capacitors. A charged capacitor is 1, discharged --- zero. It's virtually impossible to connect every capacitor with a wire, so they sit on a grid; it allows DDR4 memory to have 260 pins instead of billions. To read or write a value, address is translated to a column and row. You may have tweaked timings in BIOS: RAS --- Row Address Strobe, and CAS --- Column Address Strobe --- they are cycles required to set a row and a column in this grid.
+
+## Variable is an abstraction over the address in RAM
+
+**Variable name**. You name your variables as uninspired "i", or "counter" instead of remembering few thousands of simple hexes like 0x000076A9834CC4BE.
+
+**Variable type**. Type says how many bits to read from memory, and how to interpret these bits. Depending on the type, binary 01000000 can be the number 64, or the '@' symbol.
+
+During the high-level design, variables don't exist (forget about these types, and especially names). Instead, there is a concept of **_dataflow_** --- _what is the input and what is the output of an actor_? _Who is the data owner_?
+
+That's why a variable is an address in RAM and nothing else --- the same address means shared ownership. Feel free to take the next step and assume exclusive data access and no shared state at all --- this will effectively eliminate the whole RAM concept out of the equation.
+
+Instead of type it useful to think about the **_semantic_**: _what information an actor requires to carry its duties_.
+
+For instance, to look up a book in a catalog, I need a search criterion (ISBN, title, year, author) and the whole book catalog. Should catalog be a class, array, list, or hash map or algebraic data type --- I don't care at this point, this is the next step.
+
+This is the mental switch I'm trying to describe --- no classes or objects, there is a dangerous lock-in: it is too easy to jump from types to functions to variables and further to code without finishing the design part.
+
+Software design on paper is cheap. Hours of life wasted --- also cheap, unfortunately.
+
+The huge promise of an object-oriented paradigm was to allow us to model real-world entities in code. I saw many managers in real life, they are nothing like class WhateverManager.
+
+> I made up the term "object-oriented", and I can tell you I did not have C++ in mind.
+>
+> ~ Alan Kay The Computer Revolution hasn't happened yet --- Keynote, OOPSLA 1997
+
+(You can replace C++ here with Java or C#, to some extent with Python and JavaScript)
+
+## What is a program
+
+Ultimately, a program is a sequential list of instructions.
+
+If you're familiar with the language of assembler, you know this already. It looks like:
+
+```text
+1. Do stuff
+2. Do more stuff
+3. Jump to #1 if condition
+```
+
+Here we've got a while loop:
+
+```javascript
+while (condition) {
+    do stuff
+    do more stuff
+}
+```
+
+GOTO statements and label are a human-readable jump.
+
+"If-else" statement is an abstraction over a jump.
+
+While loop is an abstraction over a jump.
+
+For loop is an abstraction over a while loop.
+
+Foreach loop is an abstraction over a for loop.
+
+Switch-case and pattern matching are both abstractions over an if-else (a jump).
+
+A function is an abstraction over a jump.
+
+So many abstractions over the same jump instruction, in every programming language, because the hardware is similar. All the abstractions above pursue the same goal: to model a **_control flow_**.
+
+The fact that a program is a list of instructions leads to the important oversimplification: programming is not a process of creating something new, but merely automation of an existing routine.
+
+You may not like it --- programming is an art and a state of a soul, and a harmony of the Universe. But thinking of it as of "list of routine steps to be automated" helps to create real beauty and to carve her in code.
+
+When I feel overwhelmed by a program's complexity, I try to think of a simple sequence of steps, each step can be broken down by further steps, and so on.
+
+There are numerous ways of representing control flow, and it is crucially important for everyone to know my personal opinion on the topic: I find UML Sequence diagrams a perfect representation of initial designs.
+
+![Example Sequence Diagram](https://cdn-images-1.medium.com/max/800/0*VQUVVVsG9Yk1eIlF.png)
+_Example Sequence Diagram. Source: Wikipedia_
+
+Flowchart diagrams are very good for working with algorithms.
+
+![Example Flowchart diagram](https://cdn-images-1.medium.com/max/800/0*dqYBfI4vBitD9W49.png)
+_Example Flowchart diagram. Source: Wikipedia_
+
+All the language-specific abstractions: function, modules, etc. are low-level, and should come after, to reflect control flow in a human-readable form. That is why I don't like a pseudo-code for a high-level design --- the same mental lock-in: it's too easy to jump from pseudo-code to actual code.
+
+While planning, I prefer not to touch keyboard at all; paper and pen allow me to capture my thoughts quickly, while choices of shapes and colors in a software create an unnecessary distraction.
+
+**Important note**: as you may see, _control flow already assumes dataflow_. That is why data is fundamental.
+
+Code should be made around data and not vise versa. You may have experienced this while working with some legacy API --- when you have to create some quirky workarounds to keep the rest of the code clean.
+
+> Bad programmers worry about the code. Good programmers worry about data structures and their relationships.
+>
+> ~ Linus Torvalds, Message to Git mailing list, 2006-06-27
+
+## 3. Next steps
+
+A high-level design may be as perfect as it possibly could --- the cruel world will crush it anyway, the sooner the better. At this point, we need all these details to validate the design.
+
+## Always Ask "Why?" and "How does it work?"
+
+This is arguably the easiest way to excel at programming: to look under the hood and understand how it is built --- there is no magic.
+
+In my professional life, one of the biggest "Aha!" moments is when I realized that the Linux kernel is made by programmers (I love programming too!). So I may _know_ instead of _guess_ when I need it.
+
+## Practice
+
+I can admit that I am too often get carried away reading blogs, documentation, and books, watching videos, instead of just trying. Just start somewhere.
+
+If you want to know more about CPU and low-level hardware I highly recommend "Crash Course Computer Science" on YouTube (I'm not affiliated, just genuinely like the course)
+
+If you want to know more about RAM you absolutely need to read "What every programmer should know about memory" by Ulrich Drepper.
+
+[A Better Programmer: Part 2 --- The Conduct of no Regrets](https://medium.com/@aka.rider/a-better-programmer-part-2-the-conduct-of-no-regrets-59b53d6082b0)
+
+---
+
+If you like this post, please share it so others may enjoy it.
+
+If you hate this post, please reach me out so we can figure out our differences and work on improvements.
+
+[Twitter: @iurii_k](https://twitter.com/iurii_k) (DMs are open)
+
+## Links
+
+1. [Computer architecture on Wikipedia](https://en.wikipedia.org/wiki/Computer_architecture)
+2. [PostgreSQL's fsync() surprise](https://lwn.net/Articles/752063/)
+3. ["Wat" by Gary Bernhardt](https://www.destroyallsoftware.com/talks/wat)
+4. [The WHY behind the WAT (JavaScript) by Abhinav Suri](https://medium.com/dailyjs/the-why-behind-the-wat-an-explanation-of-javascripts-weird-type-system-83b92879a8db)
+5. [Sequence diagram on Wikipedia](https://en.wikipedia.org/wiki/Sequence_diagram)
+6. [Flowchart on Wikipedia](https://en.wikipedia.org/wiki/Flowchart)
+7. [Crash Course Computer Science on YouTube](https://www.youtube.com/watch?v=tpIctyqH29Q&list=PL8dPuuaLjXtNlUrzyH5r6jN9ulIgZBpdo)
+8. [What every programmer should know about memory](https://lwn.net/Articles/250967/)
+
+---
+
+By [Iurii Krasnoshchok](https://medium.com/@aka.rider) on [March 18, 2020](https://medium.com/p/b4312c9696dc).
+
+[Canonical link](https://medium.com/@aka.rider/a-better-programmer-part-1-software-design-b4312c9696dc)
+
+Exported from Medium on May 26, 2025.

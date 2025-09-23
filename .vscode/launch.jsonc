@@ -1,0 +1,20 @@
+{
+  "configurations": [
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Blog Script",
+      "program": "${workspaceFolder}/debug-blog.mjs",
+      "skipFiles": ["<node_internals>/**"],
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Debug Next.js Dev Server",
+      "program": "${workspaceFolder}/node_modules/.bin/next",
+      "args": ["dev"],
+      "cwd": "${workspaceFolder}",
+      "skipFiles": ["<node_internals>/**"],
+    },
+  ],
+}

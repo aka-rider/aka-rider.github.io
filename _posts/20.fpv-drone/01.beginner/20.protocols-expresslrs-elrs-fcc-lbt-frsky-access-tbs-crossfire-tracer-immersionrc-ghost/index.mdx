@@ -1,0 +1,40 @@
+---
+title: 'Protocols: ExpressLRS, TBS, Frsky, oh my 🤯'
+image: drone-transmitter-protocols.webp
+---
+
+## What?
+
+Protocol is a language of transmitter (aka TX) in your hands and the drone's receiver (RX). They simply MUST understand the common language for the drone to fly.
+It works like:
+
+- You twist the trottle gimbal
+- Transmitter to drone: "throttle 42"
+- Drone: "42, understood — _motors buzzing_"
+
+So whatever letters are there: TBS, ELRS, Crossfire — they must be the same letters, and the same version (V1, V2, V3...), definitely the same radio frequency (900MHz, 2.4GHz).
+
+## Which to choose?
+
+<TLDR title='Express LRS (ELRS)' />
+
+#### Pros
+
+- Long range allows to fly far
+- Low-latency
+- Very stable protocol, giving firm control over the flight
+- The equipment is cheaper than other long-range systems, both transmitters and receivers
+- Open, popular, and widely available. Some protocols are closed within the same ecosystem, meaning that the choice of drones, transmitters, accessories is limited by ths ecosystem.
+
+#### Cons
+
+- Could require a bit of setup, not as plug-and-play as Frsky
+
+### ExpressLRS FCC vs LBT
+
+FCC (Federal Communications Commission) is for the USA, LBT (Listen Before Talk) is for Europe. The difference is in the allowed power of the signal. FCC is more powerful, but it's illegal to use it in Europe. LBT is less powerful, but legal in Europe.
+LBT (Listen Before Talk) is a requirement in the European Union's radio regulations, governed by ETSI (European Telecommunications Standards Institute). LBT requires devices to check if a frequency channel is clear before transmitting, to reduce interference with other devices.
+
+### Other protocols
+
+If you're still curious about other protocols, [RChobbylab has a great comparison table](https://rchobbylab.com/fpv-radio-protocol/)
