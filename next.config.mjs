@@ -9,7 +9,7 @@ import remarkFrontmatter from 'remark-frontmatter';
 import remarkGfm from 'remark-gfm';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
 import config from './config.js';
-const { ROOT_DIR, BLOG_POSTS_DIR } = config;
+const { ROOT_DIR, BLOG_POSTS_DIR, IS_PRODUCTION } = config;
 
 const withMDX = nextMDX({
   options: {
@@ -115,6 +115,7 @@ function symlinkPostsDirectory() {
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'export',
+  basePath: IS_PRODUCTION ? process.env.PAGES_BASE_PATH : "",
   images: { unoptimized: true },
   trailingSlash: true,
   eslint: {
