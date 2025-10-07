@@ -23,7 +23,7 @@ export default async function HomePage({
     'blog',
     'foss',
     'services',
-  ] as const;
+  ] as const satisfies (keyof typeof rootPage[Lang])[];
 
   // Prepare navigation items from section order
   const navSections = sectionOrder.slice(1).map((sectionId) => ({

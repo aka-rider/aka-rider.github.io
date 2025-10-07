@@ -1,4 +1,4 @@
-import { getTranslations, Lang } from '@/i18n';
+import { common, Lang } from '@/i18n';
 
 export async function defaultMetadata({
   params,
@@ -6,10 +6,9 @@ export async function defaultMetadata({
   params: Promise<{ lang: Lang }>;
 }) {
   const { lang } = await params;
-  const t = await getTranslations(lang);
   return {
-    title: t('title'),
-    description: t('description'),
-    keywords: t('keywords'),
+    title: common[lang].title,
+    description: common[lang].description,
+    keywords: common[lang].keywords,
   };
 }

@@ -1,5 +1,6 @@
-// Define the services with categorized tech skills
-export const servicesData = {
+import { Lang } from '../index';
+
+const services = {
   interimCTO: {
     title: {
       en: 'Interim / Fractional CTO',
@@ -11,17 +12,15 @@ export const servicesData = {
     },
     icons: {
       lvl1: [
-        { icon: 'MdLeaderboard', title: 'Leadership' },
-        { icon: 'MdBusiness', title: 'Strategy' },
+        { icon: 'TfiDirectionAlt', title: 'Leadership' },
+        { icon: 'LuChartGantt', title: 'Strategy' },
         { icon: 'HiUserGroup', title: 'Hiring' },
       ],
       lvl2: [
         { icon: 'MdAutoMode', title: 'Automation' },
         { icon: 'GoServer', title: 'Infrastructure' },
-      ],
-      lvl3: [
         { icon: 'FaChalkboardTeacher', title: 'Mentoring' },
-        { icon: 'TbReportAnalytics', title: 'Analytics' },
+        { icon: 'GoGoal', title: 'OKR' },
       ],
     },
   },
@@ -47,9 +46,9 @@ export const servicesData = {
         { icon: 'SiOpenjdk', title: 'Java' },
         { icon: 'SiScala', title: 'Scala' },
         { icon: 'TbBrandCSharp', title: 'C#' },
-        { icon: 'SiPhp', title: 'PHP' },
       ],
       lvl3: [
+        { icon: 'SiPhp', title: 'PHP' },
         { icon: 'SiDelphi', title: 'Delphi' },
         { icon: 'SiErlang', title: 'Erlang' },
         { icon: 'SiElm', title: 'Elm' },
@@ -105,38 +104,43 @@ export const servicesData = {
       ],
       lvl2: [
         { icon: 'GoDatabase', title: 'Microsoft SQL Server' },
-        { icon: 'SiMongodb', title: 'MongoDB' },
         { icon: 'SiRedis', title: 'Redis' },
+        { icon: 'SiMqtt', title: 'MQTT' },
       ],
-      lvl3: [{ icon: 'SiSqlite', title: 'SQLite' }],
+      lvl3: [
+        { icon: 'SiMongodb', title: 'MongoDB' },
+        { icon: 'SiSqlite', title: 'SQLite' },
+        { icon: 'SiClickhouse', title: 'ClickHouse' },
+        { icon: 'SiSnowflake', title: 'Snowflake' },
+      ],
     },
   },
 } as const;
 
 // Helper function to transform services for a specific language
-export function translateServices<T extends 'en' | 'uk'>(lang: T) {
+export function translateServices(lang: Lang) {
   return {
     interimCTO: {
-      title: servicesData.interimCTO.title[lang],
-      proposition: servicesData.interimCTO.proposition[lang],
-      icons: servicesData.interimCTO.icons,
+      title: services.interimCTO.title[lang],
+      proposition: services.interimCTO.proposition[lang],
+      icons: services.interimCTO.icons,
     },
     programming: {
-      title: servicesData.programming.title[lang],
-      proposition: servicesData.programming.proposition[lang],
-      icons: servicesData.programming.icons,
+      title: services.programming.title[lang],
+      proposition: services.programming.proposition[lang],
+      icons: services.programming.icons,
     },
     deployment: {
-      title: servicesData.deployment.title[lang],
-      proposition: servicesData.deployment.proposition[lang],
-      icons: servicesData.deployment.icons,
+      title: services.deployment.title[lang],
+      proposition: services.deployment.proposition[lang],
+      icons: services.deployment.icons,
     },
     dataStorage: {
-      title: servicesData.dataStorage.title[lang],
-      proposition: servicesData.dataStorage.proposition[lang],
-      icons: servicesData.dataStorage.icons,
+      title: services.dataStorage.title[lang],
+      proposition: services.dataStorage.proposition[lang],
+      icons: services.dataStorage.icons,
     },
   };
 }
 
-export type ServicesContent = ReturnType<typeof translateServices<'en'>>;
+export type ServicesContent = ReturnType<typeof translateServices>[keyof ReturnType<typeof translateServices>];

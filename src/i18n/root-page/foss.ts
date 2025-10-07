@@ -1,4 +1,7 @@
-export const foss = [
+import { Lang } from '../index';
+
+// Define the structure first
+const foss = [
   {
     name: 'nanoQ aka nQ',
     description: {
@@ -44,7 +47,7 @@ export const foss = [
 ] as const;
 
 // Helper function to transform foss for a specific language
-export function translateFoss<T extends 'en' | 'uk'>(lang: T) {
+export function translateFoss(lang: Lang) {
   return foss.map(project => ({
     name: project.name,
     description: project.description[lang],
@@ -55,4 +58,4 @@ export function translateFoss<T extends 'en' | 'uk'>(lang: T) {
   }));
 }
 
-export type FossContent = ReturnType<typeof translateFoss<'en'>>[number];
+export type FossContent = ReturnType<typeof translateFoss>[number];

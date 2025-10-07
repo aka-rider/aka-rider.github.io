@@ -5,7 +5,7 @@ import '@/styles/styles.css';
 
 import { defaultMetadata } from '@/lib/metadata';
 
-import { defaultLang, languages } from '@/i18n';
+import { defaultLang, Languages } from '@/i18n';
 
 export default async function DummyLayout({
   children,
@@ -22,5 +22,5 @@ export async function generateMetadata(): Promise<Metadata> {
 }
 
 export async function generateStaticParams() {
-  return Object.keys(languages).map((lang) => ({ lang }));
+  return Languages.keys().map((lang) => ({ lang }));
 }

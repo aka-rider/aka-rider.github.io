@@ -2,8 +2,8 @@
 
 import { usePathname, useRouter } from 'next/navigation';
 
-import { Lang, languages } from '@/i18n';
-
+import type { Lang } from '@/i18n';
+import { Languages } from '@/i18n';
 interface LangSwitcherProps {
   currentLang: Lang;
 }
@@ -13,14 +13,16 @@ export default function LangSwitcher({ currentLang }: LangSwitcherProps) {
   const pathname = usePathname();
 
   const handleLanguageChange = (newLang: Lang) => {
-    // Replace the language segment in the pathname
-    const segments = pathname.split('/');
-    if (segments[1] && segments[1] in languages) {
-      segments[1] = newLang;
-    } else {
-      segments.splice(1, 0, newLang);
+    // Extract the path without any language prefix
+    const segments = pathname.split('/').filter(Boolean);
+
+    // Remove any existing language segments from the beginning
+    while (segments.length > 0 && segments[0] && segments[0] in Languages.data) {
+      segments.shift();
     }
-    const newPath = segments.join('/');
+
+    // Construct new path with the selected language
+    const newPath = `/${newLang}${segments.length > 0 ? '/' + segments.join('/') : ''}`;
     router.push(newPath);
   };
 
@@ -33,10 +35,10 @@ export default function LangSwitcher({ currentLang }: LangSwitcherProps) {
                    text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-800
                    cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
       >
-        {Object.entries(languages).map(([langCode, langInfo]) => (
+        {Languages.map((lang, langInfo) => (
           <option
-            key={langCode}
-            value={langCode}
+            key={lang}
+            value={lang}
             className='bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
           >
             {langInfo.name.slice(0, 3).toUpperCase()}

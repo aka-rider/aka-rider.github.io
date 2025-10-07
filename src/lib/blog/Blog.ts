@@ -1,7 +1,7 @@
 import { loadDirectory } from '@/lib/blog/loader';
 import { BlogNode } from '@/lib/blog/types';
 
-import { defaultLang, Lang, languages } from '@/i18n';
+import { defaultLang, Lang, Languages } from '@/i18n';
 
 import config from '../../../config.js';
 
@@ -10,7 +10,7 @@ export class Blog {
 
   private constructor() {
     this.root = {};
-    for (const lang of Object.keys(languages) as Lang[]) {
+    for (const lang of Languages.keys()) {
       this.root[lang] = loadDirectory(config.BLOG_POSTS_DIR, lang);
     }
   }
