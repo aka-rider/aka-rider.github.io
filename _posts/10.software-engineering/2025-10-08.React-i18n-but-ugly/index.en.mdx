@@ -1,0 +1,217 @@
+---
+title: 'React i18n but ugly'
+excerpt: >
+  Behold! A backend developer will teach you how to frontend. But the main point is to demonstrate how to engineer an ugly solution of already solved problem that makes sense.
+image: 'react-i18n-but-ugly.webp'
+---
+
+Behold! A backend developer will teach you how to frontend.
+
+But the main point is to demonstrate how to engineer an ugly solution of already solved problem that makes sense.
+
+## Scope
+
+Mostly static site, React, Next.js App Router, markdown blog with multiple languages.
+
+**Readily available**: react-intl or i18next.
+#### Problem #1 
+
+`output: "export"` means no middleware, no cookies, no runtime detection, which means no automagical solution to context management, language detection and usage.
+
+#### Problem #2 (the showstopper)
+
+What you’re “supposed” to do is to create and maintain:
+
+```txt
+messages-en.json
+messages-es.json
+messages-fr.json
+....
+```
+
+#### That means
+
+- I need to repeat the website structure in each of these files
+- Every time I need to add, tweak, or move a button, I need to modify all `messages-${lang}.json` files simultaneously
+#### Pragmatically
+
+- I can easily sacrifice plural rules, time/number formatting for less dependencies — the website is mostly static
+- I don’t outsource translations; I don’t need detachable catalogs
+- I can leverage LLMs to create at least initial translations
+
+At this point, I want to create my own solution, because the the cost-benefit of using industry standards is simply not there.
+Key point of this step is to **scope the requirements**, which allows for the creation of a minimalistic tailor-made solution, and **start prototyping**. Note that I don't try to design everything upfront.
+
+## Let's go ugly!
+
+### Step 1: hardcode JSON
+
+![](all-the-things.webp)
+
+1. `messages-${lang}.json` are part of the application, not configuration (a missing message is a defect).
+2. Leverage the TypeScript compiler to catch missing or misplaced translations.
+3. Leverage TypeScript’s type system to express the complex i18n structure.
+
+### Step 2: put everything in one file
+
+```text
+/i18n
+└── index.ts
+```
+
+```typescript
+
+const i18n = {
+  en: {
+    name: 'English',
+    emoji: '🇬🇧',
+    title: 'The website in English',
+    .....
+  },
+  uk: {
+    name: 'Українська',
+    emoji: '🇺🇦',
+    title: 'Сторінка представлена Соловʼїною',
+    .....
+  },
+
+  .....
+
+} as const;
+```
+
+### Step 3: re-invent framework anyway
+
+```typescript
+// The Lang union type is derived from the i18n structure keys
+export type Lang = keyof typeof i18n; // 'en' | 'uk'
+
+// all nested keys inside i18n:
+// "en.title", "uk.title", "en.rootPage.heroCTA", ... and so on
+type Path<T> = T extends object
+  ? {
+    [K in keyof T]: K extends string ? K | `${K}.${Path<T[K]>}` : never;
+  }[keyof T]
+  : never;
+
+type I18nPath = Path<(typeof i18n)[Lang]>;
+
+export const getTranslations =
+  (lang: string) =>
+    (path: I18nPath): string => {
+      if (!(lang in i18n)) return String(path);
+
+      const keys = path.split('.');
+      let i18node: any = i18n[lang as Lang];
+
+      for (const key of keys) {
+        if (i18node && typeof i18node === 'object' && key in i18node) {
+          i18node = i18node[key];
+        } else {
+          return String(path);
+        }
+      }
+
+      return typeof i18node === 'object'
+        ? String(path)
+        : String(i18node);
+    };
+```
+
+
+From the end-user perspective, everything looks like business as usual. But now `getTranslations` with non-existing key can cause a compilation error. Additionally, we may require that the key must be defined in all languages.
+
+```typescript
+// usage example
+export default function Footer({ lang }: { lang: Lang }) {
+  const t = getTranslations(lang);
+  const currentYear = new Date().getFullYear();
+
+  return (
+    <footer>
+      <p> © {currentYear} {t('title')} </p>
+    </footer >
+  );
+}
+```
+
+### we have a new ugly solution to already solved problem — now what?
+
+I'm showing you the intermediate results. I think this is an important step of the engineering process — to stop and re-evaluate, and frankly my solution so far doesn't look any better.
+
+#### PROS:
+
+- missing / misspelled keys are compilation errors
+- I don't need to keep multiple JSON in sync, ensuring the keys are present and the structure is identical
+
+#### CONS:
+
+- I have one bulky file with nested structures — it doesn't scale
+- I reinvented the wheel, made it less capable, and I have to maintain it now
+
+## Shape the final solution
+
+### It's not an i18n problem
+
+I'm struggling to separate the content of a static website from layout and styles — i18n is only part of the problem.
+That means what I thought of as a `i18n` is a "Static Content Tree" structure can hold other types of content, like icons, images, and links.
+
+### I don't need to mimic any framework
+
+The framework-ish `getTranslations(lang)` can go away, I can directly use `i18n['lang'].title` for better error handling and reporting.
+With `getTranslations` gone, I don't need a rigid structure: `<lang>: { <subtree> }` anymore, the structure could be flexible, as I see fit
+
+```typescript
+import { FaHome } from 'react-icons/fa';
+
+export const navData = [
+  {
+    title: {
+      en: "Home",
+      uk: "На головну",
+    },
+    icon: FaHome,
+    href: "/",
+  },
+
+  ...
+
+] as const;
+
+```
+
+And splitting by files should follow the website structure — what is often modified together, should live together
+#### Before
+
+```text
+/i18n
+└── index.ts (The God Object)
+```
+
+#### After
+
+```text
+/i18n
+└── common-components.ts
+└── nav-panel.ts
+└──/root-page
+   └──index.ts
+   └──hero-section.ts
+...
+```
+
+#### Out of scope
+
+Mature internalization frameworks are better suited for dynamically generated content: pluralization, time localization, and so on.
+Should I require this functionality at some point, I could easily generate the content in the form of `messages.<lang>.json` from my hardcoded literals, so I could have a cake and eat it too.
+
+<TLDR />
+
+- Existing React frameworks can actually be an obstacle for static websites
+- If everybody does it, it doesn't mean you should
+- Scoping the requirements and not trying to be smart and future-proof helps with minimalistic solutions — YAGNI
+- Iteration and re-evaluation beat the elusive perfect design
+- This showcases my approach to i18n and content management for my personal website
+
+---
+Photo by [sunday Choi](https://unsplash.com/@gosunday85) on [Unsplash](https://unsplash.com/photos/danke-thanks-grazie-merci-RpXMySRW0AE)
