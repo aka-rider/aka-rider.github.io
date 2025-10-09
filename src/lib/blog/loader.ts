@@ -101,11 +101,7 @@ function loadPostFile(
       rawImage.startsWith('http://') || rawImage.startsWith('https://');
     const image = isImageUrl
       ? rawImage
-      : path.join(
-        '/images/_posts',
-        path.dirname(filename).replace(/^_posts\//, ''),
-        rawImage,
-      );
+      : path.join("/", path.dirname(filename), rawImage);
 
     // Store raw content for later serialization
     const meta: Post = {

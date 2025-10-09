@@ -2,7 +2,7 @@ import { Image, Root } from 'mdast';
 import * as path from 'path';
 import { visit } from 'unist-util-visit';
 
-// This plugin replaces relative image paths with absolute paths under /images/_posts/
+// This plugin replaces relative image paths with absolute paths under `/_posts` directory
 const remarkImagePaths = (postFilePath: string) => {
   return () => (tree: Root) => {
     if (!tree || !postFilePath) {
@@ -22,10 +22,7 @@ const remarkImagePaths = (postFilePath: string) => {
       }
 
       try {
-        // Convert relative path to absolute path following the post's directory structure
-        const postDir = path.dirname(postFilePath);
-        const resolvedPath = path.join('/images', postDir, node.url);
-        node.url = resolvedPath;
+        node.url = path.join("/", path.dirname(postFilePath), node.url);
       } catch (error) {
         // eslint-disable-next-line no-console
         console.error(`Failed to process image ${node.url} with postFilePath ${postFilePath}:`, error);
