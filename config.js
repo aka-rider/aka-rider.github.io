@@ -1,11 +1,13 @@
 const path = require('path');
 
 module.exports = {
-  // Domain and URLs
-  SITE_DOMAIN: 'iurii.net',
+
+  get CNAME() {
+    return "iurii.net";
+  },
 
   get SITE_URL() {
-    return `https://${this.SITE_DOMAIN}`;
+    return `https://${this.CNAME}`;
   },
 
   get LINKED_IN() {
@@ -17,8 +19,13 @@ module.exports = {
   },
 
   // Paths
-  ROOT_DIR: process.cwd(),
-  BLOG_POSTS_DIR: '_posts',
+  get ROOT_DIR() {
+    return process.cwd();
+  },
+
+  get BLOG_POSTS_DIR() {
+    return '_posts';
+  },
 
   // Environment
   get DEBUG() {
