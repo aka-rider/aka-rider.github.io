@@ -128,4 +128,9 @@ export class Blog {
     }
     return Blog.instance;
   }
+
+  static forceReload(): Blog {
+    Blog.instance = new Blog();
+    return Blog.instance;
+  }
 }

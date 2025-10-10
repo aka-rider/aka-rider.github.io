@@ -67,6 +67,7 @@ _posts/
 3. **Slug Generation**: Normalized from filenames/directory names
 4. **Hierarchy Building**: Parent-child relationships with breadcrumb support
 5. **Static Params**: Generate all possible routes for static export
+6. **Images Handling**: Images in `_posts/` (including frontmatter) paths resolved relative to post location
 
 ### Coding Conventions
 
