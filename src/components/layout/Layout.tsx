@@ -1,5 +1,6 @@
 import { jetBrainsMono, manrope, orbitron } from '@/lib/fonts';
 
+import Analytics from '@/components/Analytics';
 import LangSwitcher from '@/components/LangSwitcher';
 import Footer from '@/components/layout/Footer';
 import ThemeProvider from '@/components/ThemeProvider';
@@ -46,6 +47,7 @@ export default function Layout({
             <Footer lang={lang} />
           </div>
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
