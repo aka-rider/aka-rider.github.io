@@ -29,9 +29,12 @@ const mdxComponents = {
     const width = htmlWidth ? Number(htmlWidth) : 800;
     const height = htmlHeight ? Number(htmlHeight) : 400;
 
+    // Ensure src is a string for Next.js Image component
+    const imageSrc = typeof src === 'string' ? src : '/public/images/blog-generic.webp';
+
     return (
       <NextImage
-        src={src || '/public/images/blog-generic.webp'}
+        src={imageSrc}
         alt={alt || 'illustration'}
         width={width}
         height={height}
