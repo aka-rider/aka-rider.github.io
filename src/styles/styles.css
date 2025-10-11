@@ -226,6 +226,7 @@
   .p {
     @apply text-base;
     font-family: var(--font-manrope);
+    line-height: 1.6;
   }
 
   pre,
