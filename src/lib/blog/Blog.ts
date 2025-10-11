@@ -120,17 +120,7 @@ export class Blog {
     return traverseNode(root);
   }
 
-  private static instance: Blog | null = null;
-
   static getInstance(): Blog {
-    if (!Blog.instance) {
-      Blog.instance = new Blog();
-    }
-    return Blog.instance;
-  }
-
-  static forceReload(): Blog {
-    Blog.instance = new Blog();
-    return Blog.instance;
+    return new Blog();
   }
 }
