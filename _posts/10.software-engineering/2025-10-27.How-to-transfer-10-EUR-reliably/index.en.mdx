@@ -1,0 +1,146 @@
+---
+title: 'How to transfer 10 EUR reliably'
+excerpt: >
+  The task is to transfer €10 by making API call(s). This problem pops up in real world all the time.
+  For instance, when a customer buys something in an e-commerce shop, the backend needs to make the payment and book the order.
+image: 'how-to-transfer-10-eur-reliably.webp'
+---
+
+The task is to transfer €10 by making API call(s). This problem pops up in real world all the time. For instance, when a customer buys something in an e-commerce shop, the backend needs to make the payment and book the order. Usually these operations are spread between third-party service providers and an in-house database or a few third parties.
+
+The goal is to complete the operation while avoiding double postings.
+
+## Let's start with one API call
+
+Withdraw €10. We need to be able to recover after a failure, and before you start to think about retries with exponentials backoff, storing the transaction in ACID database — the failure is server getting destroyed by lightning strike together with all hardware and disks.
+
+***Important lesson here**. When we're trying to solve an engineering problem, it helps to narrow down all possible options. A good start is to to hedge the biggest risks and later when we have a draft solution, possibly relax the requirements and accept certain risks involved (together with mitigation strategies).*
+
+Here's the sequence diagram of the request and response.
+
+```mermaid
+sequenceDiagram
+    participant User
+    participant OurServer
+    participant Network
+    participant RemoteServer
+
+    User->>OurServer: withdraw (amount: 10)
+    activate OurServer
+
+    OurServer->>Network: send request
+    activate Network
+
+    Network->>RemoteServer: withdraw (amount: 10)
+    activate RemoteServer
+
+    RemoteServer->>RemoteServer: process withdrawal
+
+    RemoteServer-->>Network: respond (success/failure)
+    deactivate RemoteServer
+
+    Network-->>OurServer: respond (success/failure)
+    deactivate Network
+
+    OurServer->>User: store the response
+    deactivate OurServer
+```
+
+Each actor on the diagram is a point of failure. Note how many we have when we factor in the network and local communication (imagine we want to store the response in a file or database — but the local disk may fail too).
+
+Let's trace the arrows.
+
+1. Lightning strikes our server during request — one of: we haven't sent anything, or we succeeded to make the call and died — we don't know.
+2. Network failure — again, call may have gone through or not
+3. Remote server has died while executing the request
+4. ... and so on, and so forth until the request potentially succeeded but we failed to store the results due to a nasty power spike that fried our own server to ashes.
+
+Now if we add the second call to deposit €10 the whole state of the system at any point of failure is a big question mark.
+
+## The Saga design pattern
+
+>  The Saga design pattern helps maintain data consistency in distributed systems by coordinating transactions across multiple services. A saga is a sequence of local transactions where each service performs its operation and initiates the next step through events or messages. If a step in the sequence fails, the saga performs compensating transactions to undo the completed steps.
+
+from [https://learn.microsoft.com/en-us/azure/architecture/patterns/saga](https://learn.microsoft.com/en-us/azure/architecture/patterns/saga)
+
+The problem with this approach is we may fail to store the local transaction, and/or our server may fail during the compensating transactions, leaving the system in unknown and potentially inconsistent state. Basically, we're back at the initial problem, only with extra steps.
+
+## Two Generals' Problem
+
+Two armies, each led by a different general, are preparing to attack a fortified city. They can only succeed by attacking simultaneously, alone neither of the generals stand a chance. Generals try to communicate by sending messengers. Unfortunately, there is a chance that any given messenger will be captured by enemies.
+
+So general A proposes to attack at 6 in the morning, she sends a messenger, but she needs to be sure that general B received the message. This requires General B to send an acknowledgment, but B in turn needs to know that _A received the acknowledgment_, leading to an infinite loop where neither side can be 100% certain the other is in agreement, thus making guaranteed consensus impossible.
+
+This is a thought experiment meant to illustrate the pitfalls and design challenges of attempting to coordinate an action by communicating over an unreliable link.
+
+[Two Generals' Problem on Wikipedia](https://en.wikipedia.org/wiki/Two_Generals%27_Problem)
+
+The general problem is called **_Distributed Consensus_**, and our specific use case is called **_Distributed Transaction_**.
+
+There are solutions to the problem, the classic one is called [Two-phase commit or 2PC](https://en.wikipedia.org/wiki/Two-phase_commit_protocol) which is used by many DBMS systems for replication, there is more fault-tolerant [Raft](https://en.wikipedia.org/wiki/Raft_(algorithm)) that doesn't need a central coordinator (dynamically elects a new leader and continues).
+
+Key point is, all participants must coordinate their actions to achieve consensus. Which is not usually the case with third-party systems. Especially with legacy "put payment instructions file on FTP" payment systems.
+
+## Back to our original problem
+
+The only meaningful way to recover after a lightning strike is to get a new server, and repeat the request. But how to avoid double-posting? As we identified, it's impossible to get reliable information of whether our €10 withdrawal had succeeded or not.
+
+In the best case scenario, we don't need to know.
+
+### Idempotence
+
+> Idempotence is the property of certain operations in mathematics and computer science whereby they can be applied multiple times without changing the result beyond the initial application.
+
+**Important lesson here** is to design idempotent API. Very practically speaking, your RESTful API may expect `X-Idempotency-Key: "abc-123"` HTTP header, and after encountering familiar value `abc-123` immediately reply with `HTTP 200 — OK`,  or `HTTP 201 — Created` — same response every time.
+
+Better yet, your API may be designed to be idempotent, like `POST /transactions/{externalId}` which leaves out all ambiguity.
+
+With API like that, the problem of transferring that damned money looks like
+
+1. Create internal transaction with `ID=xxx`
+2. `POST /transactions/xxx-withdrawal`
+3. `POST /transactions/xxx-deposit`
+4. Update internal status to `completed`
+
+Any incomplete transactions could be retried indefinitely without any Saga-added complexity.
+
+###  What if external API doesn't cooperate
+
+As we saw earlier (Two Generals' problem) — there is no solution. But we can either relax requirements or apply domain-specific knowledge and solve the problem for a particular case.
+
+The only solution to the problem that I'm aware of is the same as DBMSs use to achieve atomicity and durability — **Transaction Log**, or **Transaction Journal**. You journal each step of the transaction: `before_xxx` and checkpoint `after_xxx`  or simply `COMMIT`. This journal is used for recovery.
+
+In our case, the entries will look like:
+
+1. I'm beginning a new transaction
+2. I'm going to withdraw €10
+3. I successfully withdrawn €10
+4. I'm going to deposit €10
+5. I deposited €10 like a real chad
+6. The transaction is complete
+
+This approach doesn't tell us about the distributed state of the system, it only shows the point of failure. If the `after_xxx` record is missing, it may be that we failed to send the request, we failed to receive the response, or we failed to write the `after_xxx` record.
+
+At this point we could either relax the requirements (somebody needs to manually login to multiple UIs and click-ops their way to make the platform consistent again), or we could apply domain knowledge, for instance to run reconciliation, compare local and remote balances, and run adjustments. Note how domain knowledge is the key, as the payment may get stuck in some remote queue and affect the balance later, leading to double-posting.
+
+## Epilogue
+
+If you think that what I'm saying is too complex, it's because it is. When I think about practical applications of consistency and reliability, I like to recall the issue with PostgreSQL using Linux's `fsync` syscall incorrectly for over a decade.
+
+> the way the kernel handles I/O errors could result in data being lost without any errors being reported to user space
+
+[more about the issue on LWN](https://lwn.net/Articles/752063/)
+
+>In closing, Freund (Postgres dev) asked for some documentation that would tell application developers what needs to be done in order to durably write their data to disk. Dave Chinner (Linux dev) claimed that was "asking too much", to a fair amount of laughter.
+
+[from the follow-up conference](https://lwn.net/Articles/752952/)
+
+<TLDR title="it's impossible to transfer €10 reliably" />
+
+- This seemingly routine task is a distributed consensus problem which doesn't have a generic solution
+- I explained how to solve a relaxed version of the problem
+
+---
+Photo by [Branimir Balogović](https://unsplash.com/@brandaohh?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/photos/10-euro-bill-on-persons-hand-yaMNhzAqhUg?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
+
+
