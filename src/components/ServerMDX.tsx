@@ -1,12 +1,7 @@
 import { compile, run } from '@mdx-js/mdx';
-import mdxMermaid from 'mdx-mermaid'
-import { Mermaid } from 'mdx-mermaid/Mermaid';
+import { Mermaid } from 'mdx-mermaid/Mermaid'
 import React from 'react';
 import * as runtime from 'react/jsx-runtime';
-import rehypeAutolinkHeadings from 'rehype-autolink-headings';
-import rehypePrettyCode from 'rehype-pretty-code';
-import rehypeSlug from 'rehype-slug';
-import remarkGfm from 'remark-gfm';
 
 import remarkReplaceLinks from '@/lib/remark-i18n-links';
 import remarkImagePaths from '@/lib/remark-image-paths';
@@ -14,6 +9,8 @@ import remarkImagePaths from '@/lib/remark-image-paths';
 import PrimaryLink from '@/components/links/PrimaryLink';
 import NextImage from '@/components/NextImage';
 import TLDR from '@/components/TLDR';
+
+import { rehypePlugins, sharedRemarkPlugins } from '/mdx-config';
 
 const mdxComponents = {
   a: (props: React.ComponentProps<'a'>) => (
@@ -28,8 +25,8 @@ const mdxComponents = {
     ...props
   }: React.ComponentProps<'img'>) => {
     // Convert HTML img props to Next.js Image props
-    const width = htmlWidth ? Number(htmlWidth) : 800;
-    const height = htmlHeight ? Number(htmlHeight) : 400;
+    const width = htmlWidth ? Number(htmlWidth) : 1920;
+    const height = htmlHeight ? Number(htmlHeight) : 1080;
 
     // Ensure src is a string for Next.js Image component
     const imageSrc = typeof src === 'string' ? src : '/public/images/blog-generic.webp';
@@ -63,24 +60,11 @@ export default async function ServerMDX({ source, postFilePath }: ServerMDXProps
       outputFormat: 'function-body',
       development: process.env.NODE_ENV === 'development',
       remarkPlugins: [
-        remarkGfm,
-        [mdxMermaid, { output: 'svg' }],
+        ...sharedRemarkPlugins,
         remarkReplaceLinks,
-        remarkImagePaths(postFilePath)
-      ],
-      rehypePlugins: [
-        rehypeSlug,
-        [
-          rehypePrettyCode,
-          {
-            theme: {
-              dark: 'github-dark',
-              light: 'github-light',
-            },
-          },
-        ],
-        rehypeAutolinkHeadings,
-      ],
+        remarkImagePaths(postFilePath),
+      ] as any,
+      rehypePlugins: rehypePlugins as any,
     });
 
     const { default: MDXContent } = await run(compiled, {

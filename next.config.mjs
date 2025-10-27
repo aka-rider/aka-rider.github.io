@@ -4,14 +4,16 @@
 import nextMDX from '@next/mdx';
 import remarkFrontmatter from 'remark-frontmatter';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
-import remarkGfm from 'remark-gfm';
-import mdxMermaid from 'mdx-mermaid'
+
+import { sharedRemarkPlugins } from './mdx-config.mjs';
 import config from './config.js';
+
 const { IS_PRODUCTION } = config;
 
 const withMDX = nextMDX({
   options: {
-    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm, [mdxMermaid, { output: 'svg' }]],
+    // At build time, we only use the shared plugins without runtime context
+    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, ...sharedRemarkPlugins],
   },
 });
 

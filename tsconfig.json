@@ -29,7 +29,8 @@
     "paths": {
       "@/*": ["./src/*"],
       "~/*": ["./public/*"],
-      "/config": ["./config.js"]
+      "/config": ["./config.js"],
+      "/mdx-config": ["./mdx-config.mjs"]
     },
     "incremental": true,
     "plugins": [
