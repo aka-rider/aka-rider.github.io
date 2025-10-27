@@ -9,6 +9,8 @@ const remarkImagePaths = (postFilePath: string) => {
       return;
     }
 
+    // @ts-expect-error - Type mismatch between mdast Root and unist-util-visit Node types
+    // This is a known issue with conflicting versions of @types/unist in the dependency tree
     visit(tree, 'image', (node: Image) => {
       if (!node || !node.url) {
         return;

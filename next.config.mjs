@@ -3,14 +3,15 @@
 /** @type {import('@next/mdx').NextMDXOptions} */
 import nextMDX from '@next/mdx';
 import remarkFrontmatter from 'remark-frontmatter';
-import remarkGfm from 'remark-gfm';
 import remarkMdxFrontmatter from 'remark-mdx-frontmatter';
+import remarkGfm from 'remark-gfm';
+import mdxMermaid from 'mdx-mermaid'
 import config from './config.js';
 const { IS_PRODUCTION } = config;
 
 const withMDX = nextMDX({
   options: {
-    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm],
+    remarkPlugins: [remarkFrontmatter, remarkMdxFrontmatter, remarkGfm, [mdxMermaid, { output: 'svg' }]],
   },
 });
 

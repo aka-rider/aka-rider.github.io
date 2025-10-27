@@ -1,5 +1,6 @@
 'use client';
 
+import { Mermaid } from 'mdx-mermaid/Mermaid';
 import { MDXRemote, MDXRemoteSerializeResult } from 'next-mdx-remote';
 import React from 'react';
 
@@ -11,6 +12,8 @@ const mdxComponents = {
     <UnstyledLink {...props} openNewTab={true} />
   ),
   TLDR,
+  mermaid: Mermaid,
+  Mermaid,
 };
 
 interface ClientMDXProps {

@@ -1,4 +1,6 @@
 import { compile, run } from '@mdx-js/mdx';
+import mdxMermaid from 'mdx-mermaid'
+import { Mermaid } from 'mdx-mermaid/Mermaid';
 import React from 'react';
 import * as runtime from 'react/jsx-runtime';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
@@ -46,6 +48,8 @@ const mdxComponents = {
   },
   TLDR,
   hr: () => <hr className='mt-15 mb-10 opacity-30 justify-center' />,
+  mermaid: Mermaid,
+  Mermaid,
 };
 
 interface ServerMDXProps {
@@ -60,6 +64,7 @@ export default async function ServerMDX({ source, postFilePath }: ServerMDXProps
       development: process.env.NODE_ENV === 'development',
       remarkPlugins: [
         remarkGfm,
+        [mdxMermaid, { output: 'svg' }],
         remarkReplaceLinks,
         remarkImagePaths(postFilePath)
       ],
