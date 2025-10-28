@@ -28,6 +28,11 @@ const normalizeSlug = (slug: string): string => {
 };
 
 const blogNodesCompare = (a: BlogNode, b: BlogNode): number => {
+  // If both nodes have dates, use them for sorting (newest first)
+  if ('date' in a && 'date' in b && a.date && b.date) {
+    return b.date.getTime() - a.date.getTime();
+  }
+
   // Sort by sortKey if both have it, otherwise by slug
   if (a.sortKey && b.sortKey) {
     return a.sortKey.localeCompare(b.sortKey);
@@ -221,7 +226,7 @@ function loadCategory(
       // the latest post fallback
       const posts = c.getPosts();
       if (posts.length > 0) {
-        c.featured = posts[posts.length - 1];
+        c.featured = posts[0];
       }
     }
   } catch (err) {
