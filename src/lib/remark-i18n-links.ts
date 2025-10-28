@@ -9,8 +9,6 @@ import { Lang } from '@/i18n';
 // Note: Simplified version to avoid circular dependencies during MDX compilation
 const remarkReplaceLinks: Plugin<[], Root> = () => {
   return (tree) => {
-    // @ts-expect-error - Type mismatch between mdast Root and unist-util-visit Node types
-    // This is a known issue with conflicting versions of @types/unist in the dependency tree
     visit(tree, 'link', (node: Link) => {
       if (!node.url.startsWith('/posts/') && !node.url.startsWith('/blog/')) {
         return;
