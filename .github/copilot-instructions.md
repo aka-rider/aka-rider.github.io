@@ -3,6 +3,10 @@
 Always use context7 when I need code generation, setup or configuration steps, or library/API documentation.
 This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
 
+Never add or remove dependencies by editing package.json directly, use `npm install` `npm uninstall` commands instead.
+
+Never store summary of your changes in markdown files, never write readme, architecture.md, quickstart.md, or any other documentation files unless explicitly asked to do so.
+
 ## Project Overview
 
 - **Tech Stack**: Next.js 15, React 19, TypeScript, Tailwind CSS v4

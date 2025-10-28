@@ -1,5 +1,4 @@
 import { compile, run } from '@mdx-js/mdx';
-import { Mermaid } from 'mdx-mermaid/Mermaid'
 import React from 'react';
 import * as runtime from 'react/jsx-runtime';
 
@@ -45,8 +44,6 @@ const mdxComponents = {
   },
   TLDR,
   hr: () => <hr className='mt-15 mb-10 opacity-30 justify-center' />,
-  mermaid: Mermaid,
-  Mermaid,
 };
 
 interface ServerMDXProps {

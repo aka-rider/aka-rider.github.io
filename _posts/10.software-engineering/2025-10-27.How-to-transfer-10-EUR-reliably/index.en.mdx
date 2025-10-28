@@ -10,6 +10,11 @@ The task is to transfer €10 by making API call(s). This problem pops up in rea
 
 The goal is to complete the operation while avoiding double postings.
 
+<TLDR title="it's impossible to transfer €10 reliably" />
+
+- This seemingly routine task is a distributed consensus problem which doesn't have a generic solution
+- I explained how to solve a relaxed version of the problem
+
 ## Let's start with one API call
 
 Withdraw €10. We need to be able to recover after a failure, and before you start to think about retries with exponentials backoff, storing the transaction in ACID database — the failure is server getting destroyed by lightning strike together with all hardware and disks.
@@ -18,33 +23,7 @@ Withdraw €10. We need to be able to recover after a failure, and before you st
 
 Here's the sequence diagram of the request and response.
 
-```mermaid
-sequenceDiagram
-    participant User
-    participant OurServer
-    participant Network
-    participant RemoteServer
-
-    User->>OurServer: withdraw (amount: 10)
-    activate OurServer
-
-    OurServer->>Network: send request
-    activate Network
-
-    Network->>RemoteServer: withdraw (amount: 10)
-    activate RemoteServer
-
-    RemoteServer->>RemoteServer: process withdrawal
-
-    RemoteServer-->>Network: respond (success/failure)
-    deactivate RemoteServer
-
-    Network-->>OurServer: respond (success/failure)
-    deactivate Network
-
-    OurServer->>User: store the response
-    deactivate OurServer
-```
+![](diagram.svg)
 
 Each actor on the diagram is a point of failure. Note how many we have when we factor in the network and local communication (imagine we want to store the response in a file or database — but the local disk may fail too).
 
@@ -134,11 +113,6 @@ If you think that what I'm saying is too complex, it's because it is. When I thi
 >In closing, Freund (Postgres dev) asked for some documentation that would tell application developers what needs to be done in order to durably write their data to disk. Dave Chinner (Linux dev) claimed that was "asking too much", to a fair amount of laughter.
 
 [from the follow-up conference](https://lwn.net/Articles/752952/)
-
-<TLDR title="it's impossible to transfer €10 reliably" />
-
-- This seemingly routine task is a distributed consensus problem which doesn't have a generic solution
-- I explained how to solve a relaxed version of the problem
 
 ---
 Photo by [Branimir Balogović](https://unsplash.com/@brandaohh?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/photos/10-euro-bill-on-persons-hand-yaMNhzAqhUg?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)
