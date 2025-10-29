@@ -10,10 +10,11 @@ The task is to transfer €10 by making API call(s). This problem pops up in rea
 
 The goal is to complete the operation while avoiding double postings.
 
-<TLDR title="it's impossible to transfer €10 reliably" />
+<TLDR title="With idempotency it's trivial, without — impossible" />
 
-- This seemingly routine task is a distributed consensus problem which doesn't have a generic solution
-- I explained how to solve a relaxed version of the problem
+- In general case, this seemingly routine task is a distributed consensus problem
+- Why I consider saga an anti-pattern
+- Transaction Log could be used for recovery but most likely the solution cannot be fully automated
 
 ## Let's start with one API call
 
