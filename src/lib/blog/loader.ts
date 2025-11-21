@@ -5,6 +5,7 @@ import * as path from 'path';
 import { defaultLang, Lang } from '@/i18n';
 
 import { BlogNode, Category, LoadFailure, Post } from './types';
+import config from '../../../config';
 
 const META_FILE = '_meta.json';
 
@@ -101,12 +102,9 @@ function loadPostFile(
 
     const rawImage = data.hero || data.image || '/images/blog-generic.webp';
 
-    // Determine if image is a URL or relative path and resolve it
-    const isImageUrl =
-      rawImage.startsWith('http://') || rawImage.startsWith('https://');
-    const image = isImageUrl
-      ? rawImage
-      : path.join("/", path.dirname(filename), rawImage);
+    const image = rawImage.startsWith('http://') || rawImage.startsWith('https://')
+      ? rawImage // external URL
+      : `${config.SITE_URL}${path.join('/', path.dirname(filename), rawImage)}`; // posts mirrored in next.js `public`
 
     // Store raw content for later serialization
     const meta: Post = {

@@ -46,7 +46,7 @@ export default function Nav({ lang, children }: NavProps) {
         </div>
 
         <div className='flex items-center gap-3'>
-          <Social />
+          <Social lang={lang} />
 
           {/* Mobile hamburger button - only show if there are children */}
           {children && (
