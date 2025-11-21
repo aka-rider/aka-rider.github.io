@@ -26,7 +26,7 @@ export default function BlogPostPreview({
     return BlogLoadFailure({ node: post });
   }
 
-  const fontSize = featured ? 'text-xs md:text-sm' : 'text-2xs md:text-xs';
+  const fontSize = featured ? 'text-sm md:text-md' : 'text-2xs md:text-xs';
 
   return (
     <UnstyledLink
@@ -63,7 +63,7 @@ export default function BlogPostPreview({
         </div>
         {/* post title, metadata, and excerpt */}
         <div className='relative bottom-0 left-0 right-0 z-10'>
-          <h3 className={clsx('p-1', fontSize)}>{post.title}</h3>
+          <h3 className={clsx(featured ? 'pt-10' : 'pt-2', fontSize)}>{post.title}</h3>
           <p className={fontSize}>{post.excerpt}</p>
         </div>
 
