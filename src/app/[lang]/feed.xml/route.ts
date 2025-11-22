@@ -27,9 +27,9 @@ function getAllPosts(node: BlogNode): Post[] {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ lang: Lang }> }
+  { params }: { params: Promise<{ lang: string }> }
 ) {
-  const { lang } = await params;
+  const { lang } = (await params) as { lang: Lang };
   const blog = Blog.getInstance();
   const root = blog.getRoot(lang);
 
