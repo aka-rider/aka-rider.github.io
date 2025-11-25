@@ -2,6 +2,7 @@ import { Category } from '@/lib/blog';
 import { Blog } from '@/lib/blog/Blog';
 
 import BlogCategory from '@/components/BlogCategory';
+import UnstyledLink from '@/components/links/UnstyledLink';
 import Section from '@/components/Section';
 
 import { Lang } from '@/i18n';
@@ -29,7 +30,10 @@ export default function BlogPreview({ title, lang }: BlogProps) {
   }
 
   return (
-    <Section id='blog' title={title}>
+    <Section
+      id='blog'
+      title={<UnstyledLink href={`/${lang}/blog`}>{title}</UnstyledLink>}
+    >
       <BlogCategory
         lang={lang}
         category={firstCategory}
