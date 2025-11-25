@@ -7,6 +7,10 @@ module.exports = {
   },
 
   get SITE_URL() {
+    if (process.env.NODE_ENV === 'development') {
+      const port = process.env.PORT || 3000;
+      return `http://localhost:${port}`;
+    }
     return `https://${this.CNAME}`;
   },
 
