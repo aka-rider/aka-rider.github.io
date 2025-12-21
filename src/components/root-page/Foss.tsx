@@ -54,7 +54,7 @@ export default function Foss({ title, foss }: FossProps) {
                   href={project.github}
                   className='inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors'
                 >
-                  <SiGithub size={16} aria-hidden='true' />
+                  <SiGithub className='w-4 h-4' aria-hidden='true' />
                   GitHub
                 </UnstyledLink>
               )}
