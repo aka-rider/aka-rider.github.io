@@ -1,9 +1,8 @@
-import Link from 'next/link';
-
 import { Blog } from '@/lib/blog/Blog';
 import { BlogNode } from '@/lib/blog/types';
 
 import BlogIcon from '@/components/BlogIcon';
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 import { Lang } from '@/i18n';
 
@@ -50,13 +49,13 @@ export default function Breadcrumbs({
         const href = Blog.getLink(lang, crumb);
 
         return (
-          <Link
+          <UnstyledLink
             key={index}
             href={href}
             className={`${baseClasses} cursor-pointer font-medium text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400`}
           >
             {renderCrumbContent(crumb, index, isLast)}
-          </Link>
+          </UnstyledLink>
         );
       })}
     </div>
