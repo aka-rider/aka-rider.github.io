@@ -35,7 +35,7 @@ export default function Nav({ lang, children }: NavProps) {
 
   return (
     <div className='sticky top-0 left-0 w-full z-50 bg-neutral-50 dark:bg-neutral-900'>
-      <nav className='flex flex-row justify-between items-center w-full p-4 relative'>
+      <nav className='flex flex-row justify-between items-center w-full px-4 py-3 relative'>
         <div className='flex items-center'>
           <HomeButton lang={lang} />
         </div>

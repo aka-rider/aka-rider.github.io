@@ -157,6 +157,10 @@
 }
 
 @layer base {
+  html {
+    scroll-padding-top: 4rem;
+    scroll-behavior: smooth;
+  }
 
   /* Typography hierarchy - blog.css styles prevail */
   .h0 {
