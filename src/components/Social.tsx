@@ -16,20 +16,17 @@ export default function Social({ lang }: SocialProps) {
       <IconLink
         href={config.LINKED_IN}
         icon={SiLinkedin}
-        isExternal
         aria-label='LinkedIn profile'
       />
       <IconLink
         href={config.GIT_HUB}
         icon={SiGithub}
-        isExternal
         aria-label='GitHub profile'
       />
       {lang && (
         <IconLink
           href={`/${lang}/feed.xml`}
           icon={SiRss}
-          isExternal
           aria-label='RSS feed'
         />
       )}
