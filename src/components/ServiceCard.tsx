@@ -33,8 +33,7 @@ export default function ServiceCard({
               return (
                 <div key={index} className='flex flex-col items-center gap-1'>
                   <Icon
-                    size={48}
-                    className='text-neutral-800 dark:text-neutral-200 transition-colors duration-200'
+                    className='w-12 h-12 text-neutral-800 dark:text-neutral-200 transition-colors duration-200'
                     aria-hidden='true'
                   />
                   <span className='text-xs text-neutral-700 dark:text-neutral-300 text-center max-w-20'>
@@ -54,8 +53,7 @@ export default function ServiceCard({
               return (
                 <div key={index} className='flex flex-col items-center gap-1'>
                   <Icon
-                    size={36}
-                    className='text-neutral-600 dark:text-neutral-400 transition-colors duration-200'
+                    className='w-8 h-8 text-neutral-600 dark:text-neutral-400 transition-colors duration-200'
                     aria-hidden='true'
                   />
                   <span className='text-xs text-neutral-600 dark:text-neutral-400 text-center max-w-20'>
@@ -75,8 +73,7 @@ export default function ServiceCard({
               return (
                 <div key={index} className='flex flex-col items-center gap-1'>
                   <Icon
-                    size={24}
-                    className='text-neutral-500 dark:text-neutral-500 transition-colors duration-200'
+                    className='w-6 h-6 text-neutral-500 dark:text-neutral-500 transition-colors duration-200'
                     aria-hidden='true'
                   />
                   <span className='text-xs text-neutral-500 dark:text-neutral-500 text-center max-w-20'>

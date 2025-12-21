@@ -21,7 +21,7 @@ export default function Breadcrumbs({
         <span className='text-neutral-500 dark:text-neutral-400 mr-2'>/</span>
       )}
       {crumb.icon && (
-        <BlogIcon name={crumb.icon} size={16} className='mr-1' />
+        <BlogIcon name={crumb.icon} className='w-4 h-4 mr-1' />
       )}
       <span className={isLast ? 'truncate max-w-xs' : ''}>{crumb.title}</span>
     </>

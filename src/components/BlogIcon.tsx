@@ -37,15 +37,15 @@ function getPrefix(iconName: string): string | null {
 
 interface BlogIconProps {
   name: string;
-  size?: number;
   className?: string;
 }
 
 /**
  * Renders a blog category icon, dynamically imported.
  * Falls back to a generic document icon if not found.
+ * Size via Tailwind classes (e.g., 'w-6 h-6').
  */
-export default function BlogIcon({ name, size = 24, className }: BlogIconProps) {
+export default function BlogIcon({ name, className = 'w-6 h-6' }: BlogIconProps) {
   const [Icon, setIcon] = useState<IconType | null>(null);
   const [loaded, setLoaded] = useState(false);
 
@@ -76,5 +76,5 @@ export default function BlogIcon({ name, size = 24, className }: BlogIconProps) 
   }
 
   const FinalIcon = Icon || LuFileText;
-  return <FinalIcon size={size} className={className} aria-hidden='true' />;
+  return <FinalIcon className={className} aria-hidden='true' />;
 }
