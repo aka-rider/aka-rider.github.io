@@ -50,7 +50,7 @@ export default function BlogPostPreview({
             {/* noise animated texture */}
             {/* <div className='animate-noise absolute left-[-50px] top-[-100px] min-h-[400%] min-w-[330%] bg-[url(/images/noise.webp)]'></div> */}
             {/* vignette gradient */}
-            <div className='absolute left-0 top-0 min-h-full min-w-full bg-gradient-to-b from-transparent to-gray-400 opacity-20'></div>
+            <div className='absolute left-0 top-0 min-h-full min-w-full bg-gradient-to-b from-transparent to-neutral-400 opacity-20'></div>
             {/* vignette texture */}
             <div
               className='absolute left-0 top-0 min-h-full min-w-full bg-no-repeat opacity-50'

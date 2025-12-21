@@ -20,8 +20,8 @@ export const rehypePlugins = [
     rehypePrettyCode,
     {
       theme: {
-        dark: 'github-dark',
-        light: 'github-light',
+        dark: 'vitesse-dark',
+        light: 'vitesse-light',
       },
     },
   ],

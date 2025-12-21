@@ -54,28 +54,28 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
               'dark:disabled:bg-primary-800',
             ],
             variant === 'outline' && [
-              'text-primary-500 bg-white dark:bg-gray-900',
+              'text-primary-500 bg-white dark:bg-neutral-900',
               'border-primary-500 border',
               'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
               'dark:text-primary-400 dark:border-primary-400',
-              'dark:hover:bg-gray-800 dark:active:bg-gray-700 dark:disabled:bg-gray-700',
+              'dark:hover:bg-neutral-800 dark:active:bg-neutral-700 dark:disabled:bg-neutral-700',
               isDarkBg &&
-                'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
+              'hover:bg-neutral-800 active:bg-neutral-700 disabled:bg-neutral-700',
             ],
             variant === 'ghost' && [
               'text-primary-500 bg-transparent',
               'shadow-none',
               'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
               'dark:text-primary-400',
-              'dark:hover:bg-gray-800 dark:active:bg-gray-700 dark:disabled:bg-gray-700',
+              'dark:hover:bg-neutral-800 dark:active:bg-neutral-700 dark:disabled:bg-neutral-700',
               isDarkBg &&
-                'hover:bg-gray-900 active:bg-gray-800 disabled:bg-gray-800',
+              'hover:bg-neutral-800 active:bg-neutral-700 disabled:bg-neutral-700',
             ],
           ],
           //#endregion  //*======== Variants ===========
           'disabled:cursor-not-allowed',
           isLoading &&
-            'relative text-transparent transition-none hover:text-transparent disabled:cursor-wait',
+          'relative text-transparent transition-none hover:text-transparent disabled:cursor-wait',
           className,
         )}
         {...rest}
@@ -85,7 +85,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
             className={clsxm(
               'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
               {
-                'text-white dark:text-gray-200': variant === 'primary',
+                'text-white dark:text-neutral-200': variant === 'primary',
                 'text-primary-500 dark:text-primary-400': [
                   'outline',
                   'ghost',
