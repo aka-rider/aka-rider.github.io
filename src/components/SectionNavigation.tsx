@@ -79,13 +79,9 @@ export default function SectionNavigation({
 
     const element = document.getElementById(section.key);
     if (element) {
-      // Calculate the height of the sticky menu
       const navElement = document.querySelector('nav');
-      const navHeight = navElement
-        ? navElement.getBoundingClientRect().height
-        : 0;
+      const navHeight = navElement?.getBoundingClientRect().height ?? 0;
 
-      // Scroll to element with offset for the sticky menu
       window.scrollTo({
         top: element.getBoundingClientRect().top + window.scrollY - navHeight,
         behavior: 'smooth',
