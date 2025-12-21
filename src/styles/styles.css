@@ -345,3 +345,27 @@ html.dark pre[data-theme] span {
 .group:hover .timeline-glow {
   animation: timeline-glow 2s ease-in-out infinite;
 }
+
+/* Reduced motion support - respect user preferences */
+@media (prefers-reduced-motion: reduce) {
+  .animate-blink,
+  .animate-shimmer,
+  .animate-flicker,
+  .animate-noise,
+  .timeline-fade-in,
+  .timeline-pulse,
+  .timeline-glow,
+  .group:hover .timeline-pulse,
+  .group:hover .timeline-glow {
+    animation: none;
+  }
+
+  /* Disable transitions for users who prefer reduced motion */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}
