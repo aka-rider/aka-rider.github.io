@@ -7,6 +7,7 @@ interface IconLinkProps {
   size?: number;
   isExternal?: boolean;
   className?: string;
+  'aria-label'?: string;
 }
 
 export default function IconLink({
@@ -15,6 +16,7 @@ export default function IconLink({
   size = 24,
   isExternal = false,
   className = 'text-primary hover:opacity-75 transition-colors',
+  'aria-label': ariaLabel,
 }: IconLinkProps) {
   if (isExternal) {
     return (
@@ -23,15 +25,16 @@ export default function IconLink({
         target='_blank'
         rel='noopener noreferrer'
         className={className}
+        aria-label={ariaLabel}
       >
-        <Icon size={size} />
+        <Icon size={size} aria-hidden='true' />
       </a>
     );
   }
 
   return (
-    <Link href={href} className={className}>
-      <Icon size={size} />
+    <Link href={href} className={className} aria-label={ariaLabel}>
+      <Icon size={size} aria-hidden='true' />
     </Link>
   );
 }

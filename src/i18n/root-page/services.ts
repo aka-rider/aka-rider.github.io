@@ -1,4 +1,49 @@
+import { IconType } from 'react-icons';
+import { BiLogoPostgresql } from 'react-icons/bi';
+import { FaAws, FaChalkboardTeacher } from 'react-icons/fa';
+import { GoDatabase, GoGoal, GoServer } from 'react-icons/go';
+import { HiUserGroup } from 'react-icons/hi';
+import { LuChartGantt } from 'react-icons/lu';
+import { MdAutoMode, MdHttp } from 'react-icons/md';
+import {
+  SiApachekafka,
+  SiAwslambda,
+  SiC,
+  SiClickhouse,
+  SiCplusplus,
+  SiDelphi,
+  SiDocker,
+  SiElasticsearch,
+  SiElm,
+  SiErlang,
+  SiGit,
+  SiGo,
+  SiGrafana,
+  SiJavascript,
+  SiKubernetes,
+  SiLinux,
+  SiMongodb,
+  SiMqtt,
+  SiMysql,
+  SiOpenjdk,
+  SiOracle,
+  SiPhp,
+  SiPrometheus,
+  SiPython,
+  SiRedis,
+  SiScala,
+  SiServerless,
+  SiSnowflake,
+  SiSqlite,
+  SiTerraform,
+  SiTypescript,
+} from 'react-icons/si';
+import { TbApi, TbBrandCSharp } from 'react-icons/tb';
+import { TfiDirectionAlt } from 'react-icons/tfi';
+
 import { Lang } from '../index';
+
+type ServiceIcon = { icon: IconType; title: string };
 
 const services = {
   interimCTO: {
@@ -12,16 +57,16 @@ const services = {
     },
     icons: {
       lvl1: [
-        { icon: 'TfiDirectionAlt', title: 'Leadership' },
-        { icon: 'LuChartGantt', title: 'Strategy' },
-        { icon: 'HiUserGroup', title: 'Hiring' },
-      ],
+        { icon: TfiDirectionAlt, title: 'Leadership' },
+        { icon: LuChartGantt, title: 'Strategy' },
+        { icon: HiUserGroup, title: 'Hiring' },
+      ] as ServiceIcon[],
       lvl2: [
-        { icon: 'MdAutoMode', title: 'Automation' },
-        { icon: 'GoServer', title: 'Infrastructure' },
-        { icon: 'FaChalkboardTeacher', title: 'Mentoring' },
-        { icon: 'GoGoal', title: 'OKR' },
-      ],
+        { icon: MdAutoMode, title: 'Automation' },
+        { icon: GoServer, title: 'Infrastructure' },
+        { icon: FaChalkboardTeacher, title: 'Mentoring' },
+        { icon: GoGoal, title: 'OKR' },
+      ] as ServiceIcon[],
     },
   },
   programming: {
@@ -35,24 +80,24 @@ const services = {
     },
     icons: {
       lvl1: [
-        { icon: 'SiC', title: 'C' },
-        { icon: 'SiCplusplus', title: 'C++' },
-        { icon: 'SiGo', title: 'Go' },
-        { icon: 'SiPython', title: 'Python' },
-        { icon: 'SiJavascript', title: 'JavaScript' },
-        { icon: 'SiTypescript', title: 'TypeScript' },
-      ],
+        { icon: SiC, title: 'C' },
+        { icon: SiCplusplus, title: 'C++' },
+        { icon: SiGo, title: 'Go' },
+        { icon: SiPython, title: 'Python' },
+        { icon: SiJavascript, title: 'JavaScript' },
+        { icon: SiTypescript, title: 'TypeScript' },
+      ] as ServiceIcon[],
       lvl2: [
-        { icon: 'SiOpenjdk', title: 'Java' },
-        { icon: 'SiScala', title: 'Scala' },
-        { icon: 'TbBrandCSharp', title: 'C#' },
-      ],
+        { icon: SiOpenjdk, title: 'Java' },
+        { icon: SiScala, title: 'Scala' },
+        { icon: TbBrandCSharp, title: 'C#' },
+      ] as ServiceIcon[],
       lvl3: [
-        { icon: 'SiPhp', title: 'PHP' },
-        { icon: 'SiDelphi', title: 'Delphi' },
-        { icon: 'SiErlang', title: 'Erlang' },
-        { icon: 'SiElm', title: 'Elm' },
-      ],
+        { icon: SiPhp, title: 'PHP' },
+        { icon: SiDelphi, title: 'Delphi' },
+        { icon: SiErlang, title: 'Erlang' },
+        { icon: SiElm, title: 'Elm' },
+      ] as ServiceIcon[],
     },
   },
   deployment: {
@@ -66,23 +111,23 @@ const services = {
     },
     icons: {
       lvl1: [
-        { icon: 'FaAws', title: 'AWS' },
-        { icon: 'SiKubernetes', title: 'Kubernetes' },
-        { icon: 'SiTerraform', title: 'Terraform' },
-        { icon: 'SiDocker', title: 'Docker' },
-        { icon: 'SiLinux', title: 'Linux' },
-        { icon: 'SiServerless', title: 'Serverless' },
-      ],
+        { icon: FaAws, title: 'AWS' },
+        { icon: SiKubernetes, title: 'Kubernetes' },
+        { icon: SiTerraform, title: 'Terraform' },
+        { icon: SiDocker, title: 'Docker' },
+        { icon: SiLinux, title: 'Linux' },
+        { icon: SiServerless, title: 'Serverless' },
+      ] as ServiceIcon[],
       lvl2: [
-        { icon: 'SiAwslambda', title: 'Lambda' },
-        { icon: 'SiPrometheus', title: 'Prometheus' },
-        { icon: 'SiGrafana', title: 'Grafana' },
-      ],
+        { icon: SiAwslambda, title: 'Lambda' },
+        { icon: SiPrometheus, title: 'Prometheus' },
+        { icon: SiGrafana, title: 'Grafana' },
+      ] as ServiceIcon[],
       lvl3: [
-        { icon: 'SiGit', title: 'Git' },
-        { icon: 'MdHttp', title: 'HTTP' },
-        { icon: 'TbApi', title: 'RESTful' },
-      ],
+        { icon: SiGit, title: 'Git' },
+        { icon: MdHttp, title: 'HTTP' },
+        { icon: TbApi, title: 'RESTful' },
+      ] as ServiceIcon[],
     },
   },
   dataStorage: {
@@ -96,23 +141,23 @@ const services = {
     },
     icons: {
       lvl1: [
-        { icon: 'BiLogoPostgresql', title: 'PostgreSQL' },
-        { icon: 'SiMysql', title: 'MySQL' },
-        { icon: 'SiOracle', title: 'Oracle' },
-        { icon: 'SiElasticsearch', title: 'Elasticsearch' },
-        { icon: 'SiApachekafka', title: 'Kafka' },
-      ],
+        { icon: BiLogoPostgresql, title: 'PostgreSQL' },
+        { icon: SiMysql, title: 'MySQL' },
+        { icon: SiOracle, title: 'Oracle' },
+        { icon: SiElasticsearch, title: 'Elasticsearch' },
+        { icon: SiApachekafka, title: 'Kafka' },
+      ] as ServiceIcon[],
       lvl2: [
-        { icon: 'GoDatabase', title: 'Microsoft SQL Server' },
-        { icon: 'SiRedis', title: 'Redis' },
-        { icon: 'SiMqtt', title: 'MQTT' },
-      ],
+        { icon: GoDatabase, title: 'Microsoft SQL Server' },
+        { icon: SiRedis, title: 'Redis' },
+        { icon: SiMqtt, title: 'MQTT' },
+      ] as ServiceIcon[],
       lvl3: [
-        { icon: 'SiMongodb', title: 'MongoDB' },
-        { icon: 'SiSqlite', title: 'SQLite' },
-        { icon: 'SiClickhouse', title: 'ClickHouse' },
-        { icon: 'SiSnowflake', title: 'Snowflake' },
-      ],
+        { icon: SiMongodb, title: 'MongoDB' },
+        { icon: SiSqlite, title: 'SQLite' },
+        { icon: SiClickhouse, title: 'ClickHouse' },
+        { icon: SiSnowflake, title: 'Snowflake' },
+      ] as ServiceIcon[],
     },
   },
 } as const;
