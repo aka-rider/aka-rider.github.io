@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { Blog } from '@/lib/blog/Blog';
 import { BlogNode } from '@/lib/blog/types';
 
-import FontIcon from '@/components/FontIcon';
+import BlogIcon from '@/components/BlogIcon';
 
 import { Lang } from '@/i18n';
 
@@ -22,7 +22,7 @@ export default function Breadcrumbs({
         <span className='text-neutral-500 dark:text-neutral-400 mr-2'>/</span>
       )}
       {crumb.icon && (
-        <FontIcon iconName={crumb.icon} size={16} className='mr-1' />
+        <BlogIcon name={crumb.icon} size={16} className='mr-1' />
       )}
       <span className={isLast ? 'truncate max-w-xs' : ''}>{crumb.title}</span>
     </>

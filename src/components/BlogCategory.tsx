@@ -1,8 +1,8 @@
 import { Category } from '@/lib/blog';
 import { Blog } from '@/lib/blog/Blog';
 
+import BlogIcon from '@/components/BlogIcon';
 import BlogPostPreview from '@/components/BlogPostPreview';
-import FontIcon from '@/components/FontIcon';
 import UnstyledLink from '@/components/links/UnstyledLink';
 
 import { Lang } from '@/i18n';
@@ -24,7 +24,7 @@ export default function BlogCategory({
         <div key={subCategory.slug}>
           <UnstyledLink href={Blog.getLink(lang, subCategory)}>
             <div className="flex flex-row items-center pt-10 mb-10 pb-2 gap-3">
-              {subCategory.icon && <FontIcon iconName={subCategory.icon} size={42} />}
+              {subCategory.icon && <BlogIcon name={subCategory.icon} size={42} />}
               {(() => {
                 switch (depth + 1) {
                   case 0:

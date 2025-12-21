@@ -23,12 +23,18 @@ export default function Layout({
     <html lang={lang} className={fontClasses} suppressHydrationWarning>
       <body className='antialiased bg-neutral-50 dark:bg-neutral-900 text-neutral-900 dark:text-neutral-100'>
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
+          <a
+            href='#main-content'
+            className='sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded'
+          >
+            Skip to content
+          </a>
           <div className='flex flex-col min-h-screen w-11/12 xl:max-w-5xl mx-auto'>
             <div className='w-full flex justify-end items-center gap-4 p-4'>
               <LangSwitcher currentLang={lang} />
               <ThemeToggle />
             </div>
-            {children}
+            <main id='main-content'>{children}</main>
             <Footer lang={lang} />
           </div>
         </ThemeProvider>

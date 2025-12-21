@@ -94,19 +94,24 @@ export default function SectionNavigation({
   };
 
   return (
-    <div className='border-b border-neutral-300 dark:border-neutral-600 gap-4 flex flex-col md:flex-row'>
+    <nav
+      className='border-b border-neutral-300 dark:border-neutral-600 gap-4 flex flex-col md:flex-row'
+      aria-label='Page sections'
+    >
       {sections.map((section, index) => (
-        <div
+        <button
           key={`section-${index}`}
-          className={`cursor-pointer uppercase font-medium transition-colors duration-200 p-2 m-0 flex items-center ${activeIndex === index
-              ? 'text-primary-600 dark:text-primary-400 md:border-b-2 border-primary-600 dark:border-primary-400 font-bold'
-              : 'text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400'
+          type='button'
+          className={`cursor-pointer uppercase font-medium transition-colors duration-200 p-2 m-0 flex items-center bg-transparent border-none ${activeIndex === index
+            ? 'text-primary-600 dark:text-primary-400 md:border-b-2 border-primary-600 dark:border-primary-400 font-bold'
+            : 'text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400'
             }`}
           onClick={() => scrollToSection(index)}
+          aria-current={activeIndex === index ? 'true' : undefined}
         >
           {section.name}
-        </div>
+        </button>
       ))}
-    </div>
+    </nav>
   );
 }
