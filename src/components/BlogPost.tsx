@@ -4,6 +4,7 @@ import React from 'react';
 import { Post } from '@/lib/blog/types';
 
 import ServerMDX from '@/components/ServerMDX';
+import TableOfContents from '@/components/TableOfContents';
 
 export default async function BlogPost({ post }: { post: Post }) {
   // Add null checks for post data
@@ -18,6 +19,8 @@ export default async function BlogPost({ post }: { post: Post }) {
       <h1>{post.title}</h1>
 
       <Image src={post.image} alt={post.title} width={1350} height={1080} className='p-10' />
+
+      <TableOfContents />
 
       <ServerMDX source={content} postFilePath={post.filePath} />
     </article>
