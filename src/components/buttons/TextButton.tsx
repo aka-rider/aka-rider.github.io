@@ -27,7 +27,7 @@ const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(
         className={clsxm(
           'button inline-flex items-center justify-center font-semibold',
           'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
-          'transition duration-100',
+          'transition-colors duration-150',
           //#region  //*=========== Variant ===========
           variant === 'primary' && [
             'text-primary-500 hover:text-primary-600 active:text-primary-700',
