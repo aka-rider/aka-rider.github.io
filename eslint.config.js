@@ -39,8 +39,15 @@ export default [
         setTimeout: 'readonly',
         clearTimeout: 'readonly',
         sessionStorage: 'readonly',
+        // DOM element types
         HTMLButtonElement: 'readonly',
         HTMLAnchorElement: 'readonly',
+        HTMLDivElement: 'readonly',
+        HTMLElement: 'readonly',
+        // DOM event types
+        Event: 'readonly',
+        MouseEvent: 'readonly',
+        Node: 'readonly',
       },
     },
     plugins: {

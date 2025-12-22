@@ -98,8 +98,8 @@ export default function Nav({ lang, children }: NavProps) {
         <div
           ref={menuRef}
           className={`md:hidden absolute top-full left-0 w-full bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-300 dark:border-neutral-600 z-40 shadow-lg overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen
-              ? 'max-h-96 opacity-100'
-              : 'max-h-0 opacity-0 border-b-0'
+            ? 'max-h-96 opacity-100'
+            : 'max-h-0 opacity-0 border-b-0'
             }`}
         >
           <div className='p-4'>{cloneChildrenWithProps(children)}</div>
