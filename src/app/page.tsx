@@ -22,7 +22,7 @@ export default async function RootPage() {
         <nav className='flex flex-col md:flex-row items-start gap-2 w-full text-xl sm:text-2xl'>
           {Languages.entries().map(([lang, langInfo]) => (
             <a
-              className='px-5 py-2 min-w-50 ml-8 text-center rounded-md duration-75 border border-neutral-300 dark:border-neutral-600 grayscale hover:grayscale-0 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
+              className='px-5 py-2 min-w-50 ml-8 text-center rounded-md border border-neutral-300 dark:border-neutral-600 grayscale hover:grayscale-0 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200'
               href={`/${lang}`}
               key={lang}
             >

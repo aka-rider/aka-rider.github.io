@@ -39,7 +39,7 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           'inline-flex items-center justify-center rounded font-medium',
           'focus-visible:ring-primary-500 focus:outline-none focus-visible:ring',
           'shadow-sm',
-          'transition-colors duration-75',
+          'transition-colors duration-150',
           'min-h-[28px] min-w-[28px] p-1 md:min-h-[34px] md:min-w-[34px] md:p-2',
           //#region  //*=========== Variants ===========
           [
