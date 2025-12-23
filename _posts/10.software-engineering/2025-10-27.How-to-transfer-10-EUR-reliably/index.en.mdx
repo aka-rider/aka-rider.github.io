@@ -106,7 +106,8 @@ At this point we could either relax the requirements (somebody needs to manually
 
 ## Epilogue
 
-If you think that what I'm saying is too complex, it's because it is. When I think about practical applications of consistency and reliability, I like to recall the issue with PostgreSQL using Linux's `fsync` syscall incorrectly for over a decade.
+If you think that what I'm saying is overcomplicated, it's because it is.
+When I think about practical applications of consistency and reliability, I like to recall the issue with PostgreSQL using Linux's `fsync` syscall incorrectly for over a decade.
 
 > the way the kernel handles I/O errors could result in data being lost without any errors being reported to user space
 
@@ -115,6 +116,8 @@ If you think that what I'm saying is too complex, it's because it is. When I thi
 >In closing, Freund (Postgres dev) asked for some documentation that would tell application developers what needs to be done in order to durably write their data to disk. Dave Chinner (Linux dev) claimed that was "asking too much", to a fair amount of laughter.
 
 [from the follow-up conference](https://lwn.net/Articles/752952/)
+
+So, "It's in an ACID database" comes with a few asterisks.
 
 ---
 Photo by [Branimir Balogović](https://unsplash.com/@brandaohh?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText) on [Unsplash](https://unsplash.com/photos/10-euro-bill-on-persons-hand-yaMNhzAqhUg?utm_source=unsplash&utm_medium=referral&utm_content=creditCopyText)

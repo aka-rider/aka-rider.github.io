@@ -1,5 +1,3 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
 # dependencies
 /node_modules
 # testing
@@ -8,6 +6,11 @@
 # next.js
 /.next/
 /out/
+
+# next-sitemap
+robots.txt
+sitemap.xml
+sitemap-*.xml
 
 # production
 /build
@@ -32,9 +35,3 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
-
-# next-sitemap
-robots.txt
-sitemap.xml
-sitemap-*.xml
-
