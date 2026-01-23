@@ -20,7 +20,7 @@ Python does a very good job to abstract OS layer, although Python application st
 
 In general, Makefile is a good alternative to a bunch of bash scripts used to automate tedious tasks.
 
-First of all, instead of remembering and typing ill `./do_this_one_thing.sh` `./do_the_other_one` (was it dash or underscore?), you can confidently strike:
+First of all, instead of remembering and typing ill `./setup_env.sh` `./run_app.sh` (was it `./install_deps.sh` first? was it dash or underscore btw?), you can confidently strike:
 
 ```bash
 $ make one two.
@@ -292,6 +292,68 @@ Easy, right?
 
 You may want to add your favorite linter and formatter: `pep8`, `yapf`, `pyflakes` — you name it. You can generate gRPC or swagger stub, you can generate documentation from `.rst` or `.md` files.
 
+Another interesting possibility is: parallel execution.
+
+You can run make with `-j N` (where N is the number of jobs) option to enable parallel execution of independent targets.
+
+Let's imagine, you want to convert all images in the `assets/img` directory into `.webp` format.
+
+```make
+IMG_DIR := assets/img
+QUALITY := 80
+# -m 6: slowest compression method (best quality/size ratio)
+CWEBP_FLAGS := -q $(QUALITY) -m 6
+
+# Find all source images (png, jpg, jpeg)
+PNG_SRCS  := $(wildcard $(IMG_DIR)/*.png)
+JPG_SRCS  := $(wildcard $(IMG_DIR)/*.jpg)
+JPEG_SRCS := $(wildcard $(IMG_DIR)/*.jpeg)
+
+# Create a list of target webp files by replacing extensions
+# Syntax: $(Variable:OldExtension=NewExtension)
+# Assuming there are three files in `assets/img`: one.png, two.jpg, three.jpeg ...
+# $(WEBPS) variable will contain: (assets/img/one.webp, assets/img/two.webp, assets/img/three.webp)
+WEBPS := $(PNG_SRCS:.png=.webp) \
+         $(JPG_SRCS:.jpg=.webp) \
+         $(JPEG_SRCS:.jpeg=.webp)
+
+# Default rule depends on all expected webp files
+all: $(WEBPS)
+	@echo "Build complete! Converted $(words $(WEBPS)) images."
+
+# We don't want to list every file we want to convert. We use pattern rules instead.
+# These rules tell make how to convert any .jpg to .webp and so on
+# As we don't have concrete file names in pattern rules, we use make's Automatic Variables
+# $< — The name of the first prerequisite.
+# $@ — The file name of the target of the rule.
+#
+# More info at https://www.gnu.org/software/make/manual/html_node/Automatic-Variables.html
+
+%.webp: %.png
+	cwebp $(CWEBP_FLAGS) "$<" -o "$@"
+%.webp: %.jpg
+	cwebp $(CWEBP_FLAGS) "$<" -o "$@"
+%.webp: %.jpeg
+	cwebp $(CWEBP_FLAGS) "$<" -o "$@"
+
+clean:
+	rm $(WEBPS)
+
+.PHONY: all clean
+```
+
+For the example above, running `make -j 4` will allow make to convert up to 4 images simultaneously.
+
+Note  `@echo` in the all rule. make prints each command before executing it. `echo hello` will output
+
+```shell
+$ make
+echo hello
+hello
+```
+
+The `@` symbol before a command prevents the command itself from being printed — we'll see only the result of its execution.
+
 ### A shiny new hammer
 
 Why not use make for everything? Literally everything?!
@@ -302,4 +364,4 @@ It is very good tool for tracking dependencies between files with benefits, but 
 
 Feel free to use make outside of the C/C++ world having fun joy and pleasure.
 
-Every time a file needs to be created from other files, GNU make is a good candidate for the job.
+Every time a file needs to be created from other files, GNU make is a top candidate for the job.

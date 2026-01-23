@@ -5,9 +5,9 @@ excerpt: 'Performance matters, why bother with C and C++ otherwise. And many peo
 image: 'hero.webp'
 ---
 
-<TLDR title='Arrange code around RAM memory access. Trust the compiler.' />
+Note: editing this article in 2025, I still think everything is relevant.
 
-## Why performance matters
+## Performance matters
 
 We are still limited by our current hardware. There are numerous areas where it just not good enough: neural networks and virtual reality to name a few. There are plenty of devices where battery life is crucial, and we must count every single CPU tick. Even when we’re talking about clouds and microservices and lambdas, there are enormous data centers that consume vast amounts of electricity.
 
@@ -19,7 +19,7 @@ A modern way to squeeze performance out of silicon is to make hardware more and 
 
 ## Meet the Modern Hardware
 
-## CPU
+### CPU
 
 - billions of transistors
 - tries to predict the future
@@ -28,19 +28,19 @@ A modern way to squeeze performance out of silicon is to make hardware more and 
 - programmable (has its own microcode)
 - aware of memory and CPU virtualization techniques
 - has some high-level instructions (cryptographic hash functions)
-- there is even somewhat neural network to predict branches¹
-- several critical vulnerabilities were found so far
+- there is even somewhat neural network for improved branch prediction [^1]
+- several exploitable critical vulnerabilities were found so far (Spectre, Meltdown)
 
-## DRAM
+### DRAM
 
 - billions of capacitors
-- billions of capacitors, really — that’s it
+- billions of capacitors, really!
 
-> DRAM (Dynamic random-access memory) which uses memory cells consisting of one capacitor and one transistor to store each bit. This is the cheapest and highest in density, so it is used for the main memory in computers².
+> DRAM (Dynamic random-access memory) which uses memory cells consisting of one capacitor and one transistor to store each bit. This is the cheapest and highest in density, so it is used for the main memory in computers[^2].
 
 Memory loads and stores are often the bottleneck.
 
-One memory reference cost at around 100 nanoseconds³. It means that 1GHz CPU can spend 100 or more ticks waiting for a value from memory. So caching values in memory instead of recalculating every time may be literally 100 times slower. Say what?!
+One memory reference cost at around 100 nanoseconds[^3]. It means that 1GHz CPU can spend 100 or more ticks waiting for a value from memory. So caching values in memory instead of recalculating every time may be literally 100 times slower. Say what?!
 
 Even though CPU is smart enough to fetch the data beforehand, in many cases, programmers are still in charge of the memory layout and access patterns.
 
@@ -49,13 +49,13 @@ To fill this gap is to delegate the most of work to an optimizing compiler.
 
 > Modern compilers can do a lot of modifications to the code in order to improve performance. It is useful for the programmer to know what the compiler can do and what it can not do.
 >
-> ~ Agner Fog “Optimizing software in C++” ⁴
+> ~ Agner Fog “Optimizing software in C++” [^4]
 
 A source code we write is read by a machine and our fellow programmers. Let’s focus on the code readability while compilers turn our code into a chain of machine-optimal instructions.
 
 Unfortunately, nothing is automagical. C and C++ optimizing compilers are far from the ideal; it is vital to understand what is under compiler’s hood. It is a tool we use on a daily basis after all.
 
-There is this excellent video⁵: “ [Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015](https://youtu.be/FnGCDLhaxKU) ” (there is also link to a slides⁶ at the end)
+There is this excellent video [^5]: “ [Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015](https://youtu.be/FnGCDLhaxKU) ” (there is also link to a slides [^6] at the end)
 
 I would like to make a quick recap here, alt h ough you absolutely have to watch the whole video.
 
@@ -69,9 +69,11 @@ Even though the following listings were made with LLVM (clang), but the same pri
 
 ## A grasp of the LLVM IR
 
-Compilers heavily rely on the static single assignment (SSA) form, that is: requires that each variable is *assigned exactly* ***once***, and every variable is *defined* ***before*** *it is used* ⁷.
+LLVM Intermediate Representation (IR) is a human-readable assembly language.
 
-## Hello World
+Compilers heavily rely on the static single assignment (SSA) form, that is: requires that each variable is *assigned exactly* ***once***, and every variable is *defined* ***before*** *it is used*[^7].
+
+### Hello World
 
 ```llvm
 declare i32 @g(i32 %x)
@@ -92,7 +94,7 @@ The code above should be very straightforward:
 - values (variables) — `%a`, `%b`, …
 - instructions — `add`, `call`, `ret`
 
-## Control Flow
+### Control Flow
 
 ```llvm
 declare i32 @g(i32 %x)
@@ -112,7 +114,7 @@ else:
 
 The `br` operation — branch on a flag, and go to the (corresponding) label operation. It controls the whole *control flow*.
 
-## Data Flow
+### Data Flow
 
 Again: each variable is *assigned exactly* ***once***, and every variable is *defined* ***before*** *it is used*.
 
@@ -139,7 +141,7 @@ end:
 
 If we came from the `entry` then `%result = %c`, if came from the `then` then `%result = %d`.
 
-## This is it
+### This is it
 
 The LLVM IR is *that* simple. There are lots of other instructions, but nothing besides this.
 
@@ -147,7 +149,7 @@ Based on this representation only, you can already try to guess what’s happeni
 
 ## What optimizers do
 
-## Step1: Cleanup
+### Step1: Cleanup
 
 A compiler’s frontend produces ad-hoc IR code like there is an unlimited amount of memory; it cares only to produce patterns “familiar” to an optimizer.
 
@@ -221,11 +223,9 @@ The `icmp` compares integers, pointers or vectors and returns boolean. The first
 
 The `getelementptr` is an instruction that handles all pointer arithmetics in LLVM. No matter if there’s an array element or a struct field. The last argument of `getelementptr` is an element’s index.
 
-`<result> = getelementptr inbounds <ty>, <ty>* <ptrval>{, [inrange] <ty> <idx>}*`
+`<result> = getelementptr inbounds <ty>, <ty>* <ptrval>{, [inrange] <ty> <idx>}*` [^17]
 
-([Link to the LLVM](https://releases.llvm.org/3.7.0/docs/LangRef.html) [Language](https://releases.llvm.org/3.7.0/docs/LangRef.html) [Reference Manual](https://releases.llvm.org/3.7.0/docs/LangRef.html))
-
-## Step 2: Canonicalization
+### Step 2: Canonicalization
 
 There are many possible ways to write the same code using control flow statements:
 
@@ -329,7 +329,7 @@ Another difference is that the `if.then` label and code execution path are gone.
 
 In that way, control flow of a program becomes visible to an optimizer, and it is able to make more accurate decisions.
 
-## Step 3: Collapse Abstractions
+### Step 3: Collapse Abstractions
 
 > I think that is what sets C++ aside from every other language I’ve ever worked with is the ability to build abstractions which collapse.
 >
@@ -341,13 +341,13 @@ From the optimizer’s point of view, there are three main abstractions:
 2. Memory, loads, and stores
 3. Loops
 
-## Functions, calls, and the call graph
+#### Functions, calls, and the call graph
 
 A function is the fundamental human abstractions — but a processor doesn’t need it. At this point, an optimizer has a chance to reshape instructions in a more CPU-friendly manner, and remove lots of them for good.
 
 LLVM tries to partition a call graph on clusters of functions to operate in a broader context. Leaves of this graph are natural candidates for inlining as they don’t call any other functions. Inlining, thus removing leaves, creates new leaves that can also be removed. Then repeat. This decision doesn’t have to be binary — partial inlining and a bunch of crazy shuffling possible.
 
-To inline or not — this decision is *the most critical* for producing fast code.
+To inline or not — this decision is *the most critical* for producing fast code. Everything depends on it: caching, parallelization, register allocation, memory access, and so on.
 
 Luckily, many functions were made to be just shortcuts to other functions. These should be easily removed.
 
@@ -363,7 +363,7 @@ But there might be hard cases when to inline or not decision depends on an argum
 
 [**HHVM**](https://en.wikipedia.org/wiki/HipHop_Virtual_Machine) (HipHop Virtual Machine) is a PHP virtual machine with JIT. It was created to replace the HipHop (PHP to C++ source transpiler) at the Facebook.
 
-When all Facebook’s code runs in HHVM after 12 months of development, it was 7x slower⁸.
+When all Facebook’s code runs in HHVM after 12 months of development, it was 7x slower[^8].
 
 I suggest you to look at the presentation slides, but one thing I would like to outline:
 
@@ -383,7 +383,7 @@ By the way, keyword `inline` has almost nothing in common with the actual proces
 
 > keyword `inline` actually used as a hint in gcc and probably other compilers. In O1, *only* functions marked inline are considered for inlining
 
-## Memory, loads, and stores
+#### Memory, loads, and stores
 
 As it was said, compiler’s frontend generates code like memory is infinite.
 
@@ -526,7 +526,7 @@ In the opposite case, RAM access would be literally 100 times slower.
 
 > The fastest code is the one that doesn’t run.
 
-## Loops
+#### Loops
 
 A loop is where a program spends the most of its time, and loops are naturally are main optimizer targets. This is where a lot of research is going on in the compilers world.
 
@@ -661,7 +661,7 @@ There are three different loops in this code:
 
 1. `**loop.vec32**` is the main vectorized loop. Inside this loop we see `add nsw <4 x i32>` — add two vectors of 4 32-bit integers each (result is also a `<4 x i32>` vector). Moreover, this loop is unrolled, so it munches 32 x 32-bit integers per iteration. Of course, an array must have 32 or more properly aligned elements.
 2. `**loop.vec8**` is a smaller vectorized loop that works with two `<4 x i32>` vectors — 8 x 32-bit integers.
-3. `**loop.scalar**` is our original loop. All it does is to sum two 32-bit integers one by one `add nsw i32`. This loop is a fallback when array smaller than 8 elements.
+3. `**loop.scalar**` is our original loop. All it does is to sum two 32-bit integers one by one `add nsw i32`. This loop is a fallback when array and/or its last chunk smaller than 8 elements.
 
 ```llvm
 define i32 @sum(%"vector"* nocapture readonly dereferenceable(24)) local_unnamed_addr #0 {
@@ -815,18 +815,18 @@ Array of length 129 will hit `loop.vec32`, then will hit `loop.scalar`, missing 
 
 A compiler will only optimize for the average case under the “do no harm” slogan. You should know specific code paths and high-level data flow that needs to be tuned.
 
-## Benchmarking is hard
+### Benchmarking is hard
 
 In many cases, it is not that hard to eliminate a bottleneck, but to find a cause — it is a real challenge. Non-sampling and built-in profilers may interfere with the original code and mask performance problems. Sampling profiler loses important information and can skew results due to the precision error.
 
 The more you know, the better. Understanding your tools and environment is essential. How does profiler work? What compiler flags will affect an investigation? What they do exactly? How to reduce hardware and OS noise? What’s happening inside that long syscall? Are these instructions efficient on this CPU model? Am I measuring the performance of the empty loop?
-Chandler Carruth has another wonderful keynote on benchmarking and using profiler⁹ (I can’t help to recommend this guy — it’s his bread and butter to make our C and C++ code run faster).
+Chandler Carruth has another wonderful keynote on benchmarking and using profiler [^9] (I can’t help to recommend this guy — it’s his bread and butter to make our C and C++ code run faster).
 
-Understanding the assembly code doesn’t hurt. Well. It hurts less over time. Agner Fog’s site¹⁰ is a great starting point to learn hardware and low-level optimizations techniques.
+Understanding the assembly code doesn’t hurt. Well. It hurts less over time. Agner Fog’s site [^10] is a great starting point to learn hardware and low-level optimizations techniques.
 
-Medians, averages, and 95th percentiles often mean little to none; contrary — they can wrap up all useful signals with a noise.¹¹ Interpreting benchmark results may be tricky. Learn you some statistics and the theory of experiment for great good.
+Medians, averages, and 95th percentiles often mean little to none; contrary — they can wrap up all useful signals with a noise.[^11] Interpreting benchmark results may be tricky. Learn you some statistics and the theory of experiment for great good.
 
-## RAM access control
+### RAM access control
 
 Unless there are very CPU-intensive calculations going on, memory loads and stores become the bottleneck.
 
@@ -834,23 +834,24 @@ The problem is complex, and there are many aspects to look at.
 
 Modern CPUs tend to hide from us the fact that ***memory is slow***. Understanding of how hardware works are crucial to getting the maximum out of it.
 
-“ **What every programmer should know about memory** ” by Ulrich Drepper¹² is a must read if you care about the performance.
+“ **What every programmer should know about memory** ” by Ulrich Drepper [^12] is a must read if you care about the performance.
+Also you'll finally learn what is CAS and RAS after all these years of tweaking BIOS.
 
-## Sequential RAM access is much better than random
+### Sequential RAM access is much better than random
 
 Sequential access is so crucial that sometimes naive sort algorithms may regularly outperform the most intricately optimized ones on particular datasets. Matrix multiplication may perform times better depending on a rows/columns access order.
 
 CryptoNote cryptocurrency algorithm tries to achieve protection from hardware miners (ASICs) by using a large chunk of memory that needs to be accessed randomly.
 Random memory access hurts parallel execution in many ways.
 
-## Data Alignment
+### Data Alignment
 
 Some processors made us believe that there’s such thing as unaligned access. Sometimes we are even lucky enough not to meet the performance penalty (if we don’t touch CPU cache line boundaries).
 Even though simple read and write operation may go smoothly on x86-based CPUs, atomics and SIMD instructions require strict data alignment. Unaligned memory access will trigger the hardware panic on the most ARM processors.
 
 Some sort of serialization/deserialization code is a common source of a misaligned data.
 
-## CPU Caches
+### CPU Caches
 
 Again, there are many aspects to look at to get the optimal memory layout.
 
@@ -903,13 +904,13 @@ Such optimization may show substantial improvement. (Provided that an items coun
 
 But now we have two arrays to nurse and carry around. Code readability definitely suffered, and a handful of nasty bugs became possible.
 
-## Write memory bypassing CPU caches
+### Write memory bypassing CPU caches
 
 If you are going to write a big amount of memory for later use, you may want to write it bypassing a CPU cache. In that case, processor issues only write instructions without prior memory reading, and what is more important, caches will not be polluted with the data you don’t need right now.
 
 The `_mm_stream_siXXX` intrinsics family produces loads using a non-temporal memory hint.
 
-## Prefetch data from memory
+### Prefetch data from memory
 
 Processors do this most of the time, but we have the upper hand here by knowing our specific use-cases and needs.
 Just keep in mind that it takes time to get the data, so there is no use to prefetch data right before you need it. We have to prefetch while still having some work to be finished.
@@ -920,7 +921,7 @@ Another way would be to start reading the desired data from another thread.
 
 Of course, it’s all easier to say. Prefetching data upfront may cause cache thrashing and may lead to the very opposite of the expected results.
 
-## Branch prediction
+### Branch prediction
 
 Memory access and branch prediction topics are highly correlated. One thing that may come in handy is to tip a compiler with a particular branch probability. This can be done either with a famous `likely/unlikely` macros (GCC’s `__builtin_expect`) or better, with a profile-guided optimization.
 
@@ -934,7 +935,7 @@ Often there is no single bottleneck, so it is unclear where even to start. In su
 
 The [perf](https://perf.wiki.kernel.org/index.php/Main_Page) tool and [OProfile](http://oprofile.sourceforge.net/about/) on Linux allow to access hardware performance counters, Xcode can do it on Mac, and there are numerous tools from CPU vendors, like [Intel® Performance Counter Monitor](https://software.intel.com/en-us/articles/intel-performance-counter-monitor).
 
-## Make your intentions visible to a compiler
+### Make your intentions visible to a compiler
 
 Sometimes manual optimizations, like loop unrolling, or replacing branches with a pointer arithmetics, make a significant local improvement but may surprisingly hit the overall performance.
 
@@ -969,9 +970,9 @@ The whole program was executed at compile time. All that `std::__XZZF_you_re_sic
 
 I don’t think this example is *fair* — SSA form makes constant propagation a breeze, but I believe it is very *impressive*.
 
-## Passing arguments by reference (pointer) may have hidden costs
+### Passing arguments by pointer (reference) have hidden costs
 
-This code may give an optimizer a hard time. Now decision: “whether to inline `foo` ” depends on a memory access (data dependency), and on a `bar` function (code dependency).
+This code may give an optimizer a hard time.
 
 ```c++
 int foo(int a, int b) {
@@ -985,7 +986,9 @@ void bar(int a, int b, int& c) {
 }
 ```
 
-## But const …
+Now decision: “whether to inline `foo`” depends on a memory access (data dependency), and on a `bar` function (code dependency).
+
+#### But const …
 
 Unfortunately, there is no such thing for optimizer as a const pointer.
 
@@ -1009,7 +1012,11 @@ Second thought is *parallelism*. If there is no shared data, there is nothing to
 
 In many cases, returning arguments instead of passing them by reference enables a compiler to see a data flow and to produce more efficient code.
 
-## Do not use struct members to store intermediate results
+Worth mentioning Golang's philosophy here:
+
+> Don't communicate by sharing memory; share memory by communicating.
+
+### Do not use struct members to store intermediate results
 
 This is another way to make things more complicated for an optimizer:
 
@@ -1033,7 +1040,7 @@ Now optimizer have to think about `this` pointer and reason if there are side ef
 
 Pure functions are much easier to read for both: humans and compilers.
 
-## Embrace modern C/C++ stadard
+### Embrace modern C/C++ stadard
 
 C++11 and newer standards provide move semantic and return value optimization (RVO) is guaranteed.
 
@@ -1041,7 +1048,7 @@ Both, C and C++ have too many cases where behaviour of our programs rely on comp
 
 Also, newer compilers provide supplementary tools like: linters, checkers, formatters, etc.
 
-## Don’t do the compiler’s job
+### Don’t do the compiler’s job
 
 Try to spot an error in this manually unrolled loop:
 
@@ -1066,17 +1073,17 @@ static int rr_cmp(uchar *a, uchar *b)
 }
 ```
 
-*The above example is from the great article from the PVS-Studio static analyzer team.¹³*
+*The above example is from the great article from the PVS-Studio static analyzer team.[^13]*
 
 Line 14: there is the `a[1]` left from copy-paste, where `a[5]` should be.
 
 Again, loop unrollign is something C and C++ compilers can do well without any help from a programmer.
 
-## Exceptions on modern processors have close to zero overhead
+### Exceptions on modern processors have close to zero overhead
 
 > Importantly, “zero *overhead* ” is not claiming zero *cost* — of course using something always incurs some cost. Rather, C++’s zero-overhead principle has always meant that (a) “you don’t pay for what you don’t use” and (b) “when you do use it you can’t \[reasonably\] write it more efficiently by hand.”
 >
-> ~ Herb Sutter “Zero-overhead deterministic exceptions: Throwing values” ¹⁵
+> ~ Herb Sutter “Zero-overhead deterministic exceptions: Throwing values” [^15]
 
 Of course, \[close to\] zero overhead happens only for the happy path. CPU has to execute frame finalizers and jump through the stack causing a bunch of cache misses, TLB shuffling, etc. when an exception was thrown.
 
@@ -1086,15 +1093,15 @@ You wouldn’t simulate pattern matching with exceptions anyway, would you?
 
 > On the other hand, the presence of exceptions may hinder the optimizer’s job.
 
-*Alexander Krizhanovsky on Facebook provided a link¹⁶ to the article “* C++ exception handling internals *” — detailed explanation of how exceptions are handled by C++ runtime library.*
+*Alexander Krizhanovsky on Facebook provided a link [^16] to the article “* C++ exception handling internals *” — detailed explanation of how exceptions are handled by C++ runtime library.*
 
-## Use as many sanitizers and static analyzers as you can reach
+### Use as many sanitizers and static analyzers as you can reach
 
 It is not a performance tip, but since you here:
 
 > The most important thing I have done as a programmer in recent years is to aggressively pursue static code analysis.
 >
-> ~ John Carmack from “In-Depth: Static Code Analysis” on Gamasutra¹⁴
+> ~ John Carmack from “In-Depth: Static Code Analysis” on Gamasutra [^14]
 
 Modern tools are unbelievably useful. In my experience, even a false-positive alarm often points to an unnecessarily complicated code. Nowadays, a compiler itself is a great analyzer. All you need is to turn on them `-Wall` at the cost making a code a little bit cleaner — win-win.
 
@@ -1111,17 +1118,16 @@ Obligatory xkcd reference:
 
 An optimizing compiler may surely have some bugs; it may, for instance, throw out security-related code because there’s no explicit usage for it; Compiler even may even introduce new vulnerability itself.
 
-Someday, powerful AI will come to clear our bugs, until then we shall keep our code stupid simple to minimize chances of encountering bugs in compilers.
+Someday, all-knowing AI will redeem our bugs, until then we shall keep our code stupid simple and optimal.
 
-## TL;DR
+## Recap
 
-- Software systems complexity is on a growing trend
-- A hardware becomes more complex and diversified
+- Software systems complexity is growing
 - CPU is fast and sophisticated; DRAM is slow and cheap
+- Intro to LLVM IR and optimizing compilers internals
 - We have to delegate the most low-level CPU optimizations to a compiler and focus on a program’s data flow and producing human readable code
-- Understanding performance also means understanding optimizing compiler
-- Modern optimizing compilers are very capable beasts but still far from ideal
-- Memory layout and access patterns optimization pays handsomely
+- Understanding performance also means understanding optimizing compiler, hardware, and OS
+- Benchmarking is hard
 - Local optimizations sometimes may show amazing results on a micro-benchmarks while crippling overall application performance
 
 ## If you want to play with LLVM
@@ -1138,43 +1144,24 @@ cd llvm_playground
 make
 ```
 
-
-
 ---
-
-Photo by [Stefano Lombardo](https://unsplash.com/@stefanolombardo) on [Unsplash](https://unsplash.com/photos/black-and-white-analog-watch-wajwJw9P4bA)
 
 ## References
 
-1: [Hacker News: Neural network spotted deep inside Samsung’s Galaxy S7 silicon brain](https://news.ycombinator.com/item?id=12340348)
-
-2: [“Semiconductor memory” on Wikipedia](https://en.wikipedia.org/wiki/Semiconductor_memory)
-
-3: [Latency Numbers Every Programmer Should Know](http://www.eecs.berkeley.edu/~rcs/research/interactive_latency.html)
-
-4: [Optimizing software in C++: An optimization guide for Windows, Linux and Mac platforms by Agner Fog (pdf)](https://www.agner.org/optimize/optimizing_cpp.pdf)
-
-5: [YouTube: Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015](https://youtu.be/FnGCDLhaxKU)
-
-6: [Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015 slides (pdf)](https://meetingcpp.com/files/mcpp/2015/talks/meetingcxx_2015-understanding_compiler_optimization_themed_copy.pdf)
-
-7: [Wikipedia: SSA — Static Single Assignment form](https://en.wikipedia.org/wiki/Static_single_assignment_form)
-
-8: [PHP on the Metal slides by Keith Adams](https://qconsf.com/sf2012/dl/qcon-sanfran-2012/slides/KeithAdams_PHPOnTheMetalWithHHVMMOVEDTOBALLROOMBC.pdf)
-
-9: [YouTube: CppCon 2015: Chandler Carruth “Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!”](https://youtu.be/nXaxk27zwlk)
-
-10: [Software optimization resources by Agner Fog](https://www.agner.org/optimize/)
-
-11: [Your Load Generator Is Probably Lying To You — Take The Red Pill And Find Out Why](http://highscalability.com/blog/2015/10/5/your-load-generator-is-probably-lying-to-you-take-the-red-pi.html)
-
-12: [What every programmer should know about memory, Part 1.](http://lwn.net/Articles/250967)
-
-13: [PVS-Studio –– The Ultimate Question of Programming, Refactoring, and Everything](https://www.viva64.com/en/b/0391/#ID0E5CAE)
-
-14: [In-Depth: Static Code Analysis on Gamasutra](http://www.gamasutra.com/view/news/128836/InDepth_Static_Code_Analysis.php)
-
-15: [Zero-overhead deterministic exceptions: Throwing values by Herb Sutter](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0709r0.pdf)
-
-16: [C++ exception handling internals by Nicolás Brailovsky](https://monoinfinito.wordpress.com/series/exception-handling-in-c/)
-
+[^1]: [Hacker News: Neural network spotted deep inside Samsung’s Galaxy S7 silicon brain](https://news.ycombinator.com/item?id=12340348)
+[^2]: [“Semiconductor memory” on Wikipedia](https://en.wikipedia.org/wiki/Semiconductor_memory)
+[^3]: [Latency Numbers Every Programmer Should Know](http://www.eecs.berkeley.edu/~rcs/research/interactive_latency.html)
+[^4]: [Optimizing software in C++: An optimization guide for Windows, Linux and Mac platforms by Agner Fog (pdf)](https://www.agner.org/optimize/optimizing_cpp.pdf)
+[^5]: [YouTube: Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015](https://youtu.be/FnGCDLhaxKU)
+[^6]: [Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015 slides (pdf)](https://meetingcpp.com/files/mcpp/2015/talks/meetingcxx_2015-understanding_compiler_optimization_themed_copy.pdf)
+[^7]: [Wikipedia: SSA — Static Single Assignment form](https://en.wikipedia.org/wiki/Static_single_assignment_form)
+[^8]: [PHP on the Metal slides by Keith Adams](https://qconsf.com/sf2012/dl/qcon-sanfran-2012/slides/KeithAdams_PHPOnTheMetalWithHHVMMOVEDTOBALLROOMBC.pdf)
+[^9]: [YouTube: CppCon 2015: Chandler Carruth “Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!”](https://youtu.be/nXaxk27zwlk)
+[^10]: [Software optimization resources by Agner Fog](https://www.agner.org/optimize/)
+[^11]: [Your Load Generator Is Probably Lying To You — Take The Red Pill And Find Out Why](http://highscalability.com/blog/2015/10/5/your-load-generator-is-probably-lying-to-you-take-the-red-pi.html)
+[^12]: [What every programmer should know about memory, Part 1.](http://lwn.net/Articles/250967)
+[^13]: [PVS-Studio –– The Ultimate Question of Programming, Refactoring, and Everything](https://www.viva64.com/en/b/0391/#ID0E5CAE)
+[^14]: [In-Depth: Static Code Analysis on Gamasutra](http://www.gamasutra.com/view/news/128836/InDepth_Static_Code_Analysis.php)
+[^15]: [Zero-overhead deterministic exceptions: Throwing values by Herb Sutter](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0709r0.pdf)
+[^16]: [C++ exception handling internals by Nicolás Brailovsky](https://monoinfinito.wordpress.com/series/exception-handling-in-c/)
+[^17]: [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html)
