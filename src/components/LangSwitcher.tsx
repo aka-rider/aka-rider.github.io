@@ -31,15 +31,15 @@ export default function LangSwitcher({ currentLang }: LangSwitcherProps) {
       <select
         value={currentLang}
         onChange={(e) => handleLanguageChange(e.target.value as Lang)}
-        className='border border-neutral-300 dark:border-neutral-600 rounded px-2 py-1 text-sm
-                   text-neutral-900 dark:text-neutral-100 bg-neutral-50 dark:bg-neutral-800
-                   cursor-pointer hover:bg-neutral-100 dark:hover:bg-neutral-700 transition-colors'
+        className='border border-slate-200 dark:border-slate-800 rounded px-2 py-1 text-sm
+                   text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800
+                   cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors'
       >
         {Languages.map((lang, langInfo) => (
           <option
             key={lang}
             value={lang}
-            className='bg-neutral-50 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100'
+            className='bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100'
           >
             {langInfo.name.slice(0, 3).toUpperCase()}
           </option>

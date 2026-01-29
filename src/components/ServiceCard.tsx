@@ -20,7 +20,7 @@ export default function ServiceCard({
 }: ServiceCardProps) {
   return (
     <Card title={title}>
-      <p className='text-neutral-600 dark:text-neutral-300 mb-4 leading-relaxed'>
+      <p className='text-slate-600 dark:text-slate-300 mb-4 leading-relaxed'>
         {proposition}
       </p>
 
@@ -33,10 +33,10 @@ export default function ServiceCard({
               return (
                 <div key={index} className='flex flex-col items-center gap-1'>
                   <Icon
-                    className='w-12 h-12 text-neutral-800 dark:text-neutral-200 transition-colors duration-200'
+                    className='w-12 h-12 text-slate-800 dark:text-slate-200 transition-colors duration-200'
                     aria-hidden='true'
                   />
-                  <span className='text-xs text-neutral-700 dark:text-neutral-300 text-center max-w-20'>
+                  <span className='text-xs text-slate-700 dark:text-slate-300 text-center max-w-20'>
                     {item.title}
                   </span>
                 </div>
@@ -53,10 +53,10 @@ export default function ServiceCard({
               return (
                 <div key={index} className='flex flex-col items-center gap-1'>
                   <Icon
-                    className='w-8 h-8 text-neutral-600 dark:text-neutral-400 transition-colors duration-200'
+                    className='w-8 h-8 text-slate-600 dark:text-slate-400 transition-colors duration-200'
                     aria-hidden='true'
                   />
-                  <span className='text-xs text-neutral-600 dark:text-neutral-400 text-center max-w-20'>
+                  <span className='text-xs text-slate-600 dark:text-slate-400 text-center max-w-20'>
                     {item.title}
                   </span>
                 </div>
@@ -73,10 +73,10 @@ export default function ServiceCard({
               return (
                 <div key={index} className='flex flex-col items-center gap-1'>
                   <Icon
-                    className='w-6 h-6 text-neutral-500 dark:text-neutral-500 transition-colors duration-200'
+                    className='w-6 h-6 text-slate-500 dark:text-slate-500 transition-colors duration-200'
                     aria-hidden='true'
                   />
-                  <span className='text-xs text-neutral-500 dark:text-neutral-500 text-center max-w-20'>
+                  <span className='text-xs text-slate-500 dark:text-slate-500 text-center max-w-20'>
                     {item.title}
                   </span>
                 </div>

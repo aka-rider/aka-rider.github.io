@@ -1,3 +1,4 @@
+import { Accent } from '@/components/Accent';
 import Layout from '@/components/layout/Layout';
 import TypingText from '@/components/TypingText';
 
@@ -17,12 +18,14 @@ export default async function RootPage() {
         </h1>
         <h2>{common[defaultLang].description}</h2>
 
-        <TypingText text='~> please select language' className='text-xl' />
+        <Accent>
+          <TypingText text='~> please select language' className='text-xl text-sky-600 dark:text-sky-400 text-shadow-[0_0_20px_var(--tw-shadow-color)] text-shadow-sky-300/50 dark:text-shadow-sky-400' />
+        </Accent>
 
         <nav className='flex flex-col md:flex-row items-start gap-2 w-full text-xl sm:text-2xl'>
           {Languages.entries().map(([lang, langInfo]) => (
             <a
-              className='px-5 py-2 min-w-50 ml-8 text-center rounded-md border border-neutral-300 dark:border-neutral-600 grayscale hover:grayscale-0 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-all duration-200'
+              className='px-5 py-2 min-w-50 ml-8 text-center rounded-md border border-slate-100 dark:border-slate-900 grayscale hover:grayscale-0 hover:bg-slate-50 dark:hover:bg-slate-900 transition-all duration-200'
               href={`/${lang}`}
               key={lang}
             >

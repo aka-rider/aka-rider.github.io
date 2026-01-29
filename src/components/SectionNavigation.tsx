@@ -91,7 +91,7 @@ export default function SectionNavigation({
 
   return (
     <nav
-      className='border-b border-neutral-300 dark:border-neutral-600 gap-4 flex flex-col md:flex-row'
+      className='border-b border-slate-200 dark:border-slate-800 gap-4 flex flex-col md:flex-row'
       aria-label='Page sections'
     >
       {sections.map((section, index) => (
@@ -99,8 +99,8 @@ export default function SectionNavigation({
           key={`section-${index}`}
           type='button'
           className={`cursor-pointer uppercase font-medium transition-colors duration-200 p-2 m-0 flex items-center bg-transparent border-none ${activeIndex === index
-            ? 'text-primary-600 dark:text-primary-400 md:border-b-2 border-primary-600 dark:border-primary-400 font-bold'
-            : 'text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400'
+            ? 'text-sky-600 dark:text-sky-400 md:border-b-2 border-sky-600 dark:border-sky-400 font-bold'
+            : 'text-slate-700 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400'
             }`}
           onClick={() => scrollToSection(index)}
           aria-current={activeIndex === index ? 'true' : undefined}

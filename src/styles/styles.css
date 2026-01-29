@@ -3,38 +3,7 @@
 /* Tailwind CSS v4 dark mode configuration */
 @variant dark (.dark &);
 
-@theme {
-  /* Primary color palette - Sky blue for links and interactive elements */
-  --color-primary-50: #f0f9ff;
-  --color-primary-100: #e0f2fe;
-  --color-primary-200: #bae6fd;
-  --color-primary-300: #7dd3fc;
-  --color-primary-400: #38bdf8;
-  --color-primary-500: #0ea5e9;
-  --color-primary-600: #0284c7;
-  --color-primary-700: #0369a1;
-  --color-primary-800: #075985;
-  --color-primary-900: #0c4a6e;
-  --color-primary-950: #082f49;
-
-  /* Neutral color palette - Stone (warm) for backgrounds, borders, text */
-  --color-neutral-50: #fafaf9;
-  --color-neutral-100: #f5f5f4;
-  --color-neutral-200: #e7e5e4;
-  --color-neutral-300: #d6d3d1;
-  --color-neutral-400: #a8a29e;
-  --color-neutral-500: #78716c;
-  --color-neutral-600: #57534e;
-  --color-neutral-700: #44403c;
-  --color-neutral-800: #292524;
-  --color-neutral-900: #1c1917;
-  --color-neutral-950: #0c0a09;
-
-  /* Extended color palette */
-  --color-dark: #1c1917;
-}
-
-/* All animations combined */
+/* Custom Animations */
 @keyframes blink {
 
   0%,
@@ -170,7 +139,7 @@
   h1,
   .h1 {
     @apply text-2xl font-bold md:text-4xl;
-    font-family: var(--font-orbitron);
+    font-family: var(--font-header);
     letter-spacing: 0.05em;
     /* Blog padding takes precedence over globals padding */
     padding-top: 2rem;
@@ -180,7 +149,7 @@
   h2,
   .h2 {
     @apply text-xl font-bold md:text-3xl pb-5 pt-5;
-    font-family: var(--font-orbitron);
+    font-family: var(--font-header);
     letter-spacing: 0.05em;
     /* Blog padding takes precedence over globals padding */
     padding-top: 1rem;
@@ -207,13 +176,13 @@
   p,
   .p {
     @apply text-base;
-    font-family: var(--font-manrope);
+    font-family: var(--font-body);
     line-height: 1.6;
   }
 
   pre,
   code {
-    font-family: var(--font-jetbrains-mono);
+    font-family: var(--font-mono);
     padding-left: 0.5rem;
     margin: 2rem 0;
   }
@@ -231,13 +200,14 @@
     content: '"';
     font-size: 3em;
     font-weight: bold;
-    @apply text-neutral-400 dark:text-neutral-500;
+    @apply text-slate-400 dark:text-slate-500;
     position: absolute;
     left: -0.25rem;
     top: -0.25rem;
     line-height: 1;
   }
 }
+
 
 /* rehype-pretty-code dual theme support */
 

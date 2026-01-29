@@ -62,7 +62,7 @@ export default function TableOfContents({
   return (
     <nav
       aria-label='Table of contents'
-      className='my-8 pl-4 border-l-2 border-neutral-200 dark:border-neutral-700'
+      className='my-8 pl-4 border-l-2 border-slate-200 dark:border-slate-700'
     >
       {/* Header - clickable on mobile */}
       <button
@@ -70,12 +70,12 @@ export default function TableOfContents({
         className='w-full flex items-center justify-between py-2 md:cursor-default text-left'
         aria-expanded={isOpen}
       >
-        <span className='text-xs uppercase tracking-wider text-neutral-500 dark:text-neutral-400'>
+        <span className='text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400'>
           {title}
         </span>
         <HiChevronDown
           className={clsxm(
-            'w-4 h-4 text-neutral-400 transition-transform duration-200 md:hidden',
+            'w-4 h-4 text-slate-400 transition-transform duration-200 md:hidden',
             isOpen && 'rotate-180',
           )}
         />
@@ -98,7 +98,7 @@ export default function TableOfContents({
               <UnstyledLink
                 href={`#${item.id}`}
                 onClick={closeOnMobile}
-                className='text-neutral-600 dark:text-neutral-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors'
+                className='text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors'
               >
                 {item.text}
               </UnstyledLink>

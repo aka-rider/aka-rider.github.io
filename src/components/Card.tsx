@@ -19,15 +19,15 @@ export default function Card({
         'p-6 rounded-lg',
         'border border-transparent',
         'transition-all duration-200 ease-out',
-        'hover:border-neutral-200 dark:hover:border-neutral-700',
-        'hover:bg-neutral-50 dark:hover:bg-neutral-800/50',
+        'hover:border-slate-200 dark:hover:border-slate-700',
+        'hover:bg-white dark:hover:bg-slate-800/50',
         'hover:shadow-md hover:-translate-y-0.5',
         className,
       )}
       {...rest}
     >
       {title && (
-        <h3 className='text-xl font-semibold mb-3 text-neutral-900 dark:text-neutral-100'>
+        <h3 className='text-xl font-semibold mb-3 text-slate-900 dark:text-slate-100'>
           {title}
         </h3>
       )}
