@@ -42,8 +42,8 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
           [
             variant === 'primary' && [
               'bg-primary-500 text-white',
-              'border-primary-600 border',
-              'hover:bg-primary-600 hover:text-white',
+              'border-sky-600 border',
+              'hover:bg-sky-600 hover:text-white',
               'active:bg-primary-700',
               'disabled:bg-primary-700',
             ],
@@ -52,25 +52,25 @@ const IconLink = React.forwardRef<HTMLAnchorElement, IconLinkProps>(
               'border-primary-500 border',
               'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
               isDarkBg &&
-              'hover:bg-neutral-800 active:bg-neutral-700 disabled:bg-neutral-700',
+              'hover:bg-slate-800 active:bg-slate-700 disabled:bg-slate-700',
             ],
             variant === 'ghost' && [
               'text-primary-500',
               'shadow-none',
               'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
               isDarkBg &&
-              'hover:bg-neutral-800 active:bg-neutral-700 disabled:bg-neutral-700',
+              'hover:bg-slate-800 active:bg-slate-700 disabled:bg-slate-700',
             ],
             variant === 'light' && [
-              'bg-white text-neutral-700',
-              'border border-neutral-300',
-              'hover:text-dark hover:bg-neutral-100',
-              'active:bg-white/80 disabled:bg-neutral-200',
+              'bg-white text-slate-700',
+              'border border-slate-200',
+              'hover:text-dark hover:bg-slate-100',
+              'active:bg-white/80 disabled:bg-slate-200',
             ],
             variant === 'dark' && [
-              'bg-neutral-900 text-white',
-              'border border-neutral-600',
-              'hover:bg-neutral-800 active:bg-neutral-700 disabled:bg-neutral-700',
+              'bg-slate-950 text-white',
+              'border border-slate-600',
+              'hover:bg-slate-800 active:bg-slate-700 disabled:bg-slate-700',
             ],
           ],
           //#endregion  //*======== Variants ===========

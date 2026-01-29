@@ -31,8 +31,8 @@ export default function ComponentsPage() {
   return (
     <Layout lang={defaultLang}>
       <main>
-        <section className={clsx('bg-neutral-50 dark:bg-neutral-900 ', color)}>
-          <div className='layout min-h-screen py-20 text-neutral-900 dark:text-neutral-100'>
+        <section className={clsx('bg-white dark:bg-slate-950 ', color)}>
+          <div className='layout min-h-screen py-20 text-slate-900 dark:text-slate-100'>
             <h1>Built-in Components</h1>
             <ArrowLink direction='left' className='mt-2' href='/'>
               Back to Home
@@ -51,8 +51,8 @@ export default function ComponentsPage() {
                     id='color'
                     value={color}
                     className={clsx(
-                      'block max-w-xs rounded border bg-neutral-50 dark:bg-neutral-800 border-neutral-300 dark:border-neutral-600',
-                      'focus:border-primary-400 focus:ring-primary-400 focus:outline-none focus:ring',
+                      'block max-w-xs rounded border bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-800',
+                      'focus:border-sky-400 focus:ring-sky-400 focus:outline-none focus:ring',
                     )}
                     onChange={(e) => setColor(e.target.value as Color)}
                   >
@@ -67,37 +67,37 @@ export default function ComponentsPage() {
                   </ButtonLink>
                 </div>
                 <div className='flex flex-wrap gap-2 text-xs font-medium'>
-                  <div className='bg-primary-50 flex h-10 w-10 items-center justify-center rounded text-neutral-900'>
+                  <div className='bg-primary-50 flex h-10 w-10 items-center justify-center rounded text-slate-900'>
                     50
                   </div>
-                  <div className='bg-primary-100 flex h-10 w-10 items-center justify-center rounded text-neutral-900'>
+                  <div className='bg-primary-100 flex h-10 w-10 items-center justify-center rounded text-slate-900'>
                     100
                   </div>
-                  <div className='bg-primary-200 flex h-10 w-10 items-center justify-center rounded text-neutral-900'>
+                  <div className='bg-primary-200 flex h-10 w-10 items-center justify-center rounded text-slate-900'>
                     200
                   </div>
-                  <div className='bg-primary-300 flex h-10 w-10 items-center justify-center rounded text-neutral-900'>
+                  <div className='bg-primary-300 flex h-10 w-10 items-center justify-center rounded text-slate-900'>
                     300
                   </div>
-                  <div className='bg-primary-400 flex h-10 w-10 items-center justify-center rounded text-neutral-900'>
+                  <div className='bg-sky-400 flex h-10 w-10 items-center justify-center rounded text-slate-900'>
                     400
                   </div>
-                  <div className='bg-primary-500 flex h-10 w-10 items-center justify-center rounded text-neutral-900'>
+                  <div className='bg-primary-500 flex h-10 w-10 items-center justify-center rounded text-slate-900'>
                     500
                   </div>
-                  <div className='bg-primary-600 flex h-10 w-10 items-center justify-center rounded text-neutral-100'>
+                  <div className='bg-sky-600 flex h-10 w-10 items-center justify-center rounded text-slate-100'>
                     600
                   </div>
-                  <div className='bg-primary-700 flex h-10 w-10 items-center justify-center rounded text-neutral-100'>
+                  <div className='bg-primary-700 flex h-10 w-10 items-center justify-center rounded text-slate-100'>
                     700
                   </div>
-                  <div className='bg-primary-800 flex h-10 w-10 items-center justify-center rounded text-neutral-100'>
+                  <div className='bg-primary-800 flex h-10 w-10 items-center justify-center rounded text-slate-100'>
                     800
                   </div>
-                  <div className='bg-primary-900 flex h-10 w-10 items-center justify-center rounded text-neutral-100'>
+                  <div className='bg-primary-900 flex h-10 w-10 items-center justify-center rounded text-slate-100'>
                     900
                   </div>
-                  <div className='bg-primary-950 flex h-10 w-10 items-center justify-center rounded text-neutral-100'>
+                  <div className='bg-primary-950 flex h-10 w-10 items-center justify-center rounded text-slate-100'>
                     950
                   </div>
                 </div>

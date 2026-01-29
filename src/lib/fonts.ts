@@ -1,19 +1,19 @@
-import { JetBrains_Mono, Manrope, Orbitron } from 'next/font/google';
+import { JetBrains_Mono, Manrope, Merriweather } from 'next/font/google';
 
-export const jetBrainsMono = JetBrains_Mono({
+export const fontMono = JetBrains_Mono({
   subsets: ['latin', 'cyrillic'],
-  variable: '--font-jetbrains-mono',
+  variable: '--font-mono',
   display: 'swap',
 });
 
-export const orbitron = Orbitron({
-  subsets: ['latin'],
-  variable: '--font-orbitron',
+export const fontHeader = Merriweather({
+  subsets: ['latin', 'cyrillic'],
+  variable: '--font-header',
   display: 'swap',
 });
 
-export const manrope = Manrope({
+export const fontBody = Manrope({
   subsets: ['latin', 'cyrillic'],
-  variable: '--font-manrope',
+  variable: '--font-body',
   display: 'swap',
 });

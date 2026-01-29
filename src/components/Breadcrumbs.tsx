@@ -18,7 +18,7 @@ export default function Breadcrumbs({
   const renderCrumbContent = (crumb: BlogNode, index: number, isLast: boolean) => (
     <>
       {index > 0 && (
-        <span className='text-neutral-500 dark:text-neutral-400 mr-2'>/</span>
+        <span className='text-slate-500 dark:text-slate-400 mr-2'>/</span>
       )}
       {crumb.icon && (
         <BlogIcon name={crumb.icon} className='w-4 h-4 mr-1' />
@@ -28,7 +28,7 @@ export default function Breadcrumbs({
   );
 
   return (
-    <div className='border-b border-neutral-300 dark:border-neutral-600 gap-4 flex flex-col md:flex-row'>
+    <div className='border-b border-slate-200 dark:border-slate-800 gap-4 flex flex-col md:flex-row'>
       {breadcrumbs.map((crumb, index) => {
         const isLast = index === breadcrumbs.length - 1;
         const baseClasses = 'uppercase transition-colors duration-200 p-2 m-0 flex items-center';
@@ -38,7 +38,7 @@ export default function Breadcrumbs({
           return (
             <div
               key={index}
-              className={`${baseClasses} font-bold text-primary-600 dark:text-primary-400 md:border-b-2 border-primary-600 dark:border-primary-400`}
+              className={`${baseClasses} font-bold text-sky-600 dark:text-sky-400 md:border-b-2 border-sky-600 dark:border-sky-400`}
             >
               {renderCrumbContent(crumb, index, isLast)}
             </div>
@@ -52,7 +52,7 @@ export default function Breadcrumbs({
           <UnstyledLink
             key={index}
             href={href}
-            className={`${baseClasses} cursor-pointer font-medium text-neutral-700 dark:text-neutral-300 hover:text-primary-600 dark:hover:text-primary-400`}
+            className={`${baseClasses} cursor-pointer font-medium text-slate-700 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400`}
           >
             {renderCrumbContent(crumb, index, isLast)}
           </UnstyledLink>

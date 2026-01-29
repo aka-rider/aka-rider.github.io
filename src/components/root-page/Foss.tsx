@@ -35,16 +35,16 @@ export default function Foss({ title, foss }: FossProps) {
               <UnstyledLink href={project.website || '#'} >
                 {/* Project Header */}
                 <div className='flex items-center justify-between mb-4'>
-                  <h3 className='text-xl font-bold text-neutral-900 dark:text-neutral-100'>
+                  <h3 className='text-xl font-bold text-slate-900 dark:text-slate-100'>
                     {project.name}
                   </h3>
-                  <span className='text-sm text-neutral-600 dark:text-neutral-400 bg-neutral-100 dark:bg-neutral-700 px-2 py-1 rounded'>
+                  <span className='text-sm text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded'>
                     {project.role}
                   </span>
                 </div>
 
                 {/* Project Description */}
-                <p className='text-neutral-700 dark:text-neutral-300 mb-4 leading-relaxed'>
+                <p className='text-slate-700 dark:text-slate-300 mb-4 leading-relaxed'>
                   {project.description}
                 </p>
               </UnstyledLink>
@@ -52,7 +52,7 @@ export default function Foss({ title, foss }: FossProps) {
               {(project.github) && (
                 <UnstyledLink
                   href={project.github}
-                  className='inline-flex items-center gap-2 text-neutral-600 hover:text-neutral-800 dark:text-neutral-400 dark:hover:text-neutral-300 transition-colors'
+                  className='inline-flex items-center gap-2 text-slate-600 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-300 transition-colors'
                 >
                   <SiGithub className='w-4 h-4' aria-hidden='true' />
                   GitHub

@@ -56,7 +56,7 @@ export default function Nav({ lang, children }: NavProps) {
   };
 
   return (
-    <div className='sticky top-0 left-0 w-full z-50 bg-neutral-50 dark:bg-neutral-900'>
+    <div className='sticky top-0 left-0 w-full z-50 bg-white dark:bg-slate-950'>
       <nav className='flex flex-row justify-between items-center w-full px-4 py-3 relative'>
         <div className='flex items-center'>
           <HomeButton lang={lang} />
@@ -74,19 +74,19 @@ export default function Nav({ lang, children }: NavProps) {
           {children && (
             <button
               ref={buttonRef}
-              className='flex md:hidden flex-col justify-center items-center w-10 h-10 p-2 border border-neutral-300 dark:border-neutral-600 rounded bg-neutral-50 dark:bg-neutral-900 hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors'
+              className='flex md:hidden flex-col justify-center items-center w-10 h-10 p-2 border border-slate-200 dark:border-slate-800 rounded bg-white dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors'
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label='Toggle mobile menu'
               aria-expanded={isMobileMenuOpen}
             >
               <div
-                className={`w-6 h-1 bg-neutral-700 dark:bg-neutral-300 rounded transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : 'mb-1'}`}
+                className={`w-6 h-1 bg-slate-700 dark:bg-slate-300 rounded transition-transform duration-300 ${isMobileMenuOpen ? 'rotate-45 translate-y-2' : 'mb-1'}`}
               ></div>
               <div
-                className={`w-6 h-1 bg-neutral-700 dark:bg-neutral-300 rounded transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0' : 'mb-1'}`}
+                className={`w-6 h-1 bg-slate-700 dark:bg-slate-300 rounded transition-opacity duration-300 ${isMobileMenuOpen ? 'opacity-0' : 'mb-1'}`}
               ></div>
               <div
-                className={`w-6 h-1 bg-neutral-700 dark:bg-neutral-300 rounded transition-transform duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}
+                className={`w-6 h-1 bg-slate-700 dark:bg-slate-300 rounded transition-transform duration-300 ${isMobileMenuOpen ? '-rotate-45 -translate-y-2' : ''}`}
               ></div>
             </button>
           )}
@@ -97,7 +97,7 @@ export default function Nav({ lang, children }: NavProps) {
       {children && (
         <div
           ref={menuRef}
-          className={`md:hidden absolute top-full left-0 w-full bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-300 dark:border-neutral-600 z-40 shadow-lg overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen
+          className={`md:hidden absolute top-full left-0 w-full bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 z-40 shadow-lg overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen
             ? 'max-h-96 opacity-100'
             : 'max-h-0 opacity-0 border-b-0'
             }`}

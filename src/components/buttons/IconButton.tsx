@@ -45,31 +45,31 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
           [
             variant === 'primary' && [
               'bg-primary-500 text-white',
-              'border-primary-600 border',
-              'hover:bg-primary-600 hover:text-white',
+              'border-sky-600 border',
+              'hover:bg-sky-600 hover:text-white',
               'active:bg-primary-700',
               'disabled:bg-primary-700',
-              'dark:bg-primary-600 dark:border-primary-700',
+              'dark:bg-sky-600 dark:border-primary-700',
               'dark:hover:bg-primary-700 dark:active:bg-primary-800',
               'dark:disabled:bg-primary-800',
             ],
             variant === 'outline' && [
-              'text-primary-500 bg-white dark:bg-neutral-900',
+              'text-primary-500 bg-white dark:bg-slate-950',
               'border-primary-500 border',
               'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
-              'dark:text-primary-400 dark:border-primary-400',
-              'dark:hover:bg-neutral-800 dark:active:bg-neutral-700 dark:disabled:bg-neutral-700',
+              'dark:text-sky-400 dark:border-sky-400',
+              'dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:disabled:bg-slate-700',
               isDarkBg &&
-              'hover:bg-neutral-800 active:bg-neutral-700 disabled:bg-neutral-700',
+              'hover:bg-slate-800 active:bg-slate-700 disabled:bg-slate-700',
             ],
             variant === 'ghost' && [
               'text-primary-500 bg-transparent',
               'shadow-none',
               'hover:bg-primary-50 active:bg-primary-100 disabled:bg-primary-100',
-              'dark:text-primary-400',
-              'dark:hover:bg-neutral-800 dark:active:bg-neutral-700 dark:disabled:bg-neutral-700',
+              'dark:text-sky-400',
+              'dark:hover:bg-slate-800 dark:active:bg-slate-700 dark:disabled:bg-slate-700',
               isDarkBg &&
-              'hover:bg-neutral-800 active:bg-neutral-700 disabled:bg-neutral-700',
+              'hover:bg-slate-800 active:bg-slate-700 disabled:bg-slate-700',
             ],
           ],
           //#endregion  //*======== Variants ===========
@@ -85,8 +85,8 @@ const IconButton = React.forwardRef<HTMLButtonElement, IconButtonProps>(
             className={clsxm(
               'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
               {
-                'text-white dark:text-neutral-200': variant === 'primary',
-                'text-primary-500 dark:text-primary-400': [
+                'text-white dark:text-slate-200': variant === 'primary',
+                'text-primary-500 dark:text-sky-400': [
                   'outline',
                   'ghost',
                 ].includes(variant),

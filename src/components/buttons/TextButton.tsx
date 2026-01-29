@@ -30,12 +30,12 @@ const TextButton = React.forwardRef<HTMLButtonElement, TextButtonProps>(
           'transition-colors duration-150',
           //#region  //*=========== Variant ===========
           variant === 'primary' && [
-            'text-primary-500 hover:text-primary-600 active:text-primary-700',
+            'text-primary-500 hover:text-sky-600 active:text-primary-700',
             'disabled:text-primary-200',
           ],
           variant === 'basic' && [
-            'text-black hover:text-neutral-600 active:text-neutral-800',
-            'disabled:text-neutral-300',
+            'text-black hover:text-slate-600 active:text-slate-800',
+            'disabled:text-slate-300',
           ],
           //#endregion  //*======== Variant ===========
           'disabled:cursor-not-allowed disabled:brightness-105 disabled:hover:underline',

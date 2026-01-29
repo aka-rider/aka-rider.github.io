@@ -22,7 +22,7 @@ export default function BlogPreview({ title, lang }: BlogProps) {
   if (!firstCategory) {
     return (
       <Section id='blog' title={title}>
-        <div className='text-center py-8 text-neutral-500 dark:text-neutral-400'>
+        <div className='text-center py-8 text-slate-500 dark:text-slate-400'>
           No blog content available
         </div>
       </Section>
