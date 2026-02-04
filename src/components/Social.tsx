@@ -7,12 +7,13 @@ import { Lang } from '@/i18n';
 import config from '/config';
 
 interface SocialProps {
-  lang?: Lang;
+  lang: Lang;
+  className?: string;
 }
 
-export default function Social({ lang }: SocialProps) {
+export default function Social({ lang, className }: SocialProps) {
   return (
-    <>
+    <div className={className}>
       <IconLink
         href={config.LINKED_IN}
         icon={SiLinkedin}
@@ -23,13 +24,11 @@ export default function Social({ lang }: SocialProps) {
         icon={SiGithub}
         aria-label='GitHub profile'
       />
-      {lang && (
-        <IconLink
-          href={`/${lang}/feed.xml`}
-          icon={SiRss}
-          aria-label='RSS feed'
-        />
-      )}
-    </>
+      <IconLink
+        href={`/${lang}/feed.xml`}
+        icon={SiRss}
+        aria-label='RSS feed'
+      />
+    </div>
   );
 }

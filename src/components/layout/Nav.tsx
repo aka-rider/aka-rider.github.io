@@ -3,7 +3,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 
 import HomeButton from '@/components/HomeButton';
-import Social from '@/components/Social';
 
 import { Lang } from '@/i18n';
 
@@ -68,8 +67,6 @@ export default function Nav({ lang, children }: NavProps) {
         </div>
 
         <div className='flex items-center gap-3'>
-          <Social lang={lang} />
-
           {/* Mobile hamburger button - only show if there are children */}
           {children && (
             <button

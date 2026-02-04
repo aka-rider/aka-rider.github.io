@@ -1,5 +1,11 @@
 @import 'tailwindcss';
 
+@theme {
+  --font-mono: var(--font-mono);
+  --font-display: var(--font-header);
+  --font-sans: var(--font-body);
+}
+
 /* Tailwind CSS v4 dark mode configuration */
 @variant dark (.dark &);
 
