@@ -3,5 +3,6 @@
     "en": "FPV",
     "uk": "FPV"
   },
-  "icon": "PiDroneBold"
+  "icon": "PiDroneBold",
+  "thumbnails": true
 }

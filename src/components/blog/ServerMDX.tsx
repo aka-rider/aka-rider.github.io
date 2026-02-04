@@ -7,7 +7,7 @@ import remarkImagePaths from '@/lib/remark-image-paths';
 
 import PrimaryLink from '@/components/links/PrimaryLink';
 import NextImage from '@/components/NextImage';
-import TLDR from '@/components/TLDR';
+import TLDR from '@/components/blog/TLDR';
 
 import { rehypePlugins, sharedRemarkPlugins } from '/mdx-config';
 

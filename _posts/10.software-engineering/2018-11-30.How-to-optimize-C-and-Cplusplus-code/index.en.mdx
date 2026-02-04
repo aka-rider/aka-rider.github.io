@@ -1,8 +1,9 @@
 ---
-title: 'How to optimize C and C++ code in 2018'
+title: 'How to optimize modern C and C++ code'
 date: '2018-11-30'
 excerpt: 'Performance matters, why bother with C and C++ otherwise. And many people still using outdated optimization techniques like old mantras'
 image: 'hero.webp'
+tags: ['software', 'architecture']
 ---
 
 Note: editing this article in 2025, I still think everything is relevant.
@@ -71,7 +72,7 @@ Even though the following listings were made with LLVM (clang), but the same pri
 
 LLVM Intermediate Representation (IR) is a human-readable assembly language.
 
-Compilers heavily rely on the static single assignment (SSA) form, that is: requires that each variable is *assigned exactly* ***once***, and every variable is *defined* ***before*** *it is used*[^7].
+Compilers heavily rely on the static single assignment (SSA) form, that is: requires that each variable is _assigned exactly_ **_once_**, and every variable is _defined_ **_before_** _it is used_[^7].
 
 ### Hello World
 
@@ -112,15 +113,15 @@ else:
 }
 ```
 
-The `br` operation — branch on a flag, and go to the (corresponding) label operation. It controls the whole *control flow*.
+The `br` operation — branch on a flag, and go to the (corresponding) label operation. It controls the whole _control flow_.
 
 ### Data Flow
 
-Again: each variable is *assigned exactly* ***once***, and every variable is *defined* ***before*** *it is used*.
+Again: each variable is _assigned exactly_ **_once_**, and every variable is _defined_ **_before_** _it is used_.
 
 But how can we get a value that is defined only in a conditional branch, like `%d` in the above example?
 
-The answer is the `phi` instruction, that merges branch values into one, based on ***where you came from***.
+The answer is the `phi` instruction, that merges branch values into one, based on **_where you came from_**.
 
 ```llvm
 declare i32 @g(i32 %x)
@@ -143,7 +144,7 @@ If we came from the `entry` then `%result = %c`, if came from the `then` then `%
 
 ### This is it
 
-The LLVM IR is *that* simple. There are lots of other instructions, but nothing besides this.
+The LLVM IR is _that_ simple. There are lots of other instructions, but nothing besides this.
 
 Based on this representation only, you can already try to guess what’s happening behind the curtains.
 
@@ -251,9 +252,9 @@ if (flag)
 int x = z;
 ```
 
-An optimizer rewrites control flow to the ***canonical*** form, rather than trying to recognize every possible variant in a source code.
+An optimizer rewrites control flow to the **_canonical_** form, rather than trying to recognize every possible variant in a source code.
 
-So every loop becomes *canonical loop*, if-then statement — *canonical if-then*, and so on.
+So every loop becomes _canonical loop_, if-then statement — _canonical if-then_, and so on.
 
 Let’s get back to the first example:
 
@@ -323,7 +324,7 @@ return:
 
 First, there is the code that checks the number of arguments `if (argc != 2)`.
 
-Before: `icmp ne` — compare if ***not*** *equal* instruction. Now we see `icmp eq` — compare if equal. An optimizer doesn’t need to handle the `icmp ne` instruction even though it is supported by the LLVM IR.
+Before: `icmp ne` — compare if **_not_** _equal_ instruction. Now we see `icmp eq` — compare if equal. An optimizer doesn’t need to handle the `icmp ne` instruction even though it is supported by the LLVM IR.
 
 Another difference is that the `if.then` label and code execution path are gone. Now `return` label is handling the same logic with a `phi` node.
 
@@ -347,7 +348,7 @@ A function is the fundamental human abstractions — but a processor doesn’t n
 
 LLVM tries to partition a call graph on clusters of functions to operate in a broader context. Leaves of this graph are natural candidates for inlining as they don’t call any other functions. Inlining, thus removing leaves, creates new leaves that can also be removed. Then repeat. This decision doesn’t have to be binary — partial inlining and a bunch of crazy shuffling possible.
 
-To inline or not — this decision is *the most critical* for producing fast code. Everything depends on it: caching, parallelization, register allocation, memory access, and so on.
+To inline or not — this decision is _the most critical_ for producing fast code. Everything depends on it: caching, parallelization, register allocation, memory access, and so on.
 
 Luckily, many functions were made to be just shortcuts to other functions. These should be easily removed.
 
@@ -375,13 +376,13 @@ HHVM team made an impressive investigation to find the culprit: aggressively inl
 
 Their solution was to implement a simpler version of memcpy that wouldn’t have several code paths depending on the size of a copied data, CPU model, etc. Simpler function’s code fit into two cache lines instead.
 
-T *he new memcpy performed much* ***worse*** *in different memory* ***micro-benchmarks****, but it significantly improved* ***overall*** *application performance*
+T _he new memcpy performed much_ **_worse_** _in different memory_ **\*micro-benchmarks\*\***, but it significantly improved\* **_overall_** _application performance_
 
 By the way, keyword `inline` has almost nothing in common with the actual process of inlining.
 
-*Correction from the u/quicknir on Reddit:*
+_Correction from the u/quicknir on Reddit:_
 
-> keyword `inline` actually used as a hint in gcc and probably other compilers. In O1, *only* functions marked inline are considered for inlining
+> keyword `inline` actually used as a hint in gcc and probably other compilers. In O1, _only_ functions marked inline are considered for inlining
 
 #### Memory, loads, and stores
 
@@ -653,7 +654,7 @@ Another technique is related to the **branch conditions** inside of a loop. Gene
 
 After abovementioned techniques are run, a loop code becomes cleaner and smaller, and that’s where it gets optimized for the maximum CPU utilization.
 
-Modern processors have highly efficient single instruction, multiple data (**SIMD**) pipelines. Hence, an optimizer makes loop *vectorization* — a particular case of SIMD. In our example with the `sum` function, this simply means: execute the same `add` instruction several times per iteration.
+Modern processors have highly efficient single instruction, multiple data (**SIMD**) pipelines. Hence, an optimizer makes loop _vectorization_ — a particular case of SIMD. In our example with the `sum` function, this simply means: execute the same `add` instruction several times per iteration.
 
 An optimized code may look somewhat scary. Before you try to get through it, there’s a short intro.
 
@@ -832,7 +833,7 @@ Unless there are very CPU-intensive calculations going on, memory loads and stor
 
 The problem is complex, and there are many aspects to look at.
 
-Modern CPUs tend to hide from us the fact that ***memory is slow***. Understanding of how hardware works are crucial to getting the maximum out of it.
+Modern CPUs tend to hide from us the fact that **_memory is slow_**. Understanding of how hardware works are crucial to getting the maximum out of it.
 
 “ **What every programmer should know about memory** ” by Ulrich Drepper [^12] is a must read if you care about the performance.
 Also you'll finally learn what is CAS and RAS after all these years of tweaking BIOS.
@@ -968,7 +969,7 @@ define i32 @main() #1 personality i8* bitcast ...
 
 The whole program was executed at compile time. All that `std::__XZZF_you_re_sick_of_this_cr*p_::__iterator__Stable_v1_XYZ_operator` is gone. Vector’s heap allocations through `std::allocator` calls are gone — `return 10` is all that’s left.
 
-I don’t think this example is *fair* — SSA form makes constant propagation a breeze, but I believe it is very *impressive*.
+I don’t think this example is _fair_ — SSA form makes constant propagation a breeze, but I believe it is very _impressive_.
 
 ### Passing arguments by pointer (reference) have hidden costs
 
@@ -1008,7 +1009,7 @@ inline To union_cast(From x) {
 
 …or a pointer to pointer cast, or array tricks, or integer overflows, or buffer overflows. Not to mention the dull `const_cast`, there are endless possibilities to alias the same memory region in C and C++, either intentionally or accidentally.
 
-Second thought is *parallelism*. If there is no shared data, there is nothing to lock on. Modern multi-core CPUs are capable of highly parallel execution, and there is no need to spend precious cycles on locks (we prefer to mine cryptocurrencies instead).
+Second thought is _parallelism_. If there is no shared data, there is nothing to lock on. Modern multi-core CPUs are capable of highly parallel execution, and there is no need to spend precious cycles on locks (we prefer to mine cryptocurrencies instead).
 
 In many cases, returning arguments instead of passing them by reference enables a compiler to see a data flow and to produce more efficient code.
 
@@ -1073,7 +1074,7 @@ static int rr_cmp(uchar *a, uchar *b)
 }
 ```
 
-*The above example is from the great article from the PVS-Studio static analyzer team.[^13]*
+_The above example is from the great article from the PVS-Studio static analyzer team.[^13]_
 
 Line 14: there is the `a[1]` left from copy-paste, where `a[5]` should be.
 
@@ -1081,7 +1082,7 @@ Again, loop unrollign is something C and C++ compilers can do well without any h
 
 ### Exceptions on modern processors have close to zero overhead
 
-> Importantly, “zero *overhead* ” is not claiming zero *cost* — of course using something always incurs some cost. Rather, C++’s zero-overhead principle has always meant that (a) “you don’t pay for what you don’t use” and (b) “when you do use it you can’t \[reasonably\] write it more efficiently by hand.”
+> Importantly, “zero _overhead_ ” is not claiming zero _cost_ — of course using something always incurs some cost. Rather, C++’s zero-overhead principle has always meant that (a) “you don’t pay for what you don’t use” and (b) “when you do use it you can’t \[reasonably\] write it more efficiently by hand.”
 >
 > ~ Herb Sutter “Zero-overhead deterministic exceptions: Throwing values” [^15]
 
@@ -1089,11 +1090,11 @@ Of course, \[close to\] zero overhead happens only for the happy path. CPU has t
 
 You wouldn’t simulate pattern matching with exceptions anyway, would you?
 
-*Correction from the u/matthieum on Reddit*
+_Correction from the u/matthieum on Reddit_
 
 > On the other hand, the presence of exceptions may hinder the optimizer’s job.
 
-*Alexander Krizhanovsky on Facebook provided a link [^16] to the article “* C++ exception handling internals *” — detailed explanation of how exceptions are handled by C++ runtime library.*
+_Alexander Krizhanovsky on Facebook provided a link [^16] to the article “_ C++ exception handling internals _” — detailed explanation of how exceptions are handled by C++ runtime library._
 
 ### Use as many sanitizers and static analyzers as you can reach
 
@@ -1149,19 +1150,35 @@ make
 ## References
 
 [^1]: [Hacker News: Neural network spotted deep inside Samsung’s Galaxy S7 silicon brain](https://news.ycombinator.com/item?id=12340348)
+
 [^2]: [“Semiconductor memory” on Wikipedia](https://en.wikipedia.org/wiki/Semiconductor_memory)
+
 [^3]: [Latency Numbers Every Programmer Should Know](http://www.eecs.berkeley.edu/~rcs/research/interactive_latency.html)
+
 [^4]: [Optimizing software in C++: An optimization guide for Windows, Linux and Mac platforms by Agner Fog (pdf)](https://www.agner.org/optimize/optimizing_cpp.pdf)
+
 [^5]: [YouTube: Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015](https://youtu.be/FnGCDLhaxKU)
+
 [^6]: [Understanding Compiler Optimization — Chandler Carruth — Opening Keynote Meeting C++ 2015 slides (pdf)](https://meetingcpp.com/files/mcpp/2015/talks/meetingcxx_2015-understanding_compiler_optimization_themed_copy.pdf)
+
 [^7]: [Wikipedia: SSA — Static Single Assignment form](https://en.wikipedia.org/wiki/Static_single_assignment_form)
+
 [^8]: [PHP on the Metal slides by Keith Adams](https://qconsf.com/sf2012/dl/qcon-sanfran-2012/slides/KeithAdams_PHPOnTheMetalWithHHVMMOVEDTOBALLROOMBC.pdf)
+
 [^9]: [YouTube: CppCon 2015: Chandler Carruth “Tuning C++: Benchmarks, and CPUs, and Compilers! Oh My!”](https://youtu.be/nXaxk27zwlk)
+
 [^10]: [Software optimization resources by Agner Fog](https://www.agner.org/optimize/)
+
 [^11]: [Your Load Generator Is Probably Lying To You — Take The Red Pill And Find Out Why](http://highscalability.com/blog/2015/10/5/your-load-generator-is-probably-lying-to-you-take-the-red-pi.html)
+
 [^12]: [What every programmer should know about memory, Part 1.](http://lwn.net/Articles/250967)
+
 [^13]: [PVS-Studio –– The Ultimate Question of Programming, Refactoring, and Everything](https://www.viva64.com/en/b/0391/#ID0E5CAE)
+
 [^14]: [In-Depth: Static Code Analysis on Gamasutra](http://www.gamasutra.com/view/news/128836/InDepth_Static_Code_Analysis.php)
+
 [^15]: [Zero-overhead deterministic exceptions: Throwing values by Herb Sutter](http://www.open-std.org/jtc1/sc22/wg21/docs/papers/2018/p0709r0.pdf)
+
 [^16]: [C++ exception handling internals by Nicolás Brailovsky](https://monoinfinito.wordpress.com/series/exception-handling-in-c/)
+
 [^17]: [LLVM Language Reference Manual](https://llvm.org/docs/LangRef.html)

@@ -1,4 +1,4 @@
-import Nav from '@/components/Nav';
+import Nav from '@/components/layout/Nav';
 import About from '@/components/root-page/About';
 import BlogPreview from '@/components/root-page/BlogPreview';
 import Foss from '@/components/root-page/Foss';

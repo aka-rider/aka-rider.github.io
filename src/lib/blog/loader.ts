@@ -1,6 +1,7 @@
 import fs from 'fs';
 import matter from 'gray-matter';
 import * as path from 'path';
+import readingTime from 'reading-time';
 
 import { defaultLang, Lang } from '@/i18n';
 
@@ -13,6 +14,7 @@ interface CategoryMeta {
   title: Record<Lang, string>;
   featuredPost?: string; // slug of featured post
   icon?: string;
+  thumbnails?: boolean;
 }
 
 interface DirnameMeta {
@@ -100,6 +102,13 @@ function loadPostFile(
       date = new Date(sortKey);
     }
 
+    // Determine language from filename for accurate reading time
+    // index.uk.mdx -> uk (170 wpm)
+    // others -> en (200 wpm)
+    const isUk = filename.includes('.uk.md');
+    const wordsPerMinute = isUk ? 170 : 200;
+    const stats = readingTime(content, { wordsPerMinute });
+
     const rawImage = data.hero || data.image || '/images/blog-generic.webp';
 
     const image = rawImage.startsWith('http://') || rawImage.startsWith('https://')
@@ -120,6 +129,9 @@ function loadPostFile(
       image,
       content: content, // Store raw content instead of serialized
       excerpt: data.excerpt || content.slice(0, 200) + '...',
+      tags: data.tags,
+      readingTime: Math.ceil(stats.minutes),
+      featured: data.featured === true,
     };
     return meta;
   } catch (err) {
@@ -151,9 +163,11 @@ function loadCategory(
     title: meta.title[lang] || meta.title[defaultLang] || slug,
     filePath: dirname,
     icon: meta.icon,
+    thumbnails: meta.thumbnails,
     parent,
     children: [],
     childrenBySlug: {},
+    tags: {},
     getPosts: () => {
       if (!c.children || c.children.length === 0) {
         return [];
@@ -161,7 +175,7 @@ function loadCategory(
       return c.children
         .filter(
           (child): child is Post =>
-            child.type === 'Post' && child !== c.featured,
+            child.type === 'Post',
         )
         .sort(blogNodesCompare);
     },
@@ -193,39 +207,40 @@ function loadCategory(
     }
 
     // featured post
+    let featuredSet = false;
     if (meta.featuredPost) {
-      try {
-        const feat = c.childrenBySlug
-          ? c.childrenBySlug[meta.featuredPost]
-          : undefined;
-        if (!feat) {
-          throw new Error(`Featured post ${meta.featuredPost} not found`);
-        }
-        if (feat.type !== 'Post') {
-          throw new Error(
-            `Featured post ${meta.featuredPost} is not a Post but ${feat.type}`,
-          );
-        }
+      const feat = c.childrenBySlug
+        ? c.childrenBySlug[meta.featuredPost]
+        : undefined;
+      if (feat && feat.type === 'Post') {
+        (feat as Post).featured = true;
         c.featured = feat as Post;
-      } catch (err) {
-        c.featured = {
-          type: 'LoadFailure',
-          slug,
-          sortKey,
-          parent,
-          title: `Failed to load ${dirname}`,
-          filePath: dirname,
-          err,
-          children: [],
-          childrenBySlug: {},
-        };
+        featuredSet = true;
       }
-    } else {
+    }
+
+    if (!featuredSet) {
       // the latest post fallback
       const posts = c.getPosts();
       if (posts.length > 0) {
+        posts[0].featured = true;
         c.featured = posts[0];
       }
+    }
+
+    // Build tags index
+    if (c.children) {
+      c.children.forEach((child) => {
+        if (child.type === 'Post' && child.tags && Array.isArray(child.tags)) {
+          child.tags.forEach((tag) => {
+            if (!c.tags) c.tags = {};
+            if (!c.tags[tag]) {
+              c.tags[tag] = [];
+            }
+            c.tags[tag].push(child);
+          });
+        }
+      });
     }
   } catch (err) {
     return {

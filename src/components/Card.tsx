@@ -16,7 +16,7 @@ export default function Card({
   return (
     <div
       className={clsxm(
-        'p-6 rounded-lg',
+        'p-4 rounded-lg',
         'border border-transparent',
         'transition-all duration-200 ease-out',
         'hover:border-slate-200 dark:hover:border-slate-700',

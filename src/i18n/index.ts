@@ -14,6 +14,8 @@ export const common = {
     returnHome: 'Return home',
     showMore: 'Show more',
     showLess: 'Show less',
+    readingTime: 'min',
+    viewArchive: 'View Archive →',
   },
 
   uk: {
@@ -25,5 +27,7 @@ export const common = {
     returnHome: 'На головну',
     showMore: 'Показати більше',
     showLess: 'Показати менше',
+    readingTime: 'хв',
+    viewArchive: 'Архів →',
   },
 } as const;

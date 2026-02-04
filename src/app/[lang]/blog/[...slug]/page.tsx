@@ -1,14 +1,14 @@
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 
 import { Blog } from '@/lib/blog/Blog';
 import { BlogNode } from '@/lib/blog/types';
 
-import BlogCategory from '@/components/BlogCategory';
-import BlogLoadFailure from '@/components/BlogLoadFailure';
-import BlogPost from '@/components/BlogPost';
-import Breadcrumbs from '@/components/Breadcrumbs';
-import Giscus from '@/components/Giscus';
-import Nav from '@/components/Nav';
+import BlogCategory from '@/components/blog/BlogCategory';
+import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
+import BlogPost from '@/components/blog/BlogPost';
+import Breadcrumbs from '@/components/blog/Breadcrumbs';
+import Giscus from '@/components/blog/Giscus';
+import Nav from '@/components/layout/Nav';
 
 import { Lang } from '@/i18n';
 
@@ -32,6 +32,11 @@ export default async function BlogPage({
 
   if (!node) {
     notFound();
+  }
+
+  if (node.type === 'Category') {
+    // Redirect all category pages to the main blog feed with the category selected
+    redirect(`/${lang}/blog?category=${node.slug}`);
   }
 
   // Generate breadcrumbs by traversing up the parent chain, then add current node
@@ -64,7 +69,6 @@ function renderNodeContent(node: BlogNode, lang: Lang) {
       <BlogCategory
         lang={lang}
         category={node}
-        collapsed={false}
       />
     );
   }
@@ -72,7 +76,7 @@ function renderNodeContent(node: BlogNode, lang: Lang) {
   if (node.type === 'Post') {
     return (
       <>
-        <BlogPost post={node} />
+        <BlogPost post={node} lang={lang} />
         <Giscus
           repo="aka-rider/aka-rider.github.io"
           repoId="MDEwOlJlcG9zaXRvcnkyNjc3MDM0MTc="
