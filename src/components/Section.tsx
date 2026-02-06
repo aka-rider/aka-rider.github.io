@@ -12,8 +12,8 @@ export default function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className={clsx(className, 'pt-10 flex flex-col')}>
-      <h2 className='pb-2 md:pb-3'>{title}</h2>
+    <section id={id} className={clsx(className, 'pt-3 flex flex-col')}>
+      <h2 className='p-4 md:p-6'>{title}</h2>
       {children}
     </section>
   );
