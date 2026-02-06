@@ -38,7 +38,7 @@ export default async function HomePage({
       </Nav>
 
       {sectionOrder.map((sectionId) => {
-        const sectionContent = content[sectionId];
+        const section = content[sectionId];
 
         // Handle each section with proper props
         switch (sectionId) {
@@ -46,27 +46,27 @@ export default async function HomePage({
             return (
               <About
                 key={sectionId}
-                title={sectionContent.name}
-                content={(sectionContent as any).content}
+                title={section.name}
+                items={(section as any).items}
               />
             );
 
           case 'blog':
             return (
-              <BlogPreview key={sectionId} title={sectionContent.name} lang={lang} />
+              <BlogPreview key={sectionId} title={section.name} lang={lang} />
             );
 
           case 'services':
             return (
               <Services
                 key={sectionId}
-                title={sectionContent.name}
-                services={(sectionContent as any).items}
+                title={section.name}
+                services={(section as any).items}
               />
             );
 
           case 'foss':
-            return <Foss key={sectionId} title={sectionContent.name} foss={(sectionContent as any).items} />;
+            return <Foss key={sectionId} title={section.name} foss={(section as any).items} />;
 
           default:
             return null;
