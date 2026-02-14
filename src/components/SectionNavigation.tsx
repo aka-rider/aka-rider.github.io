@@ -2,12 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 
-import BlogIcon from '@/components/blog/BlogIcon';
 
 interface Section {
   key: string;
   name: string;
-  icon?: string;
 }
 
 interface SectionNavigationProps {
@@ -108,12 +106,6 @@ export default function SectionNavigation({
           onClick={() => scrollToSection(index)}
           aria-current={activeIndex === index ? 'true' : undefined}
         >
-          {section.icon && (
-            <BlogIcon
-              name={section.icon}
-              className={`w-4 h-4 mr-2 ${activeIndex === index ? 'text-sky-600 dark:text-sky-400' : 'text-slate-500'}`}
-            />
-          )}
           {section.name}
         </button>
       ))}
