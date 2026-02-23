@@ -2,6 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 
+import clsx from '@/lib/clsxm';
+
+import { NAV_CONTAINER_CLASSES, NavigationItem } from '@/components/layout/NavigationPrimitives';
+
 
 interface Section {
   key: string;
@@ -92,23 +96,21 @@ export default function SectionNavigation({
 
   return (
     <nav
-      className='border-b border-slate-200 dark:border-slate-800 gap-4 flex flex-col md:flex-row'
+      className={clsx(NAV_CONTAINER_CLASSES)}
       aria-label='Page sections'
     >
-      {sections.map((section, index) => (
-        <button
-          key={`section-${index}`}
-          type='button'
-          className={`cursor-pointer uppercase font-medium transition-colors duration-200 p-2 m-0 flex items-center bg-transparent border-none ${activeIndex === index
-            ? 'text-sky-600 dark:text-sky-400 md:border-b-2 border-sky-600 dark:border-sky-400 font-bold'
-            : 'text-slate-700 dark:text-slate-300 hover:text-sky-600 dark:hover:text-sky-400'
-            }`}
-          onClick={() => scrollToSection(index)}
-          aria-current={activeIndex === index ? 'true' : undefined}
-        >
-          {section.name}
-        </button>
-      ))}
+      {sections.map((section, index) => {
+        const isActive = activeIndex === index;
+        return (
+          <NavigationItem
+            key={`section-${index}`}
+            isActive={isActive}
+            label={section.name}
+            onClick={() => scrollToSection(index)}
+            aria-current={isActive ? 'true' : undefined}
+          />
+        );
+      })}
     </nav>
   );
 }

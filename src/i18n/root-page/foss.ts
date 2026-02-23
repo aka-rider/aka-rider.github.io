@@ -3,20 +3,6 @@ import { Lang } from '../index';
 // Define the structure first
 const foss = [
   {
-    name: 'nanoQ aka nQ',
-    description: {
-      en: 'Brokerless golang Pub/Sub for streaming real-time data. IoT, sensors, VoIP, clicks, multimedia data for backend infra.',
-      uk: 'Go бібліотека Pub/Sub для потокової передачі даних у реальному часі. IoT, сенсори, VoIP, клікі та мультимедійних поміж backend сервісами.',
-    },
-    role: {
-      en: 'Author',
-      uk: 'Автор',
-    },
-    website: 'https://medium.com/aigent/meet-nanoq-high-performance-brokerless-pub-sub-for-streaming-real-time-data-with-golang-6630d3067f4e',
-    github: 'https://github.com/aka-rider/nq',
-    image: '/images/gopher-hiking-by-egonelbre.svg',
-  },
-  {
     name: 'cachelot',
     description: {
       en: 'Lightning-fast embeddable Memcached. Low memory footprint.',
@@ -29,6 +15,20 @@ const foss = [
     website: 'https://cachelot.io',
     github: 'https://github.com/cachelot/cachelot',
     image: '/images/cachelot.png',
+  },
+  {
+    name: 'nanoQ aka nQ',
+    description: {
+      en: 'Brokerless golang Pub/Sub for streaming real-time data. IoT, sensors, VoIP, clicks, multimedia data for backend infra.',
+      uk: 'Go бібліотека Pub/Sub для потокової передачі даних у реальному часі. IoT, сенсори, VoIP, клікі та мультимедійних поміж backend сервісами.',
+    },
+    role: {
+      en: 'Author',
+      uk: 'Автор',
+    },
+    website: 'https://medium.com/aigent/meet-nanoq-high-performance-brokerless-pub-sub-for-streaming-real-time-data-with-golang-6630d3067f4e',
+    github: 'https://github.com/aka-rider/nq',
+    image: '/images/gopher-hiking-by-egonelbre.svg',
   },
   {
     name: 'Boost C++ Libraries',

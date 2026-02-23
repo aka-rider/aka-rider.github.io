@@ -31,7 +31,7 @@ export default function LangSwitcher({ currentLang }: LangSwitcherProps) {
       <select
         value={currentLang}
         onChange={(e) => handleLanguageChange(e.target.value as Lang)}
-        className='border border-slate-200 dark:border-slate-800 rounded px-2 py-1 text-sm
+        className='border rounded px-2 py-1 text-sm
                    text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800
                    cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors'
       >

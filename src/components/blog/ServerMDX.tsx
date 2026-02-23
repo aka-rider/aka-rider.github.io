@@ -5,9 +5,9 @@ import * as runtime from 'react/jsx-runtime';
 import remarkReplaceLinks from '@/lib/remark-i18n-links';
 import remarkImagePaths from '@/lib/remark-image-paths';
 
+import TLDR from '@/components/blog/TLDR';
 import PrimaryLink from '@/components/links/PrimaryLink';
 import NextImage from '@/components/NextImage';
-import TLDR from '@/components/blog/TLDR';
 
 import { rehypePlugins, sharedRemarkPlugins } from '/mdx-config';
 

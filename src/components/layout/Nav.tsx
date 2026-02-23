@@ -55,18 +55,21 @@ export default function Nav({ lang, children }: NavProps) {
   };
 
   return (
-    <div className='sticky top-0 left-0 w-full z-50 bg-white dark:bg-slate-950'>
-      <nav className='flex flex-row justify-between items-center w-full px-4 py-3 relative'>
-        <div className='flex items-center'>
+    <div className='sticky top-0 left-0 w-full z-50 bg-white dark:bg-slate-950 h-14'>
+      <nav className='flex flex-row justify-between w-full px-4 relative h-full items-center'>
+        <div className='flex items-center h-full'>
           <HomeButton lang={lang} />
         </div>
 
         {/* Desktop navigation - hidden on mobile */}
-        <div className='hidden md:flex items-center justify-center flex-1'>
+        {/* We use flex-1 to push content, but items-center to align them.
+            h-full is needed for children which have 'h-full border-b-2' styling logic.
+        */}
+        <div className='hidden md:flex items-center justify-center flex-1 h-full'>
           {cloneChildrenWithProps(children)}
         </div>
 
-        <div className='flex items-center gap-3'>
+        <div className='flex items-center gap-3 h-full'>
           {/* Mobile hamburger button - only show if there are children */}
           {children && (
             <button
