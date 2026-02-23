@@ -1,6 +1,10 @@
 import Image from 'next/image';
+import { SiLinkedin } from 'react-icons/si';
 
+import UnstyledLink from '@/components/links/UnstyledLink';
 import Section from '@/components/Section';
+
+import { LINKED_IN } from '/config';
 
 interface AboutProps {
   title: string;
@@ -8,11 +12,12 @@ interface AboutProps {
     subhead: string[];
     proofs: string[];
     cta?: string;
+    linkedinCta?: string;
   };
 }
 
 export default function About({ title, items }: AboutProps) {
-  const { subhead, proofs, cta } = items;
+  const { subhead, proofs, cta, linkedinCta } = items;
 
   return (
     <Section id='about' title={title}>
@@ -38,28 +43,42 @@ export default function About({ title, items }: AboutProps) {
               <p key={index}>{paragraph}</p>
             ))}
           </div>
+
         </div>
       </div>
 
-      {/* Proofs - Flexible Row */}
-      <div className='mt-5 md:mt-16 flex flex-col md:flex-row gap-8'>
-        {proofs.map((proof, index) => (
-          <div key={index} className='flex-1 p-4 border-l-2 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20'>
-            <p className='text-sm leading-relaxed text-gray-500 dark:text-gray-300 font-medium'>
-              {proof}
+      <div className='flex flex-col md:flex-col-reverse gap-8 md:gap-16 mt-8 md:mt-16'>
+        {/* Mobile: Top, Desktop: Bottom - CTA Group */}
+        <div className='flex flex-col items-center gap-6'>
+          {linkedinCta && (
+            <UnstyledLink
+              href={LINKED_IN}
+              className='inline-flex items-center gap-2 px-5 py-2.5 bg-[#0077b5] text-white rounded-lg hover:bg-[#006097] transition-colors font-medium text-sm md:text-base w-fit'
+            >
+              <SiLinkedin className='w-5 h-5' />
+              <span>{linkedinCta}</span>
+            </UnstyledLink>
+          )}
+
+          {cta && (
+            <p className='text-lg md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-400 dark:from-slate-400 dark:to-slate-200 text-center'>
+              {cta}
             </p>
-          </div>
-        ))}
-      </div>
-
-      {/* CTA */}
-      {cta && (
-        <div className='mt-12 text-center'>
-          <p className='text-lg md:text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-400 dark:from-slate-400 dark:to-slate-200'>
-            {cta}
-          </p>
+          )}
         </div>
-      )}
+
+        {/* Proofs - Flexible Row */}
+        {/* Mobile: Bottom, Desktop: Top */}
+        <div className='flex flex-col md:flex-row gap-8'>
+          {proofs.map((proof, index) => (
+            <div key={index} className='flex-1 p-4 border-l-2 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20'>
+              <p className='text-sm leading-relaxed text-gray-500 dark:text-gray-300 font-medium'>
+                {proof}
+              </p>
+            </div>
+          ))}
+        </div>
+      </div>
     </Section>
   );
 }
