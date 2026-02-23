@@ -23,6 +23,7 @@ export const rootPage = {
           `Перш за все, я C++ розробник. Я читав код V8 та Node.js щоб вивчити JavaScript, я писав власний інтерпретатор Python і JVM.`
         ],
         cta: `Давайте співпрацювати!`,
+        linkedinCta: `Напишіть в LinkedIn`,
       },
     },
     blog: {
@@ -65,6 +66,7 @@ export const rootPage = {
           `As a C++ developer at heart. I read V8 and Node.js sources to learn JavaScript, I wrote my own Python interpreter and JVM.`,
         ],
         cta: `Let's build something great together.`,
+        linkedinCta: `Message me on LinkedIn`,
       },
     },
     blog: {
