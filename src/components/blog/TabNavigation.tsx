@@ -1,14 +1,15 @@
 import * as React from 'react';
 
-import { BLOG_NAV_CONTAINER, getBlogNavItemClasses } from '@/lib/blog/styles';
 import clsx from '@/lib/clsxm';
+
+import { NAV_CONTAINER_CLASSES, NavigationItem } from '@/components/layout/NavigationPrimitives';
 
 interface TabNavigationProps {
   tabs: { id: string; label: string }[];
   activeTab: string;
   onTabChange: (id: string) => void;
   onSectionClick?: () => void; // Callback for mobile menu close
-  className?: string; // Kept for compatibility but might strict it
+  className?: string;
 }
 
 export default function TabNavigation({
@@ -35,26 +36,20 @@ export default function TabNavigation({
 
   return (
     <nav
-      className={clsx(
-        BLOG_NAV_CONTAINER,
-        'gap-4 flex-col md:flex-row',
-        className
-      )}
+      className={clsx(NAV_CONTAINER_CLASSES, className)}
       aria-label='Blog categories'
     >
       {tabs.map((tab) => {
         const isActive = activeTab === tab.id;
         return (
-          <button
+          <NavigationItem
             key={tab.id}
+            isActive={isActive}
+            label={tab.label}
+            onClick={(e) => handleTabClick(tab.id, e)}
             role="tab"
             aria-selected={isActive}
-            onClick={(e) => handleTabClick(tab.id, e)}
-            type='button'
-            className={clsx(getBlogNavItemClasses(isActive), 'cursor-pointer m-0')}
-          >
-            {tab.label}
-          </button>
+          />
         );
       })}
     </nav>

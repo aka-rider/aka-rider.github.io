@@ -24,7 +24,7 @@ export default function BlogCategory({
       {category.tags && Object.keys(category.tags).length > 0 && (
         <div className="flex flex-wrap gap-2 mb-8">
           {Object.keys(category.tags).map(tag => (
-            <span key={tag} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400">#{tag} ({category.tags![tag].length})</span>
+            <span key={tag} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400">#{tag} ({category.tags![tag]?.length})</span>
           ))}
         </div>
       )}
