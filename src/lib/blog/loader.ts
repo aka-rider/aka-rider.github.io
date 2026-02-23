@@ -208,21 +208,26 @@ function loadCategory(
 
     // featured post
     let featuredSet = false;
+    // 1. Check if category metadata explicitly defines a featured post
     if (meta.featuredPost) {
-      const feat = c.childrenBySlug
-        ? c.childrenBySlug[meta.featuredPost]
-        : undefined;
-      if (feat && feat.type === 'Post') {
+      const feat = c.childrenBySlug?.[meta.featuredPost];
+      if (feat?.type === 'Post') {
         (feat as Post).featured = true;
         c.featured = feat as Post;
         featuredSet = true;
       }
     }
 
+    // 2. If not set by meta, check if any post is explicitly featured in frontmatter
     if (!featuredSet) {
-      // the latest post fallback
       const posts = c.getPosts();
-      if (posts.length > 0) {
+      const explicitFeatured = posts.find((p) => p.featured === true);
+
+      if (explicitFeatured) {
+        c.featured = explicitFeatured;
+        featuredSet = true;
+      } else if (posts.length > 0 && posts[0]) {
+        // 3. Fallback: feature the latest post only if no other post is featured
         posts[0].featured = true;
         c.featured = posts[0];
       }

@@ -3,6 +3,7 @@ title: 'Makefiles for Python and beyond'
 date: '2020-02-28'
 image: 'makefile-python-ducttape.webp'
 tags: ['software', 'tooling']
+featured: true
 ---
 
 Makefiles are quite unpopular in the dynamic languages world.
@@ -12,7 +13,6 @@ The truth is: make is a wonderful and often misunderstood tool. It is fairly sim
 Hell, source-based Linux distros and BSD operating systems heavily rely on make.
 
 There are many application for Makefiles outside of C/C++ world, and I think that make deserves more attention and love.
-
 
 ## Why does Python even need a Makefile?
 
@@ -62,7 +62,7 @@ What is all this have to do with Python again?
 
 Okay, let us make a simple application.
 
-Let’s say we want to make an application that shows random cat gifs (*the example is shamelessly hijacked from the glorious* [Elm tutorial](https://elm-lang.org/examples/cat-gifs))
+Let’s say we want to make an application that shows random cat gifs (_the example is shamelessly hijacked from the glorious_ [Elm tutorial](https://elm-lang.org/examples/cat-gifs))
 
 ```python
 # App to render random cat gifs for the great good
@@ -144,7 +144,6 @@ So this is the very common situation I was talking about in the beginning: we ne
 Let’s see if this make stuff will be more clear.
 
 The first rule in our Makefile will be the virtual environment, but `venv` is a directory, and we need a plain file, so let’s take any file from the “ venv”. For instance, `venv/bin/activate` will do:
-
 
 ```make
 venv/bin/activate: requirements.txt
@@ -345,7 +344,7 @@ clean:
 
 For the example above, running `make -j 4` will allow make to convert up to 4 images simultaneously.
 
-Note  `@echo` in the all rule. make prints each command before executing it. `echo hello` will output
+Note `@echo` in the all rule. make prints each command before executing it. `echo hello` will output
 
 ```shell
 $ make
