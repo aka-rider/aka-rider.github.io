@@ -52,8 +52,8 @@ const services = {
       uk: 'Тимчасовий CTO',
     },
     proposition: {
-      en: 'Short, measurable engagements for teams under 35: ship MVPs, fix production hot paths, hire senior engineers, and leave you with runnable ops and ownership.',
-      uk: 'Обмежені завдання з командами до 35 осіб: випуск MVP, налаштування продакшн середовищ, найм інженерів, автоматизація вашого бізнесу.',
+      en: 'Short, measurable engagements for teams under 35: design roadmaps & technical strategies, ship MVPs, fix production hot paths, step in to lead during transitions, hire senior engineers, and leave you with runnable ops and ownership.',
+      uk: 'Обмежені завдання з командами до 35 осіб: планування і архітектура, запуск MVP, вирішення проблем маштабування, підтримка існуючих команд під час зміни керівництва, найм інженерів. Я лишаю вас із самостійними командами і налагодженими бізнес-процесами.',
     },
     icons: {
       lvl1: [
