@@ -8,8 +8,9 @@ export const rootPage = {
       items: {
         subhead: [
           `
-          Маю досвід створення бекендів на 80 мільйонів користувачів (з RDBMS) або real-time інфраструктура для 3000 одночасних speech-to-text потоків.
-          Я не довіряю ні мануалам, ані best practices — тільки коду та метрикам. Проєктування високонавантажених системи починається з розуміння що саме відбувається під капотом у заліза, ядра і далі...
+          Маю досвід створення бекендів на 30 мільйонів користувачів (з RDBMS) або real-time інфраструктура для 3000 одночасних speech-to-text потоків.
+          Я читаю код частіше за документацію і вірю метрикам більше, ніж best practices.
+          Проєктування високонавантажених системи починається з розуміння що саме відбувається під капотом у заліза, ядра і далі...
           `,
           `
           Я переношу свій підхід і в управління. Я вчу команди розуміти системи, які вони будують. Я замінюю магію на розуміння.
@@ -17,10 +18,10 @@ export const rootPage = {
           `,
         ],
         proofs: [
+          `Я розробив Key-Value сховище, 3M OPS ~300ns latency.`,
+          `Я зробив рушій контейнерів для створення bootable Linux ISO (до появи Docker).`,
           `Коли MySQL почав гальмувати на 128-ядерних процесорах, я знайшов причину за допомогою perf та kprofile.`,
-          `Коли застосунок на Go переставав відповідати під навантаженням, я зробив мінімальний кейс, і разом із кор-мейнтейнерами працював над патчем для планувальника горутин.`,
-          `Я розробив Key-Value сховище, 3M OPS ~100ns latency.`,
-          `Перш за все, я C++ розробник. Я читав код V8 та Node.js щоб вивчити JavaScript, я писав власний інтерпретатор Python і JVM.`
+          `Коли застосунок на Go переставав відповідати під навантаженням, я зробив мінімальний кейс, і разом із кор-мейнтейнерами працював над патчем для планувальника горутин.`
         ],
         cta: `Давайте співпрацювати!`,
         linkedinCta: `Напишіть в LinkedIn`,
@@ -50,8 +51,8 @@ export const rootPage = {
       items: {
         subhead: [
           `
-          I have built backends for 80M users on an RDBMS, or real-time streaming infrastructure for 3K concurrent speech-to-text streams.
-          I trust neither manuals nor best practices — only source code and metrics.
+          I have built backends for 30M users on an RDBMS, or real-time streaming infrastructure for 3K concurrent speech-to-text streams.
+          I verify manuals against source code and prefer metrics over best practices.
           To architect high-scale systems is to understand exactly what happens under the hood, from the hardware and kernel up.
           `,
           `
@@ -60,10 +61,10 @@ export const rootPage = {
           `,
         ],
         proofs: [
+          `I engineered a KV store achieving 3M OPS at ~300ns latency.`,
+          `I built a custom container engine to generate bootable Linux ISOs (pre‑Docker era).`,
           `When a MySQL server degraded on 128 - core CPUs, I used perf and kprofile to find the root cause.`,
-          `When a Go application became unresponsive under pressure, I worked with core maintainers on a reproducible case and the goroutine scheduler patch.`,
-          `I engineered a KV store achieving 3M OPS at ~100ns latency.`,
-          `As a C++ developer at heart. I read V8 and Node.js sources to learn JavaScript, I wrote my own Python interpreter and JVM.`,
+          `When a Go application became unresponsive under pressure, I worked with core maintainers on a reproducible case and the goroutine scheduler patch.`
         ],
         cta: `Let's build something great together.`,
         linkedinCta: `Message me on LinkedIn`,
