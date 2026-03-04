@@ -23,6 +23,7 @@ export const rehypePlugins = [
         dark: 'vitesse-dark',
         light: 'vitesse-light',
       },
+      keepBackground: false,
     },
   ],
   rehypeAutolinkHeadings,

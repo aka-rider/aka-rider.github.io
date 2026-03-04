@@ -181,7 +181,6 @@
   body,
   p,
   .p {
-    @apply text-base;
     font-family: var(--font-body);
     line-height: 1.6;
   }
@@ -189,6 +188,7 @@
   pre,
   code {
     font-family: var(--font-mono);
+    font-size: 0.9rem;
     padding-left: 0.5rem;
     margin: 2rem 0;
   }
@@ -214,22 +214,6 @@
   }
 }
 
-
-/* rehype-pretty-code dual theme support */
-
-/* Default to light theme */
-html:not(.dark) pre[data-theme],
-html:not(.dark) pre[data-theme] span {
-  color: var(--shiki-light);
-  background-color: var(--shiki-light-bg);
-}
-
-/* Dark theme when .dark class is present */
-html.dark pre[data-theme],
-html.dark pre[data-theme] span {
-  color: var(--shiki-dark);
-  background-color: var(--shiki-dark-bg);
-}
 
 /* Timeline Component Enhanced Animations */
 @keyframes timeline-fade-in {

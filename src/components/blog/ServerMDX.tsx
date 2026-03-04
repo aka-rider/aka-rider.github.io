@@ -5,6 +5,7 @@ import * as runtime from 'react/jsx-runtime';
 import remarkReplaceLinks from '@/lib/remark-i18n-links';
 import remarkImagePaths from '@/lib/remark-image-paths';
 
+import Spoiler from '@/components/blog/Spoiler';
 import TLDR from '@/components/blog/TLDR';
 import PrimaryLink from '@/components/links/PrimaryLink';
 import NextImage from '@/components/NextImage';
@@ -43,6 +44,7 @@ const mdxComponents = {
     );
   },
   TLDR,
+  Spoiler,
   hr: () => <hr className='mt-15 mb-10 opacity-30 justify-center' />,
 };
 
