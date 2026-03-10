@@ -326,3 +326,29 @@
     animation-iteration-count: 1 !important;
   }
 }
+
+@layer components {
+
+  /* Reduce footnotes contrast */
+  .prose .footnotes,
+  .prose [data-footnotes] {
+    @apply text-slate-500 dark:text-slate-400 text-sm border-t border-slate-200 dark:border-slate-800 pt-4 mt-10;
+  }
+
+  .prose .footnotes p,
+  .prose [data-footnotes] p,
+  .prose .footnotes li,
+  .prose [data-footnotes] li {
+    @apply text-slate-500 dark:text-slate-400 text-sm;
+  }
+
+  .prose .footnotes a,
+  .prose [data-footnotes] a {
+    @apply text-slate-600 dark:text-slate-400 hover:text-sky-600 dark:hover:text-slate-200;
+  }
+
+  .prose .footnotes h2,
+  .prose [data-footnotes] h2 {
+    @apply text-base font-semibold mb-4 text-slate-600 dark:text-slate-400 mt-0;
+  }
+}
