@@ -351,4 +351,9 @@
   .prose [data-footnotes] h2 {
     @apply text-base font-semibold mb-4 text-slate-600 dark:text-slate-400 mt-0;
   }
+
+  /* Add spacing around unordered lists in blog posts */
+  .prose ul {
+    @apply my-6;
+  }
 }
