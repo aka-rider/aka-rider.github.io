@@ -294,9 +294,9 @@ Your browser thinks it is communicating with the trusted first-party domain, com
 And when you clear your cookies to start fresh? Enter **super-cookies**. These aren't stored in your browser's cookie jar at all; they abuse fundamental web protocols to persist your identity:
 
 - **ETags:** Designed for browser caching. A server assigns a unique ETag to a resource. Your browser then dutifully sends that exact tag "I have the version X cached, do you have a newer one?", unknowingly broadcasting a persistent unique ID.
-- **HSTS (HTTP Strict Transport Security):** Designed to force secure (`https`) connections. A server tells your browser, "Only connect to me via HTTP**S** from now on."
+- **HSTS (HTTP Strict Transport Security):** Designed to force secure (HTTP**S**) connections. A server tells your browser, "Only connect to me via HTTPS from now on."
   Your browser remembers this rule for that specific domain. Trackers exploit this by routing you through a series of hidden subdomains (e.g., `a.tracker.com`, `b.tracker.com`, `c.tracker.com`).
-  They intentionally set the HSTS rule on some subdomains (representing "1") and omit it on others (representing "0"). Because your browser permanently caches these security rules, it inadvertently stores a unique binary tracking ID (`101`) that the tracker can read during your next visit. This persists even in Incognito mode.
+  They intentionally set the HSTS rule on some subdomains (representing "1") and omit it on others (representing "0"). Because your browser permanently caches these security rules, it inadvertently stores a unique binary tracking ID (`101`) like a barcode. This persists even in Incognito mode.
 
 The good news is that modern ad-blockers and privacy-focused browsers have caught up to most of these cookie-based exploits. The bad news is that the ad-tech industry doesn't care — they have already moved on to fingerprinting (above).
 Merely clicking "Block Third-Party Cookies" in your settings is practically obsolete.
@@ -431,8 +431,8 @@ For privacy, they should be combined with fingerprinting-resisting browsers and 
 
 For the same reason as above, DNS tells a lot about your online activities: what websites you visit, what apps you use, what devices you have.
 
-When setting up a Wi-Fi router, never use Google's DNS servers (8.8.8.8, 8.8.4.4).
-Better options are Cloudflare's 1.1.1.1, 1.0.0.1, or Quad9's 9.9.9.9.
+When setting up a Wi-Fi router, never use Google's DNS servers (`8.8.8.8`, `8.8.4.4`).
+Better options are Cloudflare's `1.1.1.1`, `1.0.0.1`, or Quad9's `9.9.9.9`.
 
 Beware of ad-blocking DNS services like AdGuard DNS or NextDNS. It's not that they are bad, but same as with VPNs, you give them all your traffic, so you must trust them 200% or more.
 
