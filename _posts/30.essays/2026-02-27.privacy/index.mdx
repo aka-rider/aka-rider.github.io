@@ -1,0 +1,491 @@
+---
+title: 'Privacy: a personal take'
+image: hero.webp
+excerpt: |
+  Why do I care about privacy? Who cares about you and me?
+  Our data is used against us, from overcharging us to manipulating elections.
+  Regardless of the privacy issue, online hygiene is a must.
+tags: ['privacy', 'essays']
+---
+
+**Privacy** is tightly coupled with **trust**. Ask yourself: do you trust **this article**?
+
+## Asymmetry of Power
+
+Data abuse is not even a matter of speculation anymore; it's happening.
+Both **incompetence** and **malice** are at play.
+
+The sheer amount of power data gives is terrifying.
+
+Some societies are **surveillance states**, others are **one legislation away** from becoming one.
+
+**US tech giants** are influential and powerful enough to **coerce governments** worldwide.
+
+Authoritarian regimes use data to suppress dissent.
+State-sponsored actors are meddling in democratic elections.
+Right-wing actors use the data to spread hatred to gain power.
+Corporations trade outrage for profit.
+
+Companies hoard data only to recklessly leak it, or sell it. Criminals use it to impersonate, steal, and scam.
+
+The question is no longer _if_ LexisNexis or Meta knows our precise location during elections, protests, or any other day.
+This data is there, for sale or for grabs, together with our bank account details, education, and political views.
+
+The data is weaponized.
+From dynamic pricing charging higher rates based on your phone model to black boxes denying mortgages and jobs based on who knows what.
+
+Data brokers don't just sell ads; they sell political clusters.
+Malicious actors use this data to feed the algorithm enough outrage to paralyze institutional trust.
+Disinformation sways elections, ignites riots, and erodes democratic societies.
+
+### Threat Modeling
+
+This story is for the average person who is _not a target_ of _state-sponsored surveillance_.
+I'm trying to navigate set-and-forget solutions for daily use.
+
+<TLDR title='Anonymous browsing is possible with Tor Browser; full anonymity is extremely hard.' />
+
+- there are easy wins
+- there are privacy and anti-privacy tech duels ongoing
+- there are hard limits of our digital society
+
+I was privacy-curious for some time, but I didn't actively advocate for online privacy.
+Privacy is a spectrum. We all trade some privacy for some convenience.
+I would be a hypocrite not to mention that I'm writing this on a MacBook and hosting it on GitHub.
+
+I am inactive on my social media accounts. I use private email from ProtonMail for years now.
+
+One day I got curious about:
+
+- anonymity online, and
+- living without US tech giants (sounds hypocritical from a MacBook — I know).
+
+## This is what I learned about tracking techniques and personal experiences.
+
+The deeper I fell down the privacy rabbit hole, the whole thing grew depressier and depressier.
+
+![](image-1.webp)
+
+## Part 1: an easy win-win
+
+Protect your privacy and make the internet more enjoyable.
+
+### Online hygiene
+
+#### browser
+
+A browser sees everything you do online, so please do your own research on whom you trust.
+
+Don't use Google Chrome or Microsoft Edge — they are spyware. They collect your data and actively resist ad blockers.
+
+As of the time of writing (early 2026):
+
+For anonymous browsing, use [Tor Browser](https://www.torproject.org/). It works well for daily browsing, but the _Tor network_ is slower and not suitable for, e.g., streaming.
+
+<Spoiler title="Tor?">
+
+Tor (The Onion Router) bounces your traffic through three random volunteer relays around the world.
+
+1.  **Guard Node:** Knows your IP but not where you are going.
+2.  **Middle Node:** Knows nothing.
+3.  **Exit Node:** Knows where you are going but not who you are.
+
+</Spoiler>
+
+Fun fact: The US Navy developed Onion Routing in the mid-90s to protect US intelligence communications online.
+They released the code to the public because if only the Navy used it, traffic analysis would be easy (a specific encrypted traffic = US Navy).
+Later, the NSA spent millions of dollars trying to break Tor. So the project is well-tested.
+
+Some websites may block the Tor network (could be fixed by restarting the browser a few times).
+For iOS, the app is called [Onion Browser](https://onionbrowser.com/) by Mike Tigas.
+
+Logging in = no anonymity. You may want a separate browser.
+
+Desktop: [Firefox](https://www.firefox.com/) or Safari are both good defaults for daily productivity tasks.
+
+Ad blockers are your best online friends. They make your browsing faster, protect you from malware, and fight against invasive tracking.
+Use [uBlock Origin](https://addons.mozilla.org/en-US/firefox/addon/ublock-origin/) for Firefox.
+Be careful installing multiple add-ons. Combined, they could help to track you.
+
+There are plenty of **privacy-focused browsers**, but consider:
+
+1. By design, they break some websites. You may want a backup.
+2. An outdated browser is a security nightmare; browsers must receive automatic updates.
+
+[LibreWolf](https://librewolf.net/) is a good option for Linux users.
+
+For Android: [Cromite](https://github.com/uazo/cromite) (hardened Chromium) and [IronFox](https://gitlab.com/ironfox-oss/IronFox) (hardened Firefox).
+
+Some websites only work with Chrome, so I use [Brave](https://brave.com/) in anonymous mode.
+There is a lot of controversy around Brave, DYOR.
+
+#### search
+
+Google ultimately decides which websites exist and which don't. Nobody deserves that much power.
+
+Don't use Google Search or Bing — try [Ecosia](https://www.ecosia.org/) (GDPR-compliant), or [DuckDuckGo](https://duckduckgo.com/). Honestly?
+Google was king until they started hiding search results on the second page to show more ads.
+Try competitors, and you will be pleasantly surprised.
+
+### Stop oversharing
+
+Remove your phone number, address, real name, and other personal data from social media profiles and websites, and stop giving them out.
+Your digital footprint is a network, some of your actions online identify you indirectly, but some data points (your phone number, email, real name, date of birth) scream your identity.
+
+Delete accounts you don't use. Demand erasure of your personal data under the GDPR, the Right to Be Forgotten (RTBF).
+You don't need a lawyer for that. The biggest websites have a special form or link; others will comply if you send them an email to a dedicated GDPR address.
+
+<Spoiler title="Example GDPR Request (Right to Erasure)">
+
+```text
+Subject: Right to Erasure Request (GDPR Article 17) - [Your Full Name]
+
+To the Data Protection Officer,
+
+I am writing to formally exercise my right to erasure under Article 17 of the GDPR.
+I request that you permanently delete all personal data associated with me from your systems, databases, and public-facing search results.
+
+Please delete all information linked to:
+
+- Full Name: [Insert Your Name]
+- Email Address: [Insert Your Email]
+- Profile URL (if known): [Insert Link]
+- ...
+
+This request includes any data you have collected directly or obtained via third-party sources.
+Please also ensure that any third parties or "downstream" partners you have shared my data with are notified of this erasure request.
+
+Please provide a confirmation email once this process is complete.
+I look forward to your response within the statutory 30-day period.
+
+Sincerely,
+[Your Name]
+```
+
+</Spoiler>
+
+Never log into websites with your social media accounts.
+
+Never use your phone number for 2FA; it compromises both your security and your privacy.
+
+We're living in the age of raging LLMs (so-called AI), so don't share personal data with friendly people in your DMs.
+Not even if they are hot.
+
+Don't share your CV on LinkedIn or any other job platform without a screening call.
+If you are a Software Engineer, you are a high-value target for both data collection and social engineering attacks.
+
+But deleting your data from a direct service is only half the battle.
+
+### Fight Data Brokers
+
+Companies like LexisNexis, Experian, and Acxiom scrape public records and aggregate them with leaked datasets.
+They build shadow profiles of you and sell them as a service.
+You can combat this manually through opt-out frameworks, or use automated services like [DeleteMe](https://joindeleteme.com/) or [Incogni](https://incogni.com/) to legally pursue these brokers into removing your data.
+
+### Reconsider apps on your smartphone
+
+Most apps abuse your data. Even if you don't give them permission, even if you don't use them.
+
+An app can periodically wake up in the background; a Wi-Fi or cellular connection reveals your approximate location.
+It can scan your phone for other apps: Bank of America, Tinder, Guitar Tuner — this list already discloses too much about you.
+
+An app can scan your photos for GPS metadata or faces. Of course, it will beg you to give it access to your contacts, calendar, and call logs...
+
+Seriously, you don't need 90% of the apps on your phone. Use the web version of Facebook, Instagram, Twitter, LinkedIn, etc.
+Use Progressive Web Apps (PWAs) instead of native apps whenever possible. (Save a browser tab as an app icon on your home screen).
+
+Most of these apps are just webpages running in their own browsers, eating your phone's memory and battery, and stealing your data.
+
+Use only essential apps: banking, messaging with push notifications, navigation, offline music, and books.
+
+On a desktop or laptop, there are even fewer reasons to use apps.
+And you don't need to run separate instances of Chromium browser for each app, meaning less memory and CPU usage.
+
+## Part 2: where privacy starts
+
+I will explain how tracking happens, and what mitigation strategies exist.
+
+### Your inbox
+
+Think of somebody reading all your emails — they know what flight you booked, for what car your insurance is, your medical appointments and prescriptions, your employment contract with salary, your bank details, and much more.
+
+You have to ditch Gmail, Yahoo, Outlook, and other big free email providers if you want privacy.
+Use privacy-focused email services like [ProtonMail](https://proton.me/mail), or [Tutanota](https://tuta.com/).
+
+I would also recommend buying your own domain name (they start at around $5-10/year); that way you can always change email providers without changing your email address.
+
+`john.doe43@gmail.com` —> `me@john-doe.email`, or `hello@john-doe.me`
+
+### Your digital traces
+
+Every advertiser sells and buys your data through data brokers.
+Many sites collect and share this information: a user with `<advertising-id>` bought a shampoo from `<brand>`.
+Or that a user with `<advertising-id>` was reading a manual for a `<brand>` washing machine.
+
+How do they correlate the `<advertising-id>` with YOU?
+
+#### email address
+
+Every time you log in with your email address or phone number, the website can identify you with 100% confidence.
+
+They know the plus sign trick: `johndoe43+amazon@gmail.com` and `johndoe43+linkedin@gmail.com` are the same address.
+They understand custom domains: `amazon@john-doe.email` and `linkedin@john-doe.email` are the same address.
+
+Services like [SimpleLogin](https://simplelogin.io/), [addy.io](https://addy.io/), [Firefox Relay](https://relay.firefox.com/) or Apple's “Hide My Email” create unique email aliases that forward to your real inbox.
+They make your identification harder, as long as you don't reveal your other unique data points.
+
+#### Use a Password Manager
+
+This is not privacy advice per se, but without a password manager you will inevitably reuse passwords. And without a password manager, maintaining unique email aliases becomes a nightmare.
+
+A password manager (like [Proton Pass](https://proton.me/pass), [KeePassXC](https://keepassxc.org/), [Bitwarden](https://bitwarden.com/), or [1Password](https://1password.com/)) solves this.
+A built-in password manager, like the one in Firefox or Safari, is better than nothing.
+
+While we're at it, prefer passkeys over passwords whenever possible.
+And store all your passports, IDs, and driver's license photos in the same password manager as well. Don't keep them in your photo gallery or on your desktop.
+
+#### phone number
+
+Many services require a phone number for registration or 2FA.
+
+For privacy, the simplest solution is to buy a cheap eSIM plan.
+
+I tried [SMSPool](https://www.smspool.net); it worked, but it also got my account locked.
+
+#### other unique data points
+
+Real name & date of birth. You may opt to use a pseudonym and a random date of birth on websites that don't require real information.
+
+**Disclaimer**: faking data for banks or government services is illegal; it may also violate a platform's ToC. I don't advocate committing crimes.
+
+Your home address and your credit card or bank account are where we see how we slide into a privacy dystopia. We trade our most sensitive data for convenience.
+
+You can order packages to a locker or a pick-up point. You can use one-time prepaid cards from [Privacy.com](https://www.privacy.com/)(US only) or [Revolut](https://www.revolut.com/).
+You could use gift cards. You can use cash. It's not even close to as convenient.
+
+I went to buy a gift card, found it only in one of the 3 stores I visited, and after activating it, both my account and the gift card were immediately blocked.
+I had to appeal to customer support. The case is still open after 2 weeks.
+
+#### Device/browser fingerprinting
+
+Data brokers use your screen resolution, timezone, installed fonts, browser plugins, and other traits to create a unique fingerprint of your device and browser.
+There are two main techniques to resist fingerprinting: one is **randomizing your fingerprint** to confuse trackers, the other is making it as generic as possible to **blend in with the crowd**.
+Randomizing your fingerprint is a cat-and-mouse game. Trackers can identify the entropy of your fingerprint gradually. Anti-trackers create more entropy.
+Blending in with the crowd only works if you are actually in the crowd. If you are using a unique combination of browser, OS, and plugins, you have a unique fingerprint.
+
+To make your fingerprint less unique, open your browser in full-screen mode. Only set your language to `en_US` (some privacy-focused browsers always report `en_US`).
+Firefox add-ons like [CanvasBlocker](https://addons.mozilla.org/en-US/firefox/addon/canvasblocker/) help with fingerprint randomization.
+
+Trackers can be blocked, just like ads, before they even try to fingerprint.
+
+[Tor Browser](https://www.torproject.org/) is the strongest fingerprint-resisting browser out the box.
+
+#### Cookies, super-cookies, trackers
+
+HTTP is fundamentally stateless. To remember that you are logged in, a website leaves a cookie — a small text file strictly bound to its specific domain. It was a harmless architectural fix.
+Every time you visit `news.com`, the browser sends all cookies associated with `news.com` back to the server. This way, `news.com` can recognize you as a returning visitor, keep you logged in, and personalize your experience.
+
+Then ad-tech weaponized it. If `news.com` embeds an invisible 1x1 image (a tracking pixel) or script from `ads.meta.com`, your browser is forced to make a side-request to Meta.
+During that request, Meta drops its own third-party cookie. Because every major website embeds these same pixels, Meta essentially watches you traverse the entire internet, correlating your identity across distinct domains.
+
+When privacy-conscious browsers finally started blocking third-party cookies, the industry simply shifted tactics. They introduced **CNAME cloaking**. Instead of loading the tracker from `meta.com`, the target website creates a DNS record pointing `analytics.news.com` directly to Meta's servers.
+Your browser thinks it is communicating with the trusted first-party domain, completely bypassing your third-party cookie restrictions.
+
+And when you clear your cookies to start fresh? Enter **super-cookies**. These aren't stored in your browser's cookie jar at all; they abuse fundamental web protocols to persist your identity:
+
+- **ETags:** Designed for browser caching. A server assigns a unique ETag to a resource. Your browser then dutifully sends that exact tag "I have the version X cached, do you have a newer one?", unknowingly broadcasting a persistent unique ID.
+- **HSTS (HTTP Strict Transport Security):** Designed to force secure (`https`) connections. A server tells your browser, "Only connect to me via HTTP**S** from now on."
+  Your browser remembers this rule for that specific domain. Trackers exploit this by routing you through a series of hidden subdomains (e.g., `a.tracker.com`, `b.tracker.com`, `c.tracker.com`).
+  They intentionally set the HSTS rule on some subdomains (representing "1") and omit it on others (representing "0"). Because your browser permanently caches these security rules, it inadvertently stores a unique binary tracking ID (`101`) that the tracker can read during your next visit. This persists even in Incognito mode.
+
+The good news is that modern ad-blockers and privacy-focused browsers have caught up to most of these cookie-based exploits. The bad news is that the ad-tech industry doesn't care — they have already moved on to fingerprinting (above).
+Merely clicking "Block Third-Party Cookies" in your settings is practically obsolete.
+
+### Social media
+
+You may have heard that deleting your Facebook, Instagram, WhatsApp, and TikTok accounts is the best thing you can do for your privacy.
+Just like with cookies, Meta looks at your deleted account and thinks: 'That's cute.'
+
+It will of course limit the data you share voluntarily (your posts, photos, and messages [^whatsapp]).
+
+But your online activity and your behavioral profile will still be collected through people you interact with, and through the websites you visit that have Meta's tracking pixels.
+
+I'm not advocating deleting your accounts; I know it's hard.
+
+I am restricting my activity on these platforms. You may be able to bring your friends to privacy-friendly alternatives.
+
+I replaced WhatsApp with [Signal](https://signal.org/), Twitter (is anyone left?) with [Mastodon](https://joinmastodon.org/), Reddit with [Lemmy](https://vger.app/).
+
+In general, I'm trying to kill every algorithmic feed.
+We called our parents out for watching "zombie box," we are doomscrolling now.
+
+### Google Maps / Waze
+
+We disclose our current and planned locations through these apps. Our home, work, and frequently visited places are all there.
+There are good alternatives, but depending on where you live, your mileage may vary.
+
+For going by foot, bike, or public transport, [mapy.com](https://mapy.com/en/) is a great alternative to Google Maps. It offers offline maps and no tracking.
+[Organic Maps](https://organicmaps.app/) is another amazing option which relies on OpenStreetMap data.
+Depending on your location, the map may offer children's playgrounds, public toilets, and other details that Google Maps doesn't even know about.
+
+If you're driving, [HereWeGo](https://wego.here.com) is a solid choice. The company behind it sells navigation software to car manufacturers.
+The app itself collects data for map improvements and traffic updates.
+Their privacy policy states that they don't sell your data to third parties, but they do share it with their partners.
+
+I don't know any alternatives to Google Maps ratings and reviews.
+For finding cafes, Google Maps in a browser works well enough.
+Pro-tip: instead of giving Google Maps your location, just search "coffee shops in Kreuzberg."
+
+## Part 3: it gets ridiculous
+
+### Get rid of Windows
+
+Good news: Linux on desktop is superior for the most part.
+Seriously, I've been a Windows user since Windows 95. I've been a Linux user since 2005 or so.
+
+Windows 7 SP1 was the GOAT, but Windows 11? Advertisements in the Start menu? Seriously, Microsoft?
+10 seconds to open an empty Explorer window? Seriously, Microsoft?
+
+But then, the switch doesn't come without a cost. Some software is only available on Windows, and some hardware doesn't have good Linux support.
+
+You don't have to switch, you may as well boot into Linux and see if it works for you.
+Consider one of the mainstream workhorse distros like [Fedora](https://getfedora.org/), or [Ubuntu](https://ubuntu.com/).
+
+### Get rid of your smartphone
+
+You can delete all the apps you want, but Apple and Google control the root layer. They collect telemetry, location heatmaps, and app usage stats before your screen even turns on.
+
+My experience using a de-Googled LineageOS phone at the time of writing (early 2026) has been so-so. I could get almost everything to work.
+I don't expect a non-software engineer to be able to do that.
+I can vividly imagine: "No, Mom, you need to re-patch kernel with Magisk on the second slot _before_ rebooting your phone after OTA update — How many times do I have to tell you?!"
+I don't expect anyone without a technical background to be able to.
+
+On a trip, I couldn't have survived without a backup iPhone for banking. I could get banking apps to work on LineageOS, but not 100% reliably.
+Moreover, banking and government services are always a moving target; you are always one update away from losing access.
+
+[GrapheneOS](https://grapheneos.org/) is a much smoother experience, but it is only available for Pixel phones which I do not own.
+Still, it requires a lot of technical knowledge, first to flash it onto the device, and then to set up and maintain sandboxed environments.
+
+["/e/OS"](https://e.foundation/) may be an option but some devices get updates slower than stock Android.
+Security matters more than privacy.
+
+I personally prefer Apple's (hardware company) iOS over Google's (advertisement company) Android.
+Apple made a lot of privacy-focused moves in the last few years. But this is still a duopoly, they still dictate the terms.
+
+### Get rid of your car
+
+Cars Are the Worst Product at Privacy Ever [^cars].
+
+> ...they can collect super intimate information about you -- from your medical information, your genetic information, to your “sex life” (seriously), to how fast you drive, where you drive,
+> and what songs you play in your car -- in huge quantities.
+
+Ridiculous, right?
+
+This is why I'm saying that privacy is borderline impossible.
+
+Are you going to give up your car? Reverse engineer and reflash it? Bricking your phone is one thing, but bricking your car?
+
+### Even so ...
+
+#### Behavioral Biometrics, AI
+
+Talking to chatbots reveals a lot of personal data in the process. It could be something obvious (like "what to do if a 10-year-old child has a fever?") or something very subtle — your choice of words, the way you structure sentences, the topics you talk about, and much more.
+
+Google's reCAPTCHA (select all motorcycle images) doesn't actually care about the motorcycles you select.
+The neural network tracks your mouse movements and keystrokes. It can detect that you are not a robot with 95% confidence, yes.
+But with enough interaction, it can also identify YOU.
+
+Platforms profile your typing cadence, mouse trajectories, device tilt (gyroscope), and scroll speed.
+Tor Browser normalizes window sizes and reduces timer precision to spoof rendering metrics.
+
+#### Hardware & Local Surveillance
+
+Retail stores use Bluetooth beacons and Wi-Fi probe requests to track your phone's MAC address (your device's unique identifier) as you walk down an aisle.
+You need to either turn off Wi-Fi and Bluetooth when leaving the house, or ensure MAC randomization is strictly enforced by your OS.
+
+## Part 4: Take our privacy back
+
+[Tor Browser](https://www.torproject.org/) works well for daily browsing too.
+
+The more I think about privacy, the more I am inclined to believe that maintaining two separate identities is the only realistic way.
+
+Try to logout and see how much friction media giants create to reveal your identity. It often ends up with a phone verification.
+It is possible to have one or two backup phone numbers where I live.
+
+For the pseudonymous identity, you can try and provide as much information as they ask you poisoning your profile with contradictions: random dates of birth, pseudonyms, random genders, and so on.
+
+### Beware of using VPN services for privacy
+
+First of all, by using a VPN, you are trusting the VPN provider with ALL your traffic.
+That includes not only your web browsing but also the activity of all your phone apps, your smart watch, and all home devices connected to the internet.
+
+The main reason is that a VPN alone does not protect you from fingerprinting.
+And by using a VPN, you stand out from the crowd, making it easier for trackers to identify you.
+
+[Tor Browser](https://www.torproject.org/) is better for anonymous browsing.
+
+VPNs are good for bypassing geo-restrictions, or encrypting traffic on untrusted networks.
+For privacy, they should be combined with fingerprinting-resisting browsers and DNS-level blocking of trackers.
+
+### Pay close attention to DNS.
+
+For the same reason as above, DNS tells a lot about your online activities: what websites you visit, what apps you use, what devices you have.
+
+When setting up a Wi-Fi router, never use Google's DNS servers (8.8.8.8, 8.8.4.4).
+Better options are Cloudflare's 1.1.1.1, 1.0.0.1, or Quad9's 9.9.9.9.
+
+Beware of ad-blocking DNS services like AdGuard DNS or NextDNS. It's not that they are bad, but same as with VPNs, you give them all your traffic, so you must trust them 200% or more.
+
+DNS-level blocking of ads, trackers, and malware is very effective, though. You may consider setting up your own Pi-hole or AdGuard Home together with a WireGuard server on a VPS.
+
+This option is the best of both worlds: you have full control over your DNS, your traffic is encrypted, and instead of known VPN servers, you have a generic VPS IP address.
+
+## Personal takeaways
+
+My main takeaway is that privacy is a spectrum.
+It is cheap to fight basic tracking.
+
+But even with all the fancy privacy tools, it takes one stupid mistake to reveal your identity.
+
+- You forget to close a tab and connect to a VPN...
+- You accidentally log in with your real email (autocompleted)...
+- You went outside and forgot to disable Wi-Fi and Bluetooth...
+- You sat in somebody's car...
+
+There is no undo.
+
+More privacy is much more accessible if you are young, don't drive a car, don't have a mortgage, and have plenty of free time to tinker with your devices.
+The older you are, the more data points you collect, tinfoil hat or not, your healthcare provider and insurer will leak all your private information.
+
+Another takeaway is: the more people care about privacy, the harder it gets for companies to track and manipulate us.
+Meta does not need to record your audio; their probabilistic models, tracking pixels, and social graph correlation are so aggressive that they can predict what you are talking about based on your location data, who you are standing next to, and what their browsing habits are.
+
+## Epilogue
+
+Is it futile? Hell no.
+You won't realistically escape tracking. Doesn't mean you should just ignore the problem.
+
+Firefox with uBlock Origin is a no-brainer.
+
+Funny thing: you will use the same evasive tactics criminals use.
+Are you a criminal? Do you have something to hide?
+Don't let them bully you. They ask for your phone number for "2FA verification" to "protect you" and sell it to advertisers. [^fca-twitter]
+
+You are fighting for the basic right not to live behind glass walls. While tech CEOs are building the bunkers for themselves, they also protect their kids from the dystopia they create. [^tech-free]
+
+Be curious. Don't give your data without a reason. Be able to say:
+
+![](image-2.webp)
+
+---
+
+- Photo by Faisal Rahman: https://www.pexels.com/photo/photo-of-person-peeking-through-the-hole-3820281/
+- Photo by Mikhail Nilov: https://www.pexels.com/uk-ua/photo/7929249/
+
+[^whatsapp]: [Lawsuit Claims Meta Can See WhatsApp Chats in Breach of Privacy](https://www.bloomberg.com/news/articles/2026-01-25/lawsuit-claims-meta-can-see-whatsapp-chats-in-breach-of-privacy)
+
+[^cars]: [It’s Official: Cars Are the Worst Product Category We Have Ever Reviewed for Privacy](https://www.mozillafoundation.org/en/privacynotincluded/articles/its-official-cars-are-the-worst-product-category-we-have-ever-reviewed-for-privacy/)
+
+[^tech-free]: [Bill Gates and Steve Jobs raised their kids tech-free — and it should've been a red flag](https://www.independent.co.uk/tech/bill-gates-and-steve-jobs-raised-their-kids-techfree-and-it-should-ve-been-a-red-flag-a8017136.html)
+
+[^fca-twitter]: [FTC Charges Twitter with Deceptively Using Account Security Data to Sell Targeted Ads](https://www.ftc.gov/news-events/news/press-releases/2022/05/ftc-charges-twitter-deceptively-using-account-security-data-sell-targeted-ads)
