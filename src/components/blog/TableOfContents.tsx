@@ -137,7 +137,7 @@ export default function TableOfContents({
                   className={
                     item.level === 2 && item.id === activeH2Id
                       ? 'text-sky-600 dark:text-sky-400 font-medium transition-colors'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-sky-400 transition-colors'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-sky-600 dark:hover:text-slate-200 transition-colors'
                   }
                 >
                   {item.text}
@@ -201,7 +201,7 @@ export default function TableOfContents({
                     <UnstyledLink
                       href={`#${item.id}`}
                       onClick={() => setSheetOpen(false)}
-                      className='block py-1 text-slate-700 hover:text-sky-600 dark:text-slate-300 dark:hover:text-sky-400 transition-colors'
+                      className='block py-1 text-slate-700 hover:text-sky-600 dark:text-slate-400 dark:hover:text-slate-200 transition-colors'
                     >
                       {item.text}
                     </UnstyledLink>

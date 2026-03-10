@@ -55,7 +55,7 @@ export default function Nav({ lang, children }: NavProps) {
   };
 
   return (
-    <div className='sticky top-0 left-0 w-full z-50 bg-white dark:bg-slate-950 h-14'>
+    <div className='sticky top-0 left-0 w-full z-50 bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg h-14'>
       <nav className='flex flex-row justify-between w-full px-4 relative h-full items-center'>
         <div className='flex items-center h-full'>
           <HomeButton lang={lang} />
@@ -74,7 +74,7 @@ export default function Nav({ lang, children }: NavProps) {
           {children && (
             <button
               ref={buttonRef}
-              className='flex md:hidden flex-col justify-center items-center w-10 h-10 p-2 border border-slate-200 dark:border-slate-800 rounded bg-white dark:bg-slate-950 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors'
+              className='flex md:hidden flex-col justify-center items-center w-10 h-10 p-2 border border-slate-200/50 dark:border-slate-800/50 rounded bg-transparent hover:bg-slate-200/50 dark:hover:bg-slate-800/50 transition-colors'
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               aria-label='Toggle mobile menu'
               aria-expanded={isMobileMenuOpen}
@@ -97,7 +97,7 @@ export default function Nav({ lang, children }: NavProps) {
       {children && (
         <div
           ref={menuRef}
-          className={`md:hidden absolute top-full left-0 w-full bg-white dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 z-40 shadow-lg overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen
+          className={`md:hidden absolute top-full left-0 w-full bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-800/50 z-40 shadow-lg overflow-hidden transition-all duration-300 ease-out ${isMobileMenuOpen
             ? 'max-h-96 opacity-100'
             : 'max-h-0 opacity-0 border-b-0'
             }`}
