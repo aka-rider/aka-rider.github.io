@@ -58,7 +58,7 @@ const services = {
     icons: {
       lvl1: [
         { icon: TfiDirectionAlt, title: 'Leadership' },
-        { icon: LuChartGantt, title: 'Strategy' },
+        { icon: LuChartGantt, title: 'Roadmap' },
         { icon: HiUserGroup, title: 'Hiring' },
       ] as ServiceIcon[],
       lvl2: [
@@ -112,7 +112,7 @@ const services = {
     icons: {
       lvl1: [
         { icon: FaAws, title: 'AWS' },
-        { icon: SiKubernetes, title: 'Kubernetes' },
+        { icon: SiKubernetes, title: 'K8s' },
         { icon: SiTerraform, title: 'Terraform' },
         { icon: SiDocker, title: 'Docker' },
         { icon: SiLinux, title: 'Linux' },
@@ -122,6 +122,7 @@ const services = {
         { icon: SiAwslambda, title: 'Lambda' },
         { icon: SiPrometheus, title: 'Prometheus' },
         { icon: SiGrafana, title: 'Grafana' },
+        { icon: SiElasticsearch, title: 'ELK' },
       ] as ServiceIcon[],
       lvl3: [
         { icon: SiGit, title: 'Git' },
@@ -144,11 +145,10 @@ const services = {
         { icon: BiLogoPostgresql, title: 'PostgreSQL' },
         { icon: SiMysql, title: 'MySQL' },
         { icon: SiOracle, title: 'Oracle' },
-        { icon: SiElasticsearch, title: 'Elasticsearch' },
-        { icon: SiApachekafka, title: 'Kafka' },
+        { icon: GoDatabase, title: 'Microsoft SQL Server' },
       ] as ServiceIcon[],
       lvl2: [
-        { icon: GoDatabase, title: 'Microsoft SQL Server' },
+        { icon: SiApachekafka, title: 'Kafka' },
         { icon: SiRedis, title: 'Redis' },
         { icon: SiMqtt, title: 'MQTT' },
       ] as ServiceIcon[],

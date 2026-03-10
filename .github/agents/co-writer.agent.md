@@ -1,16 +1,6 @@
 ---
 description: 'Co-writer agent.'
-tools:
-  [
-    'vscode',
-    'read',
-    'edit',
-    'search',
-    'web',
-    'context7/*',
-    'markitdown/*',
-    'agent',
-  ]
+tools: ['vscode', 'read', 'edit', 'search', 'web', 'context7/*', 'agent']
 ---
 
 # ROLE
