@@ -16,6 +16,7 @@ export const common = {
     showLess: 'Show less',
     readingTime: 'min',
     viewArchive: 'View Archive →',
+    tableOfContents: 'Table of Contents',
   },
 
   uk: {
@@ -29,5 +30,6 @@ export const common = {
     showLess: 'Показати менше',
     readingTime: 'хв',
     viewArchive: 'Архів →',
+    tableOfContents: 'Зміст',
   },
 } as const;

@@ -14,7 +14,7 @@ import { rehypePlugins, sharedRemarkPlugins } from '/mdx-config';
 
 const mdxComponents = {
   a: (props: React.ComponentProps<'a'>) => (
-    <PrimaryLink {...props} openNewTab={true} />
+    <PrimaryLink {...props} />
   ),
   img: ({
     src,
@@ -38,7 +38,8 @@ const mdxComponents = {
         width={width}
         height={height}
         useSkeleton={true}
-        className={`w-full h-auto rounded-lg p-10 ${className || ''}`}
+        className={`block w-full h-auto rounded-[16px] overflow-hidden shadow-2xl dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] my-10 ${className || ''}`}
+        imgClassName="w-full h-auto"
         {...props}
       />
     );

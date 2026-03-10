@@ -17,17 +17,26 @@ export default async function BlogPost({ post, lang }: { post: Post; lang: Lang 
   const content = post.content || '';
 
   return (
-    <article className='prose lg:prose-xl p-5 lg:p-10'>
-      <h1>{post.title}</h1>
-      <p className='text-sm opacity-60'>
-        {post.readingTime} {common[lang].readingTime}
-      </p>
+    <div className='px-5 lg:px-10'>
+      <div className='relative max-w-[70ch] mx-auto'>
+        <article className='prose lg:prose-xl max-w-none'>
+          <h1>{post.title}</h1>
+          <p className='text-sm opacity-60'>
+            {post.readingTime} {common[lang].readingTime}
+          </p>
 
-      <Image src={post.image} alt={post.title} width={1350} height={1080} className='p-10' />
+          <Image
+            src={post.image}
+            alt={post.title}
+            width={1350}
+            height={1080}
+            className='w-full h-auto rounded-[20px] shadow-2xl dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] my-10'
+          />
 
-      <TableOfContents />
-
-      <ServerMDX source={content} postFilePath={post.filePath} />
-    </article>
+          <ServerMDX source={content} postFilePath={post.filePath} />
+        </article>
+        <TableOfContents lang={lang} />
+      </div>
+    </div>
   );
 }

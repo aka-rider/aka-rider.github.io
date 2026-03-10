@@ -16,8 +16,20 @@ export class Blog {
   }
 
   static getLink(lang: Lang, node?: BlogNode): string {
-    const path = node ? [node.slug] : [];
-    for (let n = node?.parent; n; n = n.parent) {
+    if (!node) {
+      return `/${lang}/blog`;
+    }
+
+    if (node.type === 'Category') {
+      if (!node.parent) {
+        // Root "posts" category
+        return `/${lang}/blog`;
+      }
+      return `/${lang}/blog?category=${node.slug}`;
+    }
+
+    const path = [node.slug];
+    for (let n = node.parent; n; n = n.parent) {
       // Include all parent slugs, including the root category
       path.unshift(n.slug);
     }

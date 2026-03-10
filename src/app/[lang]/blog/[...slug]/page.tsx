@@ -36,7 +36,11 @@ export default async function BlogPage({
 
   if (node.type === 'Category') {
     // Redirect all category pages to the main blog feed with the category selected
-    redirect(`/${lang}/blog?category=${node.slug}`);
+    if (!node.parent) {
+      redirect(`/${lang}/blog`);
+    } else {
+      redirect(`/${lang}/blog?category=${node.slug}`);
+    }
   }
 
   // Generate breadcrumbs by traversing up the parent chain, then add current node
