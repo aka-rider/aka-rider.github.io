@@ -10,7 +10,9 @@ import UnstyledLink from '@/components/links/UnstyledLink';
 import { Lang } from '@/i18n';
 
 // Inline shared constants from styles.ts to avoid dependency
-const BLOG_NAV_CONTAINER = 'border-b border-slate-200 dark:border-slate-800 flex h-14 items-center gap-2 flex-wrap px-0 py-0';
+const BLOG_NAV_CONTAINER = 'border-b border-slate-200 dark:border-slate-800 flex flex-row h-14 items-center gap-1 md:gap-2 px-4 md:px-0 py-0 overflow-x-auto whitespace-nowrap scrollbar-hide ' +
+  '[mask-image:linear-gradient(to_right,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_16px,rgba(0,0,0,1)_calc(100%-16px),rgba(0,0,0,0)_100%)] ' +
+  'md:[mask-image:none]';
 
 interface BreadcrumbsProps {
   lang: Lang;
@@ -32,8 +34,8 @@ export default function Breadcrumbs({
 
         const content = (
           <>
-            {isLast && index > 0 && (
-              <FiChevronRight className="w-4 h-4 text-slate-400 mr-2 flex-shrink-0 relative top-[1px]" aria-hidden="true" />
+            {index > 0 && (
+              <FiChevronRight className="w-4 h-4 text-slate-400 mr-2 flex-shrink-0" aria-hidden="true" />
             )}
             <span className={clsx(isLast && 'truncate max-w-[200px] md:max-w-xs')}>{crumb.title}</span>
           </>
