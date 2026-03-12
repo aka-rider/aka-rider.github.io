@@ -39,7 +39,7 @@ export default async function BlogPage({
     if (!node.parent) {
       redirect(`/${lang}/blog`);
     } else {
-      redirect(`/${lang}/blog?category=${node.slug}`);
+      redirect(`/${lang}/blog#${node.slug}`);
     }
   }
 

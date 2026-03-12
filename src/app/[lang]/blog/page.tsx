@@ -1,5 +1,3 @@
-import { Suspense } from 'react';
-
 import { Blog } from '@/lib/blog/Blog';
 
 import BlogFeed, { FeedCategory } from '@/components/blog/BlogFeed';
@@ -50,9 +48,7 @@ export default async function BlogPage({
     <>
       <main>
         {/* New State-Based Blog Feed */}
-        <Suspense>
-          <BlogFeed lang={lang} categories={feedCategories} />
-        </Suspense>
+        <BlogFeed lang={lang} categories={feedCategories} />
       </main>
     </>
   );

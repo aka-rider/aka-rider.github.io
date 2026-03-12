@@ -25,7 +25,7 @@ export class Blog {
         // Root "posts" category
         return `/${lang}/blog`;
       }
-      return `/${lang}/blog?category=${node.slug}`;
+      return `/${lang}/blog#${node.slug}`;
     }
 
     const path = [node.slug];

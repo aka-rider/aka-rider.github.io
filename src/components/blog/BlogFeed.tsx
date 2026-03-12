@@ -1,6 +1,5 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 
@@ -27,23 +26,26 @@ type BlogFeedProps = {
 };
 
 export default function BlogFeed({ lang, categories }: BlogFeedProps) {
-  const searchParams = useSearchParams();
-  const categoryParam = searchParams.get('category');
-
-  // Default to the first category, or the one from search params
-  const [activeTab, setActiveTab] = useState(() => {
-    if (categoryParam && categories.some(c => c.slug === categoryParam)) {
-      return categoryParam;
-    }
+  // Default to the first category, will be updated by useEffect on mount if hash exists
+  const [activeTab, setActiveTab] = useState<string>(() => {
     return categories[0]?.slug || '';
   });
 
-  // Sync state if URL param changes (optional, but good for back button)
+  // Sync state if URL hash changes
   useEffect(() => {
-    if (categoryParam && categories.some(c => c.slug === categoryParam)) {
-      setActiveTab(categoryParam);
-    }
-  }, [categoryParam, categories]);
+    const handleHashChange = () => {
+      const hash = window.location.hash.replace('#', '');
+      if (hash && categories.some(c => c.slug === hash)) {
+        setActiveTab(hash);
+      }
+    };
+
+    // Run once on mount to capture initial hash
+    handleHashChange();
+
+    window.addEventListener('hashchange', handleHashChange);
+    return () => window.removeEventListener('hashchange', handleHashChange);
+  }, [categories]);
 
   const activeCategory = categories.find((c) => c.slug === activeTab) || categories[0];
 
@@ -51,11 +53,7 @@ export default function BlogFeed({ lang, categories }: BlogFeedProps) {
 
   const handleTabChange = (id: string) => {
     setActiveTab(id);
-    // Optionally update URL, but user asked for "local state", so we might skip pushing state
-    // unless we want shareable links. For now, we prefer keeping it simple local state
-    // but we honor the INITIAL param.
-    // To make redirects work nicely, we could replaceState without reload to keep URL clean,
-    // or just leave it.
+    window.history.replaceState(null, '', `#${id}`);
   };
 
   // We define the navigation logic here so we can pass it to the Nav component
