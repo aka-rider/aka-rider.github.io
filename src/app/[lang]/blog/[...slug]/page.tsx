@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { notFound, redirect } from 'next/navigation';
 
 import { Blog } from '@/lib/blog/Blog';
@@ -103,4 +104,52 @@ function renderNodeContent(node: BlogNode, lang: Lang) {
 export async function generateStaticParams() {
   const blog = Blog.getInstance();
   return blog.generateStaticParams();
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: Lang; slug?: string[] }>;
+}): Promise<Metadata> {
+  const { lang, slug = [] } = await params;
+  const blog = Blog.getInstance();
+
+  let node: BlogNode | null;
+
+  if (slug.length === 0) {
+    node = blog.getRoot(lang);
+  } else {
+    node = blog.getBySlug(lang, slug);
+  }
+
+  if (!node || node.type !== 'Post') {
+    return {
+      title: node?.title,
+    };
+  }
+
+  const url = `/${lang}/blog/${slug.join('/')}`;
+
+  return {
+    title: node.title,
+    description: node.excerpt,
+    openGraph: {
+      title: node.title,
+      description: node.excerpt,
+      url,
+      type: 'article',
+      publishedTime: node.date?.toISOString(),
+      images: [
+        {
+          url: node.image,
+        },
+      ],
+    },
+    twitter: {
+      card: 'summary_large_image',
+      title: node.title,
+      description: node.excerpt,
+      images: [node.image],
+    },
+  };
 }
