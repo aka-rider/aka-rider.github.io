@@ -64,9 +64,16 @@ export default function BlogPostPreview({
           </div>
 
           <div className='flex items-center justify-between gap-4'>
-            <h3 className='font-bold text-base group-hover:text-primary-500 transition-colors'>
-              {post.title}
-            </h3>
+            <div className='flex flex-col gap-1'>
+              <h3 className='font-bold text-base group-hover:text-primary-500 transition-colors'>
+                {post.title}
+              </h3>
+              {post.excerpt && (
+                <p className='text-sm text-slate-600 dark:text-slate-400 line-clamp-2'>
+                  {post.excerpt}
+                </p>
+              )}
+            </div>
             <FiArrowRight className='w-4 h-4 text-slate-400 group-hover:text-primary-500 transition-transform group-hover:translate-x-1 shrink-0' />
           </div>
         </div>
