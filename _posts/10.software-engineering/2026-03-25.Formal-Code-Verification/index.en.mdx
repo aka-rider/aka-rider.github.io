@@ -1,0 +1,44 @@
+---
+title: 'It is time to make formal code verification mainstream'
+excerpt: >
+  Can we trust vibe-code?
+  Rhetorical question. We can't even trust code. What made me think about this: I watched an LLM actively sabotage security.
+image: 'hero.webp'
+tags: ['software', 'llm']
+---
+
+I was building a system designed around authentication and authorization from the ground up.
+At some point, the model suggested removing a security feature because it “creates obstacles” for development.
+Well… yeah. That's the point, Sherlock.
+
+I explicitly told it not to touch security. I even put it in the `instructions.md`.
+It didn't modify the existing security... It added a backdoor.
+
+In my case, this kind of misbehavior is easy to catch with tests. But what if it isn't?
+
+We do have tools for this — formal code verification.
+You can treat your code like a theorem and prove properties about it using systems like [LEAN](https://lean-lang.org/).
+Or, less strictly, prove that invalid states are unreachable using [TLA+](https://lamport.azurewebsites.net/tla/tla.html) or the [Z3 Theorem Prover](https://github.com/z3Prover/z3).
+
+The idea, in essence, is: encode your constraints and ask the solver to check them.
+Something like "an unauthenticated user can perform X" should be `UNSAT` (unsatisfiable).
+
+Formal verification has been around since forever; what has changed is the cost.
+But you can't just vibe-code it. That defeats the whole purpose.
+
+I ran a few experiments — models tend to hallucinate in the exactly same spots, risking repeating the same errors doing formal verification.
+
+I am now trying a different approach.
+
+LLMs are exceptionally good at describing the code they see. They fail at acting on it.
+(It's like someone on Wheel of Fortune who guesses every letter correctly and still can't name the word.)
+
+So maybe LLMs here aren't to prove correctness, but to help extract constraints — especially when paired with a specialized MCP — and hand those off to a system that actually guarantees them.
+
+No conclusions from my side.
+
+I'm curious — has anyone here tried combining LLMs with formal verification in practice?
+
+---
+
+- Photo by Vitaly Gariev https://unsplash.com/photos/young-man-writing-mathematical-formulas-on-a-chalkboard-lHUcuDu6gkk
