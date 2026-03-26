@@ -207,6 +207,11 @@
     margin: 2rem 0;
   }
 
+  pre {
+    max-width: 100%;
+    overflow-x: auto;
+  }
+
   blockquote {
     font-style: italic;
     opacity: 0.8;
