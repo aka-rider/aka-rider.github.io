@@ -16,26 +16,31 @@
 
 - **Tech Stack**: Next.js 15, React 19, TypeScript, Tailwind CSS v4
 - **Site Type**: Personal portfolio website with multilingual MDX blog system
-- **Deployment**: Static export (`output: 'export'` in next.config.mjs)
+- **Central Config**: `config.js` (CommonJS) at project root — defines `CNAME`, `SITE_URL`, `BLOG_POSTS_DIR`, `IS_PRODUCTION`, etc. Imported by `next.config.mjs`, blog loader, and components
+- **Deployment**: Static export (`output: 'export'`), conditional `basePath` for GitHub Pages
 - **Multi-language support**: No hardcoded text, all content is localized
-- **Dark Mode**: Full support with Tailwind dark mode selector
+- **Dark Mode**: `next-themes` with `ThemeProvider attribute='class'` + `@variant dark (.dark &)` in CSS
+- **Comments**: Giscus (GitHub Discussions) on blog posts
+- **RSS Feed**: `[lang]/feed.xml/route.ts` generates per-language Atom feeds
 
 ## Architecture Patterns
 
 ### App Router Structure
 
 - **Dynamic Routes**: `[lang]` for internationalization, `[...slug]` for blog navigation
-- **Layout Hierarchy**: Root layout (dummy) → language layout (true root) → route group layouts
+- **Layout Hierarchy**: Root layout (`app/layout.tsx` — dummy, imports CSS, generates lang params) → language layout (`[lang]/layout.tsx` — wraps in `Layout` component with `ThemeProvider`)
 - **Static Generation**: All pages use `generateStaticParams()` for static export
+- **Flat Route Structure**: `[lang]/page.tsx` (homepage), `[lang]/blog/` (blog listing + `[...slug]` for posts), `[lang]/feed.xml/` (RSS)
 
 ### Blog System Architecture
 
 - **Content Location**: `_posts/` directory with nested category structure
 - **File Structure**: `YYYY-MM-DD.title.mdx` or numbered prefixes `001.title/` meaning `${sortKey}.${slug}$`
 - **Directories Hierarchy**: Directories are either categories (containing `_meta.json`) or posts (containing `index.mdx` or `index.${lang}.mdx`)
-- **Categories Metadata**: `_meta.json` files define category titles, featured posts, icons
-- **Content Loading**: Singleton `Blog` class with recursive directory parsing
+- **Categories Metadata**: `_meta.json` files define category titles (required), optional `thumbnails` flag
+- **Content Loading**: `Blog` class (`src/lib/blog/Blog.ts`) with recursive directory parsing — use `new Blog()` to create a fresh instance
 - **Internationalization**: Content fallback chain (lang-specific → default lang)
+- **Symlinks**: `public/_posts → ../_posts` and `src/app/[lang]/blog/_posts → ../../../../_posts` — both are symlinks to the root `_posts/` directory, enabling Next.js static image serving from blog content
 
 #### Blog Content Structure
 
@@ -56,12 +61,13 @@ _posts/
 {
   "title": {
     "en": "Category Name",
-    "uk": "Назва Категорії"
+    "uk": "Назва категорії"
   },
-  "featuredPost": "post-slug",
-  "icon": "SiReact"
+  "thumbnails": true
 }
 ```
+
+Only `title` is required. Optional fields: `thumbnails` (boolean), `featuredPost` (slug string), `icon` (string).
 
 #### Blog Node Types
 
@@ -77,6 +83,14 @@ _posts/
 4. **Hierarchy Building**: Parent-child relationships with breadcrumb support
 5. **Static Params**: Generate all possible routes for static export
 6. **Images Handling**: Images in `_posts/` (including frontmatter) paths resolved relative to post location
+
+### MDX Compilation Pipeline
+
+- **Build-time**: `@next/mdx` plugin in `next.config.mjs` with shared remark/rehype plugins from `mdx-config.mjs`
+- **Runtime (blog posts)**: `@mdx-js/mdx` `compile` + `run` in `src/components/blog/ServerMDX.tsx` (React Server Component)
+- **Custom remark plugins**: `remark-i18n-links` (resolves internal links), `remark-image-paths` (resolves relative image paths)
+- **Rehype plugins**: `rehype-slug`, `rehype-pretty-code` (dual theme: vitesse-dark/vitesse-light), `rehype-autolink-headings`
+- **Custom MDX components**: `PrimaryLink` for `<a>`, `NextImage` for `<img>`, `TLDR`, `Spoiler`, custom `<hr>`
 
 ### Coding Conventions
 
@@ -98,9 +112,11 @@ _posts/
 
 ### Translation System
 
-- **Root Content**: `src/i18n/root.ts` for homepage sections
-- **Translation Function**: `getTranslations(lang)` for localized strings
-- **Metadata**: Language-specific titles, descriptions, keywords
+- **Common strings**: `src/i18n/index.ts` exports `common` dict — access as `common[lang].title`
+- **Homepage content**: `src/i18n/root-page/` directory (`index.ts`, `foss.ts`, `services.ts`) — access as `rootPage[lang].about.name`
+- **Pattern**: Direct dict access `i18n[lang].key`, no wrapper function
+- **Language types**: `Lang` type and `Languages` class from `src/i18n/languages.ts`
+- **Metadata**: Language-specific titles, descriptions, keywords in `common`
 
 ### Content Localization
 
@@ -143,21 +159,35 @@ _posts/
 ### Directory Structure
 
 ```
+config.js                   # Central config (CommonJS): SITE_URL, BLOG_POSTS_DIR, etc.
+mdx-config.mjs              # Shared remark/rehype plugin config
+_posts/                     # Blog content (source of truth)
 src/
-├── app/                    # Next.js App Router
-│   ├── [lang]/            # Language-based routing
-│   │   ├── (root)/        # Homepage routes
-│   │   ├── (blog)/        # Blog routes
-│   │   └── (debug)/       # Development/testing routes
-│   └── layout.tsx         # Root layout
-├── components/            # React components
-│   ├── layout/           # Layout-specific components
-│   └── links/            # Link components
-├── lib/                  # Utility libraries
-│   ├── blog/            # Blog system logic
-│   └── mdx.ts           # MDX processing
-├── styles/              # CSS files
-└── i18n/               # Internationalization
+├── app/
+│   ├── layout.tsx          # Dummy root layout (imports CSS, generates lang params)
+│   └── [lang]/
+│       ├── layout.tsx      # Language layout (ThemeProvider, Layout component)
+│       ├── page.tsx        # Homepage
+│       ├── blog/
+│       │   ├── page.tsx    # Blog listing
+│       │   ├── [...slug]/  # Blog post/category pages
+│       │   └── _posts      # → symlink to /_posts/
+│       └── feed.xml/       # RSS feed route
+├── components/
+│   ├── layout/             # Layout, Nav
+│   ├── links/              # UnstyledLink, PrimaryLink, etc.
+│   ├── blog/               # BlogPost, BlogCategory, ServerMDX, Giscus, etc.
+│   └── root-page/          # Homepage sections (About, BlogPreview, Foss, Services)
+├── lib/
+│   ├── blog/               # Blog.ts, loader.ts, types.ts
+│   ├── remark-i18n-links.ts  # MDX plugin: resolves internal links
+│   └── remark-image-paths.ts # MDX plugin: resolves image paths
+├── styles/
+│   └── styles.css          # Single CSS file (@import 'tailwindcss', @variant dark, animations)
+└── i18n/
+    ├── index.ts            # common translations dict
+    ├── languages.ts        # Lang type, Languages class
+    └── root-page/          # Homepage i18n (index.ts, foss.ts, services.ts)
 ```
 
 ### Import Conventions
@@ -197,7 +227,7 @@ src/
 ### Styling New Components
 
 1. Use Tailwind utilities for layout and basic styling
-2. Add custom CSS to appropriate scope (globals.css vs blog.css)
+2. Add custom CSS to `src/styles/styles.css` (single CSS file for the whole project)
 3. Use CSS variables for theme-aware colors
 4. Test in both light and dark themes
 
