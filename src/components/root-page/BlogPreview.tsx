@@ -13,7 +13,7 @@ interface BlogProps {
 }
 
 export default function BlogPreview({ title, lang }: BlogProps) {
-  const blog = Blog.getInstance();
+  const blog = new Blog();
   const rootCategory = blog.getRoot(lang) as Category;
 
   // Get the first category from the root

@@ -30,7 +30,7 @@ export async function GET(
   { params }: { params: Promise<{ lang: string }> }
 ) {
   const { lang } = (await params) as { lang: Lang };
-  const blog = Blog.getInstance();
+  const blog = new Blog();
   const root = blog.getRoot(lang);
 
   if (!root) {

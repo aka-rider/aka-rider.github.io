@@ -8,7 +8,7 @@ import config from '../../../config.js';
 export class Blog {
   private root: Record<string, BlogNode>;
 
-  private constructor() {
+  constructor() {
     this.root = {};
     for (const lang of Languages.keys()) {
       this.root[lang] = loadDirectory(config.BLOG_POSTS_DIR, lang);
@@ -130,9 +130,5 @@ export class Blog {
     };
 
     return traverseNode(root);
-  }
-
-  static getInstance(): Blog {
-    return new Blog();
   }
 }

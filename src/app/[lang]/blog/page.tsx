@@ -10,7 +10,7 @@ export default async function BlogPage({
   params: Promise<{ lang: Lang }>;
 }) {
   const { lang } = await params;
-  const blog = Blog.getInstance();
+  const blog = new Blog();
 
   const rootCategory = blog.getRoot(lang);
 

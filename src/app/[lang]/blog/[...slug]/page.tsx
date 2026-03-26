@@ -19,7 +19,7 @@ export default async function BlogPage({
   params: Promise<{ lang: Lang; slug?: string[] }>;
 }) {
   const { lang, slug = [] } = await params;
-  const blog = Blog.getInstance();
+  const blog = new Blog();
 
   let node: BlogNode | null;
 
@@ -102,7 +102,7 @@ function renderNodeContent(node: BlogNode, lang: Lang) {
 }
 
 export async function generateStaticParams() {
-  const blog = Blog.getInstance();
+  const blog = new Blog();
   return blog.generateStaticParams();
 }
 
@@ -112,7 +112,7 @@ export async function generateMetadata({
   params: Promise<{ lang: Lang; slug?: string[] }>;
 }): Promise<Metadata> {
   const { lang, slug = [] } = await params;
-  const blog = Blog.getInstance();
+  const blog = new Blog();
 
   let node: BlogNode | null;
 
