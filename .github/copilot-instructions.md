@@ -1,11 +1,16 @@
 # AI Coding Agent Instructions
 
-Always use context7 when I need code generation, setup or configuration steps, or library/API documentation.
-This means you should automatically use the Context7 MCP tools to resolve library id and get library docs without me having to explicitly ask.
+## Agent Behavior
 
-Never add or remove dependencies by editing package.json directly, use `npm install` `npm uninstall` commands instead.
-
-Never store summary of your changes in markdown files, never write readme, architecture.md, quickstart.md, or any other documentation files unless explicitly asked to do so.
+- **MCP Tools**: You have access to several Model Context Protocol (MCP) servers. Use them proactively:
+  - **Context7 (`mcp_context7_*`)**: For code generation, configuration, and library/API documentation. Resolve library IDs and fetch docs without being asked.
+  - **Serena (`mcp_oraios_serena_*`)**: For semantic code exploration, finding patterns, and navigating symbols instead of reading whole files. Use it to understand the architecture efficiently.
+  - **MarkItDown (`mcp_markitdown_*`)**: For converting URLs, files, or data URIs to Markdown to read external web or local resources.
+- Never assume — ask for clarification when intent is ambiguous.
+- Progress iteratively in small steps, consulting the user at each step.
+- Document WHY, never WHAT. No restating-the-obvious comments.
+- Never add or remove dependencies by editing package.json directly, use `npm install` `npm uninstall` commands instead.
+- Never store summary of your changes in markdown files, never write readme, architecture.md, quickstart.md, or any other documentation files unless explicitly asked to do so.
 
 ## Project Overview
 

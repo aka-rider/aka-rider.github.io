@@ -16,16 +16,19 @@ export default function Nav({ lang, children }: NavProps) {
     <div
       className='sticky top-0 left-0 w-full z-50 transition-colors duration-300 bg-white/70 dark:bg-slate-950/70 backdrop-blur-lg border-b border-slate-200/50 dark:border-slate-800/50'
     >
-      <nav className='flex flex-row w-full px-4 relative h-14 items-center'>
-        <div className='flex-none flex items-center h-full mr-2 md:mr-4'>
+      <nav className='flex flex-row w-full px-4 relative h-14 items-center justify-between'>
+        <div className='flex-none flex items-center h-full'>
           <HomeButton lang={lang} />
         </div>
 
         {children && (
-          <div className='flex items-center flex-1 h-full overflow-x-auto no-scrollbar'>
+          <div className='flex items-center justify-center flex-1 min-w-0 h-full overflow-x-auto no-scrollbar mx-2 md:mx-4'>
             {children}
           </div>
         )}
+
+        {/* Spacer to balance HomeButton and keep children flawlessly centered */}
+        <div className='flex-none w-1 pointer-events-none' aria-hidden='true' />
       </nav>
     </div>
   );
