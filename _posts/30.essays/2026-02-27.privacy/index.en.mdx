@@ -4,7 +4,6 @@ image: hero.webp
 excerpt: |
   Why do I care about privacy? Who cares about you and me?
   Our data is used against us, from overcharging us to manipulating elections.
-  Regardless of the privacy issue, online hygiene is a must.
 tags: ['privacy', 'essays']
 ---
 
@@ -36,6 +35,7 @@ From dynamic pricing charging higher rates based on your phone model to black bo
 
 Data brokers don't just sell ads; they sell political clusters.
 Malicious actors use this data to feed the algorithm enough outrage to paralyze institutional trust.
+
 Disinformation sways elections, ignites riots, and erodes democratic societies.
 
 ### Threat Modeling
@@ -80,7 +80,8 @@ Don't use Google Chrome or Microsoft Edge — they are spyware. They collect you
 
 As of the time of writing (early 2026):
 
-For anonymous browsing, use [Tor Browser](https://www.torproject.org/). It works well for daily browsing, but the _Tor network_ is slower and not suitable for, e.g., streaming.
+For anonymous browsing, use [Tor Browser](https://www.torproject.org/).
+It may work well for daily browsing (depends on a region) but the _Tor network_ is slower and not suitable for, e.g., streaming.
 
 <Spoiler title="Tor?">
 
@@ -99,7 +100,7 @@ Later, the NSA spent millions of dollars trying to break Tor (without success). 
 Some websites may block the Tor network (could be fixed by restarting the browser a few times).
 For iOS, the app is called [Onion Browser](https://onionbrowser.com/) by Mike Tigas.
 
-Logging in = no anonymity. You may want a separate browser.
+Logging in = no anonymity. You want a separate browser.
 
 Desktop: [Firefox](https://www.firefox.com/) or Safari are both good defaults for daily productivity tasks.
 
@@ -116,7 +117,7 @@ There are plenty of **privacy-focused browsers**, but consider:
 
 For Android: [Cromite](https://github.com/uazo/cromite) (hardened Chromium) and [IronFox](https://gitlab.com/ironfox-oss/IronFox) (hardened Firefox).
 
-Some websites only work with Chrome, so I use [Brave](https://brave.com/) in anonymous mode.
+Some websites only work with Chrome, so I occasionally use [Brave](https://brave.com/) in anonymous mode.
 There is a lot of controversy around Brave, DYOR.
 
 #### search
@@ -131,6 +132,8 @@ Try competitors, and you will be pleasantly surprised.
 
 Remove your phone number, address, real name, and other personal data from social media profiles and websites, and stop giving them out.
 Your digital footprint is a network, some of your actions online identify you indirectly, but some data points (your phone number, email, real name, date of birth) scream your identity.
+
+If you post your regular running route on social media, not only advertisers but also criminals know when you are not home.
 
 Delete accounts you don't use. Demand erasure of your personal data under the GDPR, the Right to Be Forgotten (RTBF).
 You don't need a lawyer for that. The biggest websites have a special form or link; others will comply if you send them an email to a dedicated GDPR address.
@@ -301,6 +304,8 @@ And when you clear your cookies to start fresh? Enter **super-cookies**. These a
 The good news is that modern ad-blockers and privacy-focused browsers have caught up to most of these cookie-based exploits. The bad news is that the ad-tech industry doesn't care — they have already moved on to fingerprinting (above).
 Merely clicking "Block Third-Party Cookies" in your settings is practically obsolete.
 
+Many browsers have removed or plan to remove "Do Not Track" requests, ironically improving tracking.
+
 ### Social media
 
 You may have heard that deleting your Facebook, Instagram, WhatsApp, and TikTok accounts is the best thing you can do for your privacy.
@@ -315,6 +320,9 @@ I'm not advocating deleting your accounts; I know it's hard.
 I am restricting my activity on these platforms. You may be able to bring your friends to privacy-friendly alternatives.
 
 I replaced WhatsApp with [Signal](https://signal.org/), Twitter (is anyone left?) with [Mastodon](https://joinmastodon.org/), Reddit with [Lemmy](https://vger.app/).
+
+Speaking of Telegram: it is not a secure messenger. If you absolutely must use it, at the very least revoke its access to your location and contacts.
+Better yet: just run Telegram in your browser and close the tab when you're done.
 
 In general, I'm trying to kill every algorithmic feed.
 We called our parents out for watching "zombie box," we are doomscrolling now.
@@ -358,7 +366,6 @@ You can delete all the apps you want, but Apple and Google control the root laye
 My experience using a de-Googled LineageOS phone at the time of writing (early 2026) has been so-so. I could get almost everything to work.
 I don't expect a non-software engineer to be able to do that.
 I can vividly imagine: "No, Mom, you need to re-patch kernel with Magisk on the second slot _before_ rebooting your phone after OTA update — How many times do I have to tell you?!"
-I don't expect anyone without a technical background to be able to.
 
 On a trip, I couldn't have survived without a backup iPhone for banking. I could get banking apps to work on LineageOS, but not 100% reliably.
 Moreover, banking and government services are always a moving target; you are always one update away from losing access.
@@ -443,9 +450,9 @@ This option is the best of both worlds: you have full control over your DNS, you
 ## Personal takeaways
 
 My main takeaway is that privacy is a spectrum.
-It is cheap to fight basic tracking.
+It is worth nothing to fight basic tracking.
 
-But even with all the fancy privacy tools, it takes one stupid mistake to reveal your identity.
+But even with all the fancy privacy tools, it takes one stupid mistake to end your anonymity.
 
 - You forget to close a tab and connect to a VPN...
 - You accidentally log in with your real email (autocompleted)...
@@ -470,6 +477,7 @@ Firefox with uBlock Origin is a no-brainer.
 Funny thing: you will use the same evasive tactics criminals use.
 Are you a criminal? Do you have something to hide?
 Don't let them bully you. They ask for your phone number for "2FA verification" to "protect you" and sell it to advertisers. [^fca-twitter]
+They steal your data and settle class action lawsuits for 0.000001% of the profits. [^google-court]
 
 You are fighting for the basic right not to live behind glass walls. While tech CEOs are building the bunkers for themselves, they also protect their kids from the dystopia they create. [^tech-free]
 
@@ -489,3 +497,5 @@ Be curious. Don't give your data without a reason. Be able to say:
 [^tech-free]: [Bill Gates and Steve Jobs raised their kids tech-free — and it should've been a red flag](https://www.independent.co.uk/tech/bill-gates-and-steve-jobs-raised-their-kids-techfree-and-it-should-ve-been-a-red-flag-a8017136.html)
 
 [^fca-twitter]: [FTC Charges Twitter with Deceptively Using Account Security Data to Sell Targeted Ads](https://www.ftc.gov/news-events/news/press-releases/2022/05/ftc-charges-twitter-deceptively-using-account-security-data-sell-targeted-ads)
+
+[^google-court]: [Google погоджується виплатити 135 мільйонів доларів за позовом щодо передачі даних Android](https://www.reuters.com/sustainability/boards-policy-regulation/google-pay-135-million-settle-android-data-transfer-lawsuit-2026-01-28/)

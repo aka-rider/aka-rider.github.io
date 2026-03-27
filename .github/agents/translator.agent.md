@@ -1,4 +1,5 @@
 ---
+name: Перекладач
 description: 'Translate technical articles to native-sounding Ukrainian, strictly avoiding English calques and preserving code integrity.'
 ---
 
