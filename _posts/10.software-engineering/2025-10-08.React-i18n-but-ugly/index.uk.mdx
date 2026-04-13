@@ -98,32 +98,30 @@ export type Lang = keyof typeof i18n; // 'en' | 'uk'
 // "en.title", "uk.title", "en.rootPage.heroCTA", ... і так далі
 type Path<T> = T extends object
   ? {
-    [K in keyof T]: K extends string ? K | `${K}.${Path<T[K]>}` : never;
-  }[keyof T]
+      [K in keyof T]: K extends string ? K | `${K}.${Path<T[K]>}` : never;
+    }[keyof T]
   : never;
 
 type I18nPath = Path<(typeof i18n)[Lang]>;
 
 export const getTranslations =
   (lang: string) =>
-    (path: I18nPath): string => {
-      if (!(lang in i18n)) return String(path);
+  (path: I18nPath): string => {
+    if (!(lang in i18n)) return String(path);
 
-      const keys = path.split('.');
-      let i18node: any = i18n[lang as Lang];
+    const keys = path.split('.');
+    let i18node: any = i18n[lang as Lang];
 
-      for (const key of keys) {
-        if (i18node && typeof i18node === 'object' && key in i18node) {
-          i18node = i18node[key];
-        } else {
-          return String(path);
-        }
+    for (const key of keys) {
+      if (i18node && typeof i18node === 'object' && key in i18node) {
+        i18node = i18node[key];
+      } else {
+        return String(path);
       }
+    }
 
-      return typeof i18node === 'object'
-        ? String(path)
-        : String(i18node);
-    };
+    return typeof i18node === 'object' ? String(path) : String(i18node);
+  };
 ```
 
 З точки зору кінцевого користувача все виглядає як було.
@@ -226,18 +224,20 @@ export const navData = [
 Готові фреймворки краще підходять для динамічно генерованого контенту.
 Я не кажу що мій підхід найкращий, але ж я можу згенерувати `messages-${lang}.json` якщо буде треба.
 
-<TLDR title="Всі так роблять — то ще не привід" />
+<TLDR title="Всі так роблять — то ще не привід" >
 
 - фреймворки можуть бути тягарем для статичного сайту
 - суворі рамки тримають рішення мінімально можливим — YAGNI
 - ітерація замість ідеального дизайну
 - [демонструю цей самий сайт](https://github.com/aka-rider/aka-rider.github.io)
 
-
+</TLDR>
 
 ---
+
 <small className="text-xs text-gray-500" >
 Ваші `-> 👍 <-` мотивують писати
 
 Фото від [sunday Choi](https://unsplash.com/@gosunday85) на [Unsplash](https://unsplash.com/photos/danke-thanks-grazie-merci-RpXMySRW0AE)
+
 </small>
