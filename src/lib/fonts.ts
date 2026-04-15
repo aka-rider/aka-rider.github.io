@@ -3,7 +3,7 @@ import { JetBrains_Mono, Manrope, Merriweather } from 'next/font/google';
 export const fontMono = JetBrains_Mono({
   subsets: ['latin'],
   variable: '--font-mono',
-  display: 'swap',
+  display: 'optional',
   preload: false,
 });
 
