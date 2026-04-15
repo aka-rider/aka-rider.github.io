@@ -48,6 +48,8 @@ export default [
         Event: 'readonly',
         MouseEvent: 'readonly',
         Node: 'readonly',
+        IntersectionObserver: 'readonly',
+        IntersectionObserverEntry: 'readonly',
       },
     },
     plugins: {

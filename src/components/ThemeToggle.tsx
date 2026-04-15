@@ -2,16 +2,31 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
-import { HiOutlineCog } from 'react-icons/hi2';
-import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 
-export default function ThemeToggle() {
+interface ThemeToggleProps {
+  iconSystem: React.ReactNode;
+  iconDark: React.ReactNode;
+  iconLight: React.ReactNode;
+}
+
+export default function ThemeToggle({ iconSystem, iconDark, iconLight }: ThemeToggleProps) {
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => setMounted(true), []);
 
-  if (!mounted) return null;
+  if (!mounted) {
+    return (
+      <div className='flex items-center justify-end w-max'>
+        <div className='flex items-center p-2 rounded-lg'>
+          <span className='relative inline-flex h-5 w-10 items-center rounded-full bg-slate-300 dark:bg-slate-600'>
+            <span className='inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-200 translate-x-1' />
+          </span>
+          <span className='pl-2 w-5 h-5' />
+        </div>
+      </div>
+    );
+  }
 
   const cycleTheme = () => {
     if (theme === 'light') {
@@ -31,14 +46,8 @@ export default function ThemeToggle() {
   };
 
   const getIcon = () => {
-    if (theme === 'system') {
-      return <HiOutlineCog className='w-5 h-5' />;
-    }
-    return getDisplayTheme() === 'dark' ? (
-      <MdOutlineDarkMode className='w-5 h-5' />
-    ) : (
-      <MdOutlineLightMode className='w-5 h-5' />
-    );
+    if (theme === 'system') return iconSystem;
+    return getDisplayTheme() === 'dark' ? iconDark : iconLight;
   };
 
   const getTooltip = () => {
@@ -62,7 +71,7 @@ export default function ThemeToggle() {
               }`}
           />
         </span>
-        <span className='pl-2' title={getTooltip()}>
+        <span className='pl-2'>
           {getIcon()}
         </span>
       </button>

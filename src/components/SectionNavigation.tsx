@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import clsx from '@/lib/clsxm';
 
@@ -22,64 +22,47 @@ export default function SectionNavigation({
   onSectionClick,
 }: SectionNavigationProps) {
   const [activeIndex, setActiveIndex] = useState(0);
+  const ratiosRef = useRef<Map<string, number>>(new Map());
 
   useEffect(() => {
-    const handleScroll = () => {
-      // Check if scrolled to bottom of the page
-      const isAtBottom =
-        window.innerHeight + window.scrollY >= document.body.offsetHeight - 20;
+    const ratios = ratiosRef.current;
 
-      if (isAtBottom) {
-        // When at the bottom, set the last section as active
-        setActiveIndex(sections.length - 1);
-        return;
-      }
-
-      const sectionElements = sections.map((section) =>
-        document.getElementById(section.key),
-      );
-      const viewportHeight = window.innerHeight;
-
-      // Find the section with the highest visibility ratio
-      const sectionVisibility = sectionElements.map((section, index) => {
-        if (!section) return { index, visibility: 0 };
-
-        const rect = section.getBoundingClientRect();
-        const sectionTop = window.scrollY + rect.top;
-        const sectionBottom = sectionTop + rect.height;
-
-        // Calculate how much of the section is visible in the viewport
-        const visibleTop = Math.max(sectionTop, window.scrollY);
-        const visibleBottom = Math.min(
-          sectionBottom,
-          window.scrollY + viewportHeight,
-        );
-        const visibleHeight = Math.max(0, visibleBottom - visibleTop);
-
-        // Calculate visibility ratio (0 to 1)
-        const visibility = visibleHeight / rect.height;
-
-        return { index, visibility };
+    const updateActive = () => {
+      let maxRatio = -1;
+      let maxIndex = 0;
+      sections.forEach((section, index) => {
+        const ratio = ratios.get(section.key) ?? 0;
+        if (ratio > maxRatio) {
+          maxRatio = ratio;
+          maxIndex = index;
+        }
       });
-
-      // Find the section with highest visibility
-      const mostVisible = sectionVisibility.reduce((max, current) =>
-        current.visibility > max.visibility ? current : max,
-      );
-
-      setActiveIndex(mostVisible.index);
+      setActiveIndex(maxIndex);
     };
 
-    window.addEventListener('scroll', handleScroll);
-    handleScroll(); // Initial check
-    return () => window.removeEventListener('scroll', handleScroll);
+    const thresholds = Array.from({ length: 11 }, (_, i) => i / 10);
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        ratios.set(entry.target.id, entry.intersectionRatio);
+      });
+      updateActive();
+    }, { threshold: thresholds });
+
+    sections.forEach((section) => {
+      const el = document.getElementById(section.key);
+      if (el) {
+        ratios.set(section.key, 0);
+        observer.observe(el);
+      }
+    });
+
+    return () => observer.disconnect();
   }, [sections]);
 
   const scrollToSection = (index: number) => {
     const section = sections[index];
     if (!section) return;
 
-    // Close mobile menu if callback provided
     onSectionClick?.();
 
     const element = document.getElementById(section.key);

@@ -30,6 +30,10 @@ const nextConfig = {
   reactStrictMode: true,
   pageExtensions: ['ts', 'tsx', 'mdx'],
 
+  experimental: {
+    optimizePackageImports: ['react-icons'],
+  },
+
   // SVGR
   webpack(config) {
     config.module.rules.push({

@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 
 import '@/styles/styles.css';
@@ -20,6 +20,11 @@ export async function generateMetadata(): Promise<Metadata> {
     params: Promise.resolve({ lang: defaultLang }),
   });
 }
+
+export const viewport: Viewport = {
+  width: 'device-width',
+  initialScale: 1,
+};
 
 export async function generateStaticParams() {
   return Languages.keys().map((lang) => ({ lang }));

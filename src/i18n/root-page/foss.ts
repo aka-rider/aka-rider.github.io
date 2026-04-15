@@ -14,7 +14,7 @@ const foss = [
     },
     website: 'https://cachelot.io',
     github: 'https://github.com/cachelot/cachelot',
-    image: '/images/cachelot.png',
+    image: '/images/cachelot.webp',
   },
   {
     name: 'nanoQ aka nQ',

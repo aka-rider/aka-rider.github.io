@@ -1,4 +1,6 @@
 import { ThemeProvider } from 'next-themes';
+import { HiOutlineCog } from 'react-icons/hi2';
+import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 
 import { fontBody, fontHeader, fontMono } from '@/lib/fonts';
 
@@ -22,6 +24,7 @@ export default function Layout({
   return (
     <html lang={lang} className={fontClasses} suppressHydrationWarning>
       <body className='antialiased bg-white dark:bg-slate-950 text-slate-900 dark:text-slate-50'>
+        <link rel='dns-prefetch' href='//scripts.simpleanalyticscdn.com' />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <a
             href='#main-content'
@@ -31,7 +34,11 @@ export default function Layout({
           <div className='flex flex-col min-h-screen w-11/12 xl:max-w-5xl mx-auto'>
             <div className='w-full flex justify-end items-center gap-4 p-4'>
               <LangSwitcher currentLang={lang} />
-              <ThemeToggle />
+              <ThemeToggle
+                iconSystem={<HiOutlineCog className='w-5 h-5' />}
+                iconDark={<MdOutlineDarkMode className='w-5 h-5' />}
+                iconLight={<MdOutlineLightMode className='w-5 h-5' />}
+              />
             </div>
             <main id='main-content'>{children}</main>
             <Footer lang={lang} />
