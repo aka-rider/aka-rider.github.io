@@ -57,63 +57,6 @@
   }
 }
 
-@keyframes noise {
-  0% {
-    transform: translate(0px, 0px);
-    opacity: 0.45;
-  }
-
-  10% {
-    transform: translate(-50px, 50px);
-    opacity: 0.5;
-  }
-
-  20% {
-    transform: translate(75px, -50px);
-    opacity: 0.45;
-  }
-
-  30% {
-    transform: translate(-50px, 50px);
-    opacity: 0.55;
-  }
-
-  40% {
-    transform: translate(50px, -75px);
-    opacity: 0.35;
-  }
-
-  50% {
-    transform: translate(-50px, 100px);
-    opacity: 0.55;
-  }
-
-  60% {
-    transform: translate(-100px, -50px);
-    opacity: 0.55;
-  }
-
-  70% {
-    transform: translate(50px, 50px);
-    opacity: 0.45;
-  }
-
-  80% {
-    transform: translate(50px, -75px);
-    opacity: 0.4;
-  }
-
-  90% {
-    transform: translate(0px, 100px);
-    opacity: 0.45;
-  }
-
-  100% {
-    transform: translate(-50px, 50px);
-    opacity: 0.4;
-  }
-}
-
 @keyframes slide-up {
   from {
     transform: translateY(100%);
@@ -139,10 +82,6 @@
 
 .animate-flicker {
   animation: flicker 3s linear infinite;
-}
-
-.animate-noise {
-  animation: noise 1.2s steps(8, end) infinite both;
 }
 
 @layer base {
@@ -313,7 +252,6 @@
   .animate-blink,
   .animate-shimmer,
   .animate-flicker,
-  .animate-noise,
   .timeline-fade-in,
   .timeline-pulse,
   .timeline-glow,

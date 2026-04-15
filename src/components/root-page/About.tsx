@@ -32,6 +32,7 @@ export default function About({ title, items }: AboutProps) {
               className='object-cover rounded-lg'
               sizes='(max-width: 768px) 100vw, 50vw'
               priority
+              fetchPriority='high'
             />
           </div>
         </div>

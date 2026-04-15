@@ -1,9 +1,10 @@
 import { JetBrains_Mono, Manrope, Merriweather } from 'next/font/google';
 
 export const fontMono = JetBrains_Mono({
-  subsets: ['latin', 'cyrillic'],
+  subsets: ['latin'],
   variable: '--font-mono',
   display: 'swap',
+  preload: false,
 });
 
 export const fontHeader = Merriweather({
