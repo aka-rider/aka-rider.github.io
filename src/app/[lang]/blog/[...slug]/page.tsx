@@ -9,6 +9,7 @@ import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
 import BlogPost from '@/components/blog/BlogPost';
 import Breadcrumbs from '@/components/blog/Breadcrumbs';
 import Giscus from '@/components/blog/Giscus';
+import PostNavigation from '@/components/blog/PostNavigation';
 import Nav from '@/components/layout/Nav';
 
 import { Lang } from '@/i18n';
@@ -84,6 +85,7 @@ function renderNodeContent(node: BlogNode, lang: Lang) {
     return (
       <>
         <BlogPost post={node} lang={lang} />
+        <PostNavigation post={node} lang={lang} />
         <Giscus
           repo="aka-rider/aka-rider.github.io"
           repoId="MDEwOlJlcG9zaXRvcnkyNjc3MDM0MTc="

@@ -48,8 +48,19 @@ export default function About({ title, items }: AboutProps) {
         </div>
       </div>
 
-      <div className='flex flex-col md:flex-col-reverse gap-8 md:gap-16 mt-8 md:mt-16'>
-        {/* Mobile: Top, Desktop: Bottom - CTA Group */}
+      <div className='flex flex-col gap-8 md:gap-16 mt-8 md:mt-16'>
+        {/* Proofs - Flexible Row */}
+        <div className='flex flex-col md:flex-row gap-8'>
+          {proofs.map((proof, index) => (
+            <div key={index} className='flex-1 p-4 border-l-2 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20'>
+              <p className='text-sm leading-relaxed text-gray-500 dark:text-gray-300 font-medium'>
+                {proof}
+              </p>
+            </div>
+          ))}
+        </div>
+
+        {/* CTA Group */}
         <div className='flex flex-col items-center gap-6'>
           {linkedinCta && (
             <UnstyledLink
@@ -66,18 +77,6 @@ export default function About({ title, items }: AboutProps) {
               {cta}
             </p>
           )}
-        </div>
-
-        {/* Proofs - Flexible Row */}
-        {/* Mobile: Bottom, Desktop: Top */}
-        <div className='flex flex-col md:flex-row gap-8'>
-          {proofs.map((proof, index) => (
-            <div key={index} className='flex-1 p-4 border-l-2 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20'>
-              <p className='text-sm leading-relaxed text-gray-500 dark:text-gray-300 font-medium'>
-                {proof}
-              </p>
-            </div>
-          ))}
         </div>
       </div>
     </Section>

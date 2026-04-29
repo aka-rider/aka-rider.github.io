@@ -17,6 +17,8 @@ export const common = {
     readingTime: 'min',
     viewArchive: 'View Archive →',
     tableOfContents: 'Table of Contents',
+    authorName: 'Iurii Krasnoshchok',
+    authorBio: 'Software architect. I build high-scale backends and mentor engineering teams.',
   },
 
   uk: {
@@ -31,5 +33,7 @@ export const common = {
     readingTime: 'хв',
     viewArchive: 'Архів →',
     tableOfContents: 'Зміст',
+    authorName: 'Юрій Краснощок',
+    authorBio: 'Архітектор ПЗ. Будую високонавантажені бекенди та менторю інженерні команди.',
   },
 } as const;
