@@ -12,12 +12,11 @@ export default function Services({ title, services }: ServicesProps) {
   return (
     <Section id='services' title={title}>
       <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
-        {Object.entries(services).map(([key, service]: [string, any]) => (
+        {Object.entries(services).map(([key, service]) => (
           <ServiceCard
             key={key}
             title={service.title}
             proposition={service.proposition}
-            icons={service.icons}
           />
         ))}
       </div>

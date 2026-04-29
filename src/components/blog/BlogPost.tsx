@@ -5,6 +5,7 @@ import { Post } from '@/lib/blog/types';
 
 import ServerMDX from '@/components/blog/ServerMDX';
 import TableOfContents from '@/components/blog/TableOfContents';
+import PrimaryLink from '@/components/links/PrimaryLink';
 
 import { common, Lang } from '@/i18n';
 
@@ -47,13 +48,29 @@ export default async function BlogPost({ post, lang }: { post: Post; lang: Lang 
             alt={post.title}
             width={1350}
             height={1080}
-            className='w-full h-auto rounded-[20px] shadow-2xl dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] mt-6 mb-10'
+            className='w-full h-auto rounded-[20px] border border-neutral-200 dark:border-neutral-800 mt-6 mb-10'
           />
 
           <ServerMDX source={content} postFilePath={post.filePath} />
+
+          <RssPrompt lang={lang} />
         </article>
         <TableOfContents lang={lang} />
       </div>
     </div>
+  );
+}
+
+function RssPrompt({ lang }: { lang: Lang }) {
+  const text = common[lang].rssPrompt;
+  const match = text.match(/^(.*?)\[(.+?)\]\((.+?)\)(.*)$/);
+  if (!match) return <p className='mt-12 text-sm text-slate-500 dark:text-slate-400'>{text}</p>;
+  const [, before, linkText, href, after] = match;
+  return (
+    <p className='mt-12 text-sm text-slate-500 dark:text-slate-400'>
+      {before}
+      <PrimaryLink href={`/${lang}${href}`}>{linkText}</PrimaryLink>
+      {after}
+    </p>
   );
 }

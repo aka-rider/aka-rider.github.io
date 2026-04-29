@@ -7,6 +7,7 @@ import remarkImagePaths from '@/lib/remark-image-paths';
 
 import Spoiler from '@/components/blog/Spoiler';
 import TLDR from '@/components/blog/TLDR';
+import CodeBlock from '@/components/blog/CodeBlock';
 import PrimaryLink from '@/components/links/PrimaryLink';
 import NextImage from '@/components/NextImage';
 
@@ -38,7 +39,7 @@ const mdxComponents = {
         width={width}
         height={height}
         useSkeleton={true}
-        className={`block w-full h-auto rounded-[16px] overflow-hidden shadow-2xl dark:shadow-[0_20px_40px_rgba(0,0,0,0.4)] my-10 ${className || ''}`}
+        className={`block w-full h-auto rounded-[16px] overflow-hidden border border-neutral-200 dark:border-neutral-800 my-10 ${className || ''}`}
         imgClassName="w-full h-auto"
         {...props}
       />
@@ -46,6 +47,12 @@ const mdxComponents = {
   },
   TLDR,
   Spoiler,
+  figure: (props: Record<string, any>) => {
+    if ('data-rehype-pretty-code-figure' in props) {
+      return <CodeBlock {...props} />;
+    }
+    return <figure {...props} />;
+  },
   hr: () => (
     <div className='my-16 flex justify-center text-slate-300 dark:text-slate-600 select-none' role='separator'>
       <span className='tracking-[0.5em] text-lg'>···</span>

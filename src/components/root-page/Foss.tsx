@@ -17,7 +17,7 @@ export default function Foss({ title, foss }: FossProps) {
     <Section id='foss' title={title} className='flex flex-col gap-4'>
 
       {foss.map((project) => (
-        <Card key={project.name}>
+        <Card key={project.name} className='hover:border-transparent hover:bg-transparent hover:shadow-none hover:translate-y-0'>
           <div className='flex gap-6'>
             {/* Project Image */}
             <div className='flex-shrink-0'>

@@ -1,7 +1,8 @@
 'use client';
 
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import * as React from 'react';
-import { useEffect, useState } from 'react';
+import { Suspense, useCallback } from 'react';
 
 import { Post } from '@/lib/blog/types';
 
@@ -25,38 +26,24 @@ type BlogFeedProps = {
   categories: FeedCategory[];
 };
 
-export default function BlogFeed({ lang, categories }: BlogFeedProps) {
-  // Default to the first category, will be updated by useEffect on mount if hash exists
-  const [activeTab, setActiveTab] = useState<string>(() => {
-    return categories[0]?.slug || '';
-  });
+function BlogFeedInner({ lang, categories }: BlogFeedProps) {
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
+  const categoryParam = searchParams.get('category');
 
-  // Sync state if URL hash changes
-  useEffect(() => {
-    const handleHashChange = () => {
-      const hash = window.location.hash.replace('#', '');
-      if (hash && categories.some(c => c.slug === hash)) {
-        setActiveTab(hash);
-      }
-    };
-
-    // Run once on mount to capture initial hash
-    handleHashChange();
-
-    window.addEventListener('hashchange', handleHashChange);
-    return () => window.removeEventListener('hashchange', handleHashChange);
-  }, [categories]);
+  const activeTab = (categoryParam && categories.some(c => c.slug === categoryParam))
+    ? categoryParam
+    : categories[0]?.slug || '';
 
   const activeCategory = categories.find((c) => c.slug === activeTab) || categories[0];
 
+  const handleTabChange = useCallback((id: string) => {
+    router.push(`${pathname}?category=${id}`, { scroll: false });
+  }, [router, pathname]);
+
   if (!activeCategory) return null;
 
-  const handleTabChange = (id: string) => {
-    setActiveTab(id);
-    window.history.replaceState(null, '', `#${id}`);
-  };
-
-  // We define the navigation logic here so we can pass it to the Nav component
   const navigation = (
     <TabNavigation
       tabs={categories.map((c) => ({ id: c.slug, label: c.title }))}
@@ -76,17 +63,11 @@ export default function BlogFeed({ lang, categories }: BlogFeedProps) {
 
       <div className='min-h-screen pb-20 mt-8'>
         <div className='layout'>
-          {/*
-            Using a key on the container force re-render for animation trigger.
-            Using simple CSS animation classes from tailwind-animate/standard CSS if available
-            or fallback to standard classes
-          */}
           <div
             key={activeTab}
             className="animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both"
           >
             {isVisualMode ? (
-              /* Visual Grid Layout */
               <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8'>
                 {posts.map((post) => (
                   <VisualPostPreview
@@ -98,7 +79,6 @@ export default function BlogFeed({ lang, categories }: BlogFeedProps) {
                 ))}
               </div>
             ) : (
-              /* Technical List Layout */
               <div className='flex flex-col divide-y divide-gray-200 dark:divide-gray-800'>
                 {posts.map((post) => (
                   <BlogPostPreview
@@ -106,7 +86,7 @@ export default function BlogFeed({ lang, categories }: BlogFeedProps) {
                     lang={lang}
                     post={post}
                     href={post.href}
-                    thumbnail={false} // Force minimal text-only mode
+                    thumbnail={false}
                     className='py-6 first:pt-0 last:pb-0'
                   />
                 ))}
@@ -116,5 +96,13 @@ export default function BlogFeed({ lang, categories }: BlogFeedProps) {
         </div>
       </div>
     </>
+  );
+}
+
+export default function BlogFeed(props: BlogFeedProps) {
+  return (
+    <Suspense fallback={<Nav lang={props.lang}>{null}</Nav>}>
+      <BlogFeedInner {...props} />
+    </Suspense>
   );
 }

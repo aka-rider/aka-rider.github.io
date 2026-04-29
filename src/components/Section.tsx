@@ -12,7 +12,7 @@ export default function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className={clsx(className, 'pt-3 flex flex-col')}>
+    <section id={id} className={clsx('py-8 md:py-16 flex flex-col', className)}>
       <h2 className='p-4 md:p-6'>{title}</h2>
       {children}
     </section>

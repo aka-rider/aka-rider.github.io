@@ -18,7 +18,8 @@ export const common = {
     viewArchive: 'View Archive →',
     tableOfContents: 'Table of Contents',
     authorName: 'Iurii Krasnoshchok',
-    authorBio: 'Software architect. I build high-scale backends and mentor engineering teams.',
+    authorBio: 'Software architect. I build high-scale software and engineering teams.',
+    rssPrompt: 'Liked this? Grab the [RSS feed](/feed.xml) to get notified.',
   },
 
   uk: {
@@ -34,6 +35,7 @@ export const common = {
     viewArchive: 'Архів →',
     tableOfContents: 'Зміст',
     authorName: 'Юрій Краснощок',
-    authorBio: 'Архітектор ПЗ. Будую високонавантажені бекенди та менторю інженерні команди.',
+    authorBio: 'Архітектор ПЗ. Будую високонавантажені системи та інженерні команди.',
+    rssPrompt: 'Сподобалось? Підпишись на [RSS](/feed.xml), щоб не проґавити наступне.',
   },
 } as const;

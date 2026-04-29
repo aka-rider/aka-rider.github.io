@@ -17,16 +17,7 @@ export default async function HomePage({
 
   const content = rootPage[lang];
 
-  // Define section order - single source of truth
-  const sectionOrder = [
-    'about',
-    'blog',
-    'foss',
-    'services',
-  ] as const satisfies (keyof typeof rootPage[Lang])[];
-
-  // Prepare navigation items from section order
-  const navSections = sectionOrder.slice(1).map((sectionId) => ({
+  const navSections = (['blog', 'services', 'foss'] as const).map((sectionId) => ({
     key: sectionId,
     name: content[sectionId].name,
   }));
@@ -37,41 +28,19 @@ export default async function HomePage({
         <SectionNavigation sections={navSections} />
       </Nav>
 
-      {sectionOrder.map((sectionId) => {
-        const section = content[sectionId];
+      <About
+        title={content.about.name}
+        items={(content.about as any).items}
+      />
 
-        // Handle each section with proper props
-        switch (sectionId) {
-          case 'about':
-            return (
-              <About
-                key={sectionId}
-                title={section.name}
-                items={(section as any).items}
-              />
-            );
+      <BlogPreview title={content.blog.name} lang={lang} />
 
-          case 'blog':
-            return (
-              <BlogPreview key={sectionId} title={section.name} lang={lang} />
-            );
+      <Services
+        title={content.services.name}
+        services={(content.services as any).items}
+      />
 
-          case 'services':
-            return (
-              <Services
-                key={sectionId}
-                title={section.name}
-                services={(section as any).items}
-              />
-            );
-
-          case 'foss':
-            return <Foss key={sectionId} title={section.name} foss={(section as any).items} />;
-
-          default:
-            return null;
-        }
-      })}
+      <Foss title={content.foss.name} foss={(content.foss as any).items} />
     </main>
   );
 }

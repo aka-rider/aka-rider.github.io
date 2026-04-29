@@ -49,16 +49,12 @@ export default function About({ title, items }: AboutProps) {
       </div>
 
       <div className='flex flex-col gap-8 md:gap-16 mt-8 md:mt-16'>
-        {/* Proofs - Flexible Row */}
-        <div className='flex flex-col md:flex-row gap-8'>
+        {/* Proofs */}
+        <ul className='list-disc list-inside space-y-2 text-sm text-gray-600 dark:text-gray-300'>
           {proofs.map((proof, index) => (
-            <div key={index} className='flex-1 p-4 border-l-2 border-gray-200 dark:border-gray-700 bg-gray-50/50 dark:bg-gray-800/20'>
-              <p className='text-sm leading-relaxed text-gray-500 dark:text-gray-300 font-medium'>
-                {proof}
-              </p>
-            </div>
+            <li key={index}>{proof}</li>
           ))}
-        </div>
+        </ul>
 
         {/* CTA Group */}
         <div className='flex flex-col items-center gap-6'>
@@ -82,5 +78,3 @@ export default function About({ title, items }: AboutProps) {
     </Section>
   );
 }
-
-
