@@ -90,85 +90,80 @@
     scroll-behavior: smooth;
   }
 
-  /* Typography hierarchy - blog.css styles prevail */
+  /* Typography hierarchy */
   .h0 {
     @apply text-3xl font-bold md:text-5xl;
   }
 
   h1,
   .h1 {
-    @apply text-2xl font-bold md:text-4xl;
+    @apply text-3xl font-bold md:text-5xl;
     font-family: var(--font-header);
-    letter-spacing: 0.05em;
-    /* Blog padding takes precedence over globals padding */
-    padding-top: 2rem;
-    padding-bottom: 3rem;
+    letter-spacing: -0.015em;
   }
 
   h2,
   .h2 {
-    @apply text-xl font-bold md:text-3xl pb-5 pt-5;
+    @apply text-xl font-bold md:text-3xl;
     font-family: var(--font-header);
-    letter-spacing: 0.05em;
-    /* Blog padding takes precedence over globals padding */
-    padding-top: 1rem;
-    padding-bottom: 2rem;
+    letter-spacing: -0.015em;
+    padding-top: 3rem;
+    padding-bottom: 1rem;
   }
 
   h3,
   .h3 {
     @apply text-lg font-bold md:text-2xl;
-    letter-spacing: 0.05em;
-    padding-top: 1rem;
-    padding-bottom: 1rem;
+    letter-spacing: 0;
+    padding-top: 2rem;
+    padding-bottom: 0.5rem;
   }
 
   h4,
   .h4 {
     @apply text-base font-bold md:text-lg;
-    letter-spacing: 0.05em;
+    letter-spacing: 0;
     padding-top: 1rem;
-    padding-bottom: 1rem;
+    padding-bottom: 0.5rem;
   }
 
   body,
   p,
   .p {
     font-family: var(--font-body);
-    line-height: 1.6;
+    line-height: 1.7;
   }
 
-  pre,
-  code {
+  /* Code blocks (rehype-pretty-code) */
+  [data-rehype-pretty-code-figure] pre {
     font-family: var(--font-mono);
     font-size: 0.9rem;
-    padding-left: 0.5rem;
     margin: 2rem 0;
-  }
-
-  pre {
     max-width: 100%;
     overflow-x: auto;
   }
 
-  blockquote {
-    font-style: italic;
-    opacity: 0.8;
-    padding-left: 2rem;
-    margin-left: 0;
-    margin: 1rem 0 1rem 0;
-    position: relative;
+  /* Inline code */
+  :not(pre)>code {
+    font-family: var(--font-mono);
+    font-size: 0.85em;
+    @apply bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5;
   }
 
-  blockquote::before {
-    content: '"';
-    font-size: 3em;
-    font-weight: bold;
-    @apply text-slate-400 dark:text-slate-500;
-    position: absolute;
-    left: -0.25rem;
-    top: -0.25rem;
-    line-height: 1;
+  blockquote {
+    font-style: italic;
+    padding-left: 1.5rem;
+    margin: 1.5rem 0;
+    position: relative;
+    @apply border-l-3 border-sky-500/40 dark:border-sky-400/30 bg-slate-50/50 dark:bg-slate-800/30 rounded-r-lg py-3 pr-4;
+  }
+
+  blockquote p:first-child {
+    margin-top: 0;
+  }
+
+  blockquote p:last-child {
+    margin-bottom: 0;
   }
 }
 
@@ -271,6 +266,57 @@
 }
 
 @layer components {
+
+  /* Blog post prose overrides */
+  .blog-prose {
+    @apply break-words;
+    color: theme('colors.slate.800');
+  }
+
+  .dark .blog-prose {
+    color: theme('colors.slate.300');
+  }
+
+  .blog-prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.800');
+  }
+
+  .dark .blog-prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.300');
+  }
+
+  .blog-prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.800');
+  }
+
+  .dark .blog-prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.300');
+  }
+
+  .blog-prose :where(h1, h2, h3, h4, h5, h6):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.900');
+  }
+
+  .dark .blog-prose :where(h1, h2, h3, h4, h5, h6):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.200');
+  }
+
+  .blog-prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.900');
+  }
+
+  .dark .blog-prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    color: theme('colors.slate.200');
+  }
+
+  .blog-prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .blog-prose h1 {
+    @apply !pb-2;
+  }
 
   /* Reduce footnotes contrast */
   .prose .footnotes,

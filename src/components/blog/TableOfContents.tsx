@@ -14,7 +14,7 @@ interface TocItem {
 }
 
 /**
- * Desktop (2xl+): sticky right sidebar with progressive disclosure — h2 always visible,
+ * Desktop (xl+): sticky right sidebar with progressive disclosure — h2 always visible,
  * h3/h4 revealed only for the currently active section.
  * Mobile/tablet: FAB at bottom-right that opens a bottom-sheet TOC.
  */
@@ -117,9 +117,9 @@ export default function TableOfContents({
 
   return (
     <>
-      {/* Desktop (2xl+): sticky sidebar to the right of article */}
+      {/* Desktop (xl+): sticky sidebar to the right of article */}
       <aside
-        className='hidden 2xl:block absolute top-0 left-full h-full ml-8 w-44'
+        className='hidden xl:block absolute top-0 left-full h-full ml-8 w-44'
         aria-label={title}
       >
         <nav className='sticky top-20'>
@@ -149,7 +149,7 @@ export default function TableOfContents({
       </aside>
 
       {/* Mobile / tablet: FAB + bottom sheet */}
-      <div className='2xl:hidden'>
+      <div className='xl:hidden'>
         {/* Floating action button */}
         <button
           onClick={() => setSheetOpen(true)}

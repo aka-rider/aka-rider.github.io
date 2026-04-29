@@ -44,20 +44,22 @@ export default async function BlogPage({
     }
   }
 
-  // Generate breadcrumbs by traversing up the parent chain, then add current node
+  // Generate breadcrumbs by traversing up the parent chain
   const breadcrumbs: BlogNode[] = [];
   let current: BlogNode | undefined = node;
   while (current?.parent) {
     breadcrumbs.unshift(current.parent);
     current = current.parent;
   }
-  // Add the current node as the last breadcrumb
-  breadcrumbs.push(node);
+  // Only include current node for category pages, not posts
+  if (node.type !== 'Post') {
+    breadcrumbs.push(node);
+  }
 
   return (
     <>
       <Nav lang={lang}>
-        <Breadcrumbs lang={lang} breadcrumbs={breadcrumbs} />
+        <Breadcrumbs lang={lang} breadcrumbs={breadcrumbs} activeIndex={node.type === 'Post' ? -1 : undefined} />
       </Nav>
       <main>{renderNodeContent(node, lang)}</main>
     </>

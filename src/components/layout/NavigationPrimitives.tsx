@@ -12,7 +12,7 @@ export const NAV_CONTAINER_CLASSES =
 // Unified item styles for both buttons (tabs) and links (breadcrumbs)
 export const getNavItemClasses = (isActive: boolean) =>
   clsx(
-    'uppercase text-sm transition-all duration-200 px-3 py-0 flex items-center h-full relative top-[1px] shrink-0 snap-start',
+    'uppercase text-sm transition-all duration-200 px-3 py-0 flex items-center h-full shrink-0 snap-start',
     'cursor-pointer m-0 border-b-2',
     isActive
       ? 'text-sky-600 dark:text-sky-400 border-sky-600 dark:border-sky-400 font-bold'

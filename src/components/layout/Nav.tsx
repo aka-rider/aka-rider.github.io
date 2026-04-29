@@ -22,7 +22,7 @@ export default function Nav({ lang, children }: NavProps) {
         </div>
 
         {children && (
-          <div className='flex items-center justify-center flex-1 min-w-0 h-full overflow-x-auto no-scrollbar mx-2 md:mx-4'>
+          <div className='flex items-center justify-center flex-1 min-w-0 h-full mx-2 md:mx-4'>
             {children}
           </div>
         )}

@@ -46,7 +46,11 @@ const mdxComponents = {
   },
   TLDR,
   Spoiler,
-  hr: () => <hr className='mt-15 mb-10 opacity-30 justify-center' />,
+  hr: () => (
+    <div className='my-16 flex justify-center text-slate-300 dark:text-slate-600 select-none' role='separator'>
+      <span className='tracking-[0.5em] text-lg'>···</span>
+    </div>
+  ),
 };
 
 interface ServerMDXProps {
