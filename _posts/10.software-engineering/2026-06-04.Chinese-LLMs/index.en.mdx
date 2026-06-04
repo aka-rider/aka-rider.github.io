@@ -1,0 +1,77 @@
+---
+title: 'Chinese Large Language Models'
+date: '2026-06-04'
+image: 'panda-eating.webp'
+tags: ['software', 'llm', 'tooling']
+---
+
+Astrologers proclaim week of Terrible Plague. Prices for GitHub Copilot in my case went up 20-30x.
+So I started testing Chinese models through the Hugging Face router [^hf-models].
+
+<TLDR>
+  The distance in quality has narrowed, but harnesses and tools surrounding
+  models provide frontier ones with a massive advantage.
+</TLDR>
+
+First impressions — the best harnesses, Claude, VSCode, Codex don't work.
+From crashes to very weird model behavior (tried to read `./../../..` instead of the current directory).
+Partially Claude, OpenAI, and others tailoring their harnesses specifically for their own models.
+Partially, I think, it's broken on purpose. For example, Visual Studio Code supports OpenAI models in Azure, but it doesn't support the same models in AWS.
+Bugs sit open for half a year, and the issues are on the level of extra attributes in JSON (not even missing ones).
+
+So Chinese models work purely in OpenCode. Because OpenCode does the minimum, unlike Claude Code, which constantly adjusts the model's behavior.
+And because of this, Chinese models behave much more unpredictably. That is, where I'm used to things working autonomously, the model here can start reading a file, reading the same file again... and again, and eating tokens.
+
+The question is of course: **do Chinese models save money**?
+The answer is "yes" with a fine print, read on.
+
+These models are much cheaper. 15-25 times cheaper. But on the other hand, they can mess up half the code, they can introduce bugs that will have to be fixed by expensive models or, God forbid — by hand.
+Or, as in my case, the model just spins and reads the same file over and over, and consumes tokens, meaning direct loss of money.
+
+All true, but today Frontier Sonnet at $15/1M tokens outright hallucinated lies. LLMs are unpredictable. Yes, expensive frontier models are less unpredictable than cheap Chinese ones.
+But overall, we need to consider this unpredictability as something inevitable and build development processes to neutralize this factor.
+
+If we talk about specific Chinese models, I don't have a final opinion yet, because there's a learning curve to get through, just like it was 6-9 months ago with frontier models.
+There are some tasks that Chinese models handle beautifully, and some tasks — poorly.
+
+Definitely, frontier (today) are simpler to use.
+
+My benchmark is `Qwen-3.6`, which I run locally — is an absolutely incredible model, considering 24 GB of VRAM.
+For example, `DeepSeek V4 Pro`, 850 GB VRAM, $3.38 seemed worse to me for planning and writing code than `Qwen-3.6`. But the same `DeepSeek V4 Pro` is very good at independently untangling complex bugs — set and forget.
+So far, zero complaints with `GLM-5.1` — it's subjectively somewhere on par with modern `Opus-4.x` or `Gemini 3.1 Pro`. Costs $4.40 instead of $25 or $12 — just grab it and use it.
+
+`DeepSeek V4 Flash` is interesting first for its price of $0.28/1M, and second — sometimes I get 140-160 tok/sec, and such throughput is quality in itself.
+For tasks on the level of "write code following a detailed plan" or "explain what this code does," expensive LLMs have almost no advantage — the result is the same.
+The quality of this model is hard to evaluate so far, nothing to compare with. Will need to give it various tasks and get used to its behavior.
+
+`Kimi K2.6` is called the workhorse — the Chinese Sonnet at $3.40 instead of $15. It's genuinely good, but 20-40 tok/sec throughput doesn't let me work comfortably, and moreover, at $4.40 there's already a subjectively better `GLM-5.1`.
+
+`MiniMax-M2.7` at $1.20 handled tasks on the level of pair programming, but there are no final conclusions yet either.
+
+There are two related thoughts I really like, and I've been thinking about them a lot lately.
+The first — about the fact that we're used to discrete code, and now we have probabilistic code.
+The probabilistic code is here, and we can't get rid of it. So right now the engineering problem is how to marry discrete and probabilistic code so that together they reliably deliver the desired result.
+
+The other thought is very similar but it's about software development specifically — that vibe coding era is over and context engineering has begun.
+
+On one hand, frontier model development has really slowed down. On the other hand, many smaller labs are catching up to the giants: Anthropic, OpenAI.
+(Chinese labs, by the way, used Opus and GPT-5.x to train their own models. Anthropic found more than 20,000 Chinese accounts that were used to train these models. A similar story happened with OpenAI.)
+
+So the model is no longer a moat. What is the product, and what all the major labs rushed after — is the combination of the model and the tools surrounding it.
+The same model rose from top-30 place to top-5 on Terminal Bench 2.0 with the help of a specialized harness [^harness-engineering].
+
+This is incredibly interesting. For some time, the quality benchmark for models was SWE-bench, of course it was hacked — SWE-bench questions and answers were included in all training datasets.
+And now Terminal Bench 2.0 is one of the main proxy indicators of model quality. This makes sense — the ability to use tools and plan multi-step processes is directly the ability to maintain software.
+And here's direct proof that discrete code can close the gap between incredibly expensive models — terabytes of VRAM / tens of kilowatts of power consumption vs. relatively small 80 GB / 300 watts.
+
+But of course, all players in the market want you to use their harness combined specifically with their models. They want to create vendor lock-in, tighten the screws, and raise prices.
+
+With this in mind, experiments with other models and other tools make sense for me, as well as looking for and building own development infrastructure.
+
+---
+
+Photo by <a href="https://unsplash.com/@sid_balachandran">Sid Balachandran</a> on <a href="https://unsplash.com/photos/panda-eating-bamboo-_9a-3NO5KJE">Unsplash</a>
+
+[^hf-models]: [Hugging Face Inference Models](https://huggingface.co/inference/models)
+
+[^harness-engineering]: [TLDR: Our coding agent went from Top 30 to Top 5 on Terminal Bench 2.0.](https://www.langchain.com/blog/improving-deep-agents-with-harness-engineering)
