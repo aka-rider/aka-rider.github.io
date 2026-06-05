@@ -11,7 +11,6 @@
 
 /* Custom Animations */
 @keyframes blink {
-
   0%,
   50% {
     opacity: 0;
@@ -34,7 +33,6 @@
 }
 
 @keyframes flicker {
-
   0%,
   19.999%,
   22%,
@@ -144,7 +142,7 @@
   }
 
   /* Inline code */
-  :not(pre)>code {
+  :not(pre) > code {
     font-family: var(--font-mono);
     font-size: 0.85em;
     @apply bg-slate-100 dark:bg-slate-800 rounded px-1.5 py-0.5;
@@ -166,7 +164,6 @@
     margin-bottom: 0;
   }
 }
-
 
 /* Timeline Component Enhanced Animations */
 @keyframes timeline-fade-in {
@@ -194,7 +191,6 @@
 }
 
 @keyframes timeline-pulse {
-
   0%,
   100% {
     transform: scale(1);
@@ -208,7 +204,6 @@
 }
 
 @keyframes timeline-glow {
-
   0%,
   100% {
     box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3);
@@ -243,7 +238,6 @@
 
 /* Reduced motion support - respect user preferences */
 @media (prefers-reduced-motion: reduce) {
-
   .animate-blink,
   .animate-shimmer,
   .animate-flicker,
@@ -266,7 +260,6 @@
 }
 
 @layer components {
-
   /* Blog post prose overrides */
   .blog-prose {
     @apply break-words;
@@ -277,39 +270,56 @@
     color: theme('colors.slate.300');
   }
 
-  .blog-prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .blog-prose
+    :where(p):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     color: theme('colors.slate.800');
   }
 
-  .dark .blog-prose :where(p):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .dark
+    .blog-prose
+    :where(p):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     color: theme('colors.slate.300');
   }
 
-  .blog-prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .blog-prose
+    :where(li):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     color: theme('colors.slate.800');
   }
 
-  .dark .blog-prose :where(li):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .dark
+    .blog-prose
+    :where(li):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     color: theme('colors.slate.300');
   }
 
-  .blog-prose :where(h1, h2, h3, h4, h5, h6):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .blog-prose
+    :where(h1, h2, h3, h4, h5, h6):not(
+      :where([class~='not-prose'], [class~='not-prose'] *)
+    ) {
     color: theme('colors.slate.900');
   }
 
-  .dark .blog-prose :where(h1, h2, h3, h4, h5, h6):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .dark
+    .blog-prose
+    :where(h1, h2, h3, h4, h5, h6):not(
+      :where([class~='not-prose'], [class~='not-prose'] *)
+    ) {
     color: theme('colors.slate.200');
   }
 
-  .blog-prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .blog-prose
+    :where(strong):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     color: theme('colors.slate.900');
   }
 
-  .dark .blog-prose :where(strong):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .dark
+    .blog-prose
+    :where(strong):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     color: theme('colors.slate.200');
   }
 
-  .blog-prose :where(pre):not(:where([class~="not-prose"], [class~="not-prose"] *)) {
+  .blog-prose
+    :where(pre):not(:where([class~='not-prose'], [class~='not-prose'] *)) {
     width: 100%;
     overflow-x: auto;
   }
@@ -345,10 +355,13 @@
   .prose ul {
     @apply my-6;
   }
+
+  .prose p {
+    @apply my-4;
+  }
 }
 
 @layer utilities {
-
   /* Hide scrollbar for Chrome, Safari and Opera */
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
