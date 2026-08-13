@@ -1,15 +1,30 @@
 import { compile, run } from '@mdx-js/mdx';
+import dynamic from 'next/dynamic';
 import React from 'react';
+import * as devRuntime from 'react/jsx-dev-runtime';
 import * as runtime from 'react/jsx-runtime';
 
 import remarkReplaceLinks from '@/lib/remark-i18n-links';
 import remarkImagePaths from '@/lib/remark-image-paths';
 
+import CodeBlock from '@/components/blog/CodeBlock';
+import { Chip, ChipStream } from '@/components/blog/llm/Chip';
+import LadderDiagram from '@/components/blog/llm/LadderDiagram';
+import SequenceDiagram from '@/components/blog/llm/SequenceDiagram';
 import Spoiler from '@/components/blog/Spoiler';
 import TLDR from '@/components/blog/TLDR';
-import CodeBlock from '@/components/blog/CodeBlock';
 import PrimaryLink from '@/components/links/PrimaryLink';
 import NextImage from '@/components/NextImage';
+
+const TemperatureDemo = dynamic(
+  () => import('@/components/blog/llm/TemperatureDemo')
+);
+const AttentionDemo = dynamic(
+  () => import('@/components/blog/llm/AttentionDemo')
+);
+const ToolCallDemo = dynamic(
+  () => import('@/components/blog/llm/ToolCallDemo')
+);
 
 import { rehypePlugins, sharedRemarkPlugins } from '/mdx-config';
 
@@ -47,6 +62,30 @@ const mdxComponents = {
   },
   TLDR,
   Spoiler,
+  Chip,
+  ChipStream,
+  TemperatureDemo,
+  AttentionDemo,
+  ToolCallDemo,
+  LadderDiagram,
+  SequenceDiagram,
+  table: (props: React.ComponentProps<'table'>) => (
+    <div className='overflow-x-auto my-6'>
+      <table className='w-full border-collapse' {...props} />
+    </div>
+  ),
+  th: (props: React.ComponentProps<'th'>) => (
+    <th
+      className='border-b border-slate-300 dark:border-slate-600 text-left font-semibold px-3 py-2 align-top'
+      {...props}
+    />
+  ),
+  td: (props: React.ComponentProps<'td'>) => (
+    <td
+      className='border-b border-slate-200 dark:border-slate-700 px-3 py-2 align-top'
+      {...props}
+    />
+  ),
   figure: (props: Record<string, any>) => {
     if ('data-rehype-pretty-code-figure' in props) {
       return <CodeBlock {...props} />;
@@ -66,10 +105,11 @@ interface ServerMDXProps {
 }
 
 export default async function ServerMDX({ source, postFilePath }: ServerMDXProps) {
+  const isDev = process.env.NODE_ENV === 'development';
   try {
     const compiled = await compile(source, {
       outputFormat: 'function-body',
-      development: process.env.NODE_ENV === 'development',
+      development: isDev,
       remarkPlugins: [
         ...sharedRemarkPlugins,
         remarkReplaceLinks,
@@ -79,7 +119,7 @@ export default async function ServerMDX({ source, postFilePath }: ServerMDXProps
     });
 
     const { default: MDXContent } = await run(compiled, {
-      ...runtime,
+      ...(isDev ? devRuntime : runtime),
       baseUrl: import.meta.url,
     });
 
