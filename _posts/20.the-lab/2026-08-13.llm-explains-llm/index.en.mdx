@@ -1,0 +1,195 @@
+---
+title: LLM explains LLM
+image: hero.png
+excerpt: |-
+  You query it like a search engine, but it retrieves nothing. An interactive tour of what an LLM actually is —
+  from matrix multiplies up through the token loop, the context window, and tool calling — with live demos you can poke.
+tags: ['llm', 'ai', 'interactive']
+---
+
+<TLDR>
+An LLM is a stateless text-continuation function, trained into a lossy generative index of human text,
+wrapped in a loop of ordinary code that gives it memory (the context window), hands (tools),
+and a steering wheel (everything you put in the window).
+</TLDR>
+
+This page explains a language model the way an engineer would want it explained: as a small pure function plus a lot of unglamorous plumbing. Three colors run through everything below: the <Chip variant='tok'>tokens</Chip> flowing as text, <Chip variant='model'>the model</Chip> itself, and the <Chip variant='harness'>harness</Chip> — ordinary code around it.
+
+## 00 — Your ideas, restated
+
+> "An LLM is trained to predict the next token — but prediction is only a means to communicate back."
+>
+> **Right, and sharper than you think.** Prediction is the training objective and the I/O channel; the capability that objective forces into existence is a model of whatever produces text. To get good at predicting the next word of the whole internet, you must implicitly learn grammar, facts, styles, personas, arithmetic-ish circuits, code semantics. The objective is narrow; what it selects for is broad.
+
+> "The function of an LLM is a search engine."
+>
+> **A good anchor — needs one correction.** It is queried like a search engine (context in, relevant continuation out), but it retrieves nothing. There are no documents inside; there is a lossy, compressed, generative index. It answers in its own words, always — which is exactly why it can confabulate: there is no source document to be faithful to. And one level down, the metaphor becomes literally true: attention IS a query–key–value lookup (section 02).
+
+> "Between matrix multiplication and behavior there's a gap I can't see across."
+>
+> **The gap is a ladder.** Same as software: transistor → gate → ALU → instruction → C → API. Nobody understands a web server at the transistor level; nobody needs to. Sections 01–03 climb the equivalent rungs.
+
+## 01 — The core is a pure function
+
+`f(tokens) → probability distribution over the next token`
+
+That is the single most load-bearing reframe on this page. The model is **stateless**. No memory between calls, no goals, no execution. One forward pass in, one distribution out. Every capability you observe from the outside — chat, memory, personality, agency, tool use — lives *outside* this function, in ordinary code.
+
+Spelled out for an engineer: the input is a sequence of integers, token ids drawn from a vocabulary of roughly 100,000 entries. The output is roughly 100,000 floats that sum to 1 — one probability per possible next token.
+
+Text and tokens aren't the same thing. A tokenizer maps text to subword pieces; a token is roughly ¾ of an English word. The word "unbelievably" might split like <Chip variant='tok'>un</Chip><Chip variant='tok'>believ</Chip><Chip variant='tok'>ably</Chip> — an illustrative split; real tokenizers use a learned vocabulary, but the shape is right: common words are one token, rarer ones fragment.
+
+### Demo 1 — The distribution, not the answer
+
+<TemperatureDemo />
+
+The model computed nothing "true" here. It scored every token in the vocabulary for plausibility given the prefix; the chart shows the top 8 candidates, renormalized to 100%. Choosing one is a separate, dumb step downstream — and it's yours: the sampler is harness code, not model code.
+
+> Greedy decoding, temperature, and top-p are settings of the *sampler*, not settings of the model. For the same input, the model always produces the same logits; T rescales those logits before softmax turns them into probabilities. The knowledge stays fixed — only how sharply you commit to its top choices changes.
+
+## 02 — Down the ladder: what f is made of
+
+<LadderDiagram />
+
+Each rung is boring given the rung below it. The interesting emergent fact is that stacking enough boring rungs, trained on enough text, yields the behavior at the top.
+
+### Attention = a differentiable search engine
+
+This is your own metaphor, found in the machinery. Every token position emits a **query** vector ("what am I looking for?"). Every earlier position offers a **key** ("what am I about?") and a **value** ("what I contribute if you look at me"). The score is a query·key dot product; softmax over the scores gives attention weights; the output is a weighted sum of values. It is a soft lookup — a search where every result matches a little.
+
+### Demo 2 — Attention as lookup
+
+<AttentionDemo />
+
+> Weights here are illustrative, shaped like real ones — not extracted from an actual model. For real visualizations: 3Blue1Brown, ["Attention in transformers, step-by-step"](https://www.youtube.com/watch?v=eMlx5fFNoYc). This coreference example is the classic one; real models are context-sensitive — change the sentence to end "…because it was too wide" and attention on **it** shifts toward **street**.
+
+<Spoiler title='02.1 What a matrix multiply is actually doing'>
+
+Your hypothesis was "we multiply weights to filter out." Correct — here it is made precise.
+
+A weight matrix is a **stack of detectors**. Each row is one learned pattern; the dot product of an input against a row measures agreement with that pattern. A big positive result means the detector fires. A negative result actively votes against the pattern — it "filters out."
+
+| | | |
+| --- | --- | --- |
+| input activation | x = [2.0, 0.0, 1.0] | |
+| detector row w₁ | [0.9, −0.2, 0.1] | x·w₁ = 1.8 + 0 + 0.1 = **1.9** → fires |
+| detector row w₂ | [−1.0, 0.5, 0.0] | x·w₂ = −2.0 + 0 + 0 = **−2.0** → suppressed; ReLU clamps it to 0 — genuinely filtered out |
+
+One matmul is thousands of "how much of pattern X is present?" questions answered in parallel. The output vector is a fingerprint of which patterns fired. The next layer's detectors look for patterns *of* patterns — composition is where concepts come from.
+
+> Caveat: rows rarely map to neat human concepts; features are smeared across many dimensions ("superposition") → [Anthropic, "Toy Models of Superposition"](https://transformer-circuits.pub/2022/toy_model/index.html).
+
+> Further reading: ["Attention Is All You Need"](https://arxiv.org/abs/1706.03762) · [nanoGPT model.py, CausalSelfAttention](https://github.com/karpathy/nanoGPT/blob/master/model.py) — the whole mechanism is ~60 lines of PyTorch · Karpathy, ["Let's build GPT: from scratch, in code, spelled out"](https://www.youtube.com/watch?v=kCc8FmEb1nY).
+
+</Spoiler>
+
+## 03 — Up the ladder: the loop and the context window
+
+The autoregressive loop is a short piece of ordinary code. This is **harness**, not model:
+
+```js
+context = tokenize(prompt)
+loop:
+  dist  = f(context)            // the model: one forward pass, stateless
+  token = sample(dist, T)       // the harness: your sampling policy
+  context.append(token)
+  if token == STOP: break
+```
+
+The model is called fresh every single token. "Generating a paragraph" is hundreds of independent evaluations of a pure function, each seeing an input that is exactly one token longer than last time.
+
+### The chat is a file, not a session
+
+Walk a two-turn conversation as the literal token stream the model sees. One chip below stands for a short run of real tokens, grouped for readability.
+
+**Turn 1 — the harness serializes the user's message:**
+
+<ChipStream ariaLabel='Turn 1 serialized tokens'><Chip variant='harness' special>{'<|user|>'}</Chip><Chip variant='tok'>hello</Chip><Chip variant='harness' special>{'<|assistant|>'}</Chip></ChipStream>
+
+**Turn 1 — the model generates:**
+
+<ChipStream ariaLabel='Turn 1 generated tokens'><Chip variant='model' special>{'<think>'}</Chip><Chip variant='model'>Casual greeting. Respond warmly, briefly.</Chip><Chip variant='model' special>{'</think>'}</Chip><Chip variant='model'>Hi!</Chip><Chip variant='model'>How can I help?</Chip><Chip variant='model' special>{'<|end|>'}</Chip></ChipStream>
+
+Thinking tokens are ordinary tokens in the stream. The harness may hide them from the chat UI you see, but the model produced and consumed them like any other text.
+
+**Turn 2 — you send "how are you?" (dimmed = re-sent, every turn · bright = new):**
+
+<ChipStream ariaLabel='Turn 2 full re-sent token stream'><Chip variant='harness' special dim>{'<|user|>'}</Chip><Chip variant='tok' dim>hello</Chip><Chip variant='harness' special dim>{'<|assistant|>'}</Chip><Chip variant='model' special dim>{'<think>'}</Chip><Chip variant='model' dim>Casual greeting. Respond warmly, briefly.</Chip><Chip variant='model' special dim>{'</think>'}</Chip><Chip variant='model' dim>Hi!</Chip><Chip variant='model' dim>How can I help?</Chip><Chip variant='model' special dim>{'<|end|>'}</Chip><Chip variant='harness' special>{'<|user|>'}</Chip><Chip variant='tok'>how are you?</Chip><Chip variant='harness' special>{'<|assistant|>'}</Chip></ChipStream>
+
+The harness does not "add a message to the model's memory." It re-serializes *everything* — the whole turn-1 exchange, dimmed above, plus the new user line — and feeds the entire string to f again, from scratch.
+
+> **The model has no session state — the transcript IS the state.** "It remembers what I said" means "what you said is still inside the input string." Context-window limits, why long chats degrade, why "it forgot" — all corollaries of it falling out of the window.
+
+The assistant is a character the document implies. f just continues documents that look like this one.
+
+> Real chat templates are exactly this string-splicing: [Qwen2.5-7B-Instruct's tokenizer_config.json chat_template](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct/blob/main/tokenizer_config.json), built from `<|im_start|>`/`<|im_end|>` markers · [HF chat templating docs](https://huggingface.co/docs/transformers/chat_templating).
+
+> "Re-feeds everything" is not recomputed from scratch in practice — attention keys/values for the unchanged prefix are cached (the KV cache), an engineering optimization. The semantics stay "the whole transcript goes in." → [nanoGPT model.py](https://github.com/karpathy/nanoGPT/blob/master/model.py) · [HF transformers cache_utils.py](https://github.com/huggingface/transformers/blob/main/src/transformers/cache_utils.py).
+
+## 04 — Tool calling, demystified
+
+**The model never executes anything. It writes; the harness acts.**
+
+Four sentences cover the whole mechanism. (1) The harness puts tool descriptions into the context — more tokens. (2) The model, continuing the document, emits tokens that happen to be shaped like a function call. (3) The harness detects that shape, stops the loop, and runs real code. (4) The result is serialized back into the context as tokens, and the loop resumes. The model experiences a tool result exactly as it experiences user text: as more input.
+
+<SequenceDiagram />
+
+### Demo 3 — Step through a real tool call
+
+<ToolCallDemo />
+
+> [Anthropic, "How tool use works"](https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works) · [OpenAI, "Function calling"](https://developers.openai.com/api/docs/guides/function-calling) — both APIs are this loop with JSON.
+
+Agents are this loop, iterated: emit → act → observe → emit. Nothing else was added.
+
+## 05 — Steering
+
+Given 01–04, every steering lever is one of two kinds: **shape the input** (cheap, per-call) or **change the weights** (expensive, permanent).
+
+| Lever | What it actually does | Kind | Reach for it when |
+| --- | --- | --- | --- |
+| system prompt / persona | selects which document-world f continues | input | always — it's the cheapest big lever |
+| few-shot examples | pattern induction inside the context; f imitates the pattern | input | format/style/edge-case compliance |
+| temperature / top-p | reshapes sampling of the distribution, not the distribution's knowledge | sampler | determinism vs. variety (Demo 1) |
+| RAG / retrieval | pastes ground truth into the context so f can quote instead of recall | input | facts that must be right / fresh |
+| tool calls | lets the harness inject verified results mid-generation | input (mid-loop) | arithmetic, live data, side effects |
+| fine-tuning | nudges the weights: moves which continuations are probable | weights | a behavior you need constantly, not per-prompt |
+| RLHF / RLAIF | weights, optimized against preferences instead of next-token loss | weights | this is largely why base models became assistants |
+
+"Prompt engineering" is unglamorous once you see it: you are composing the query string of the world's strangest search engine, and everything in the context window is part of the query — the system prompt, the transcript so far, the tool results, even the model's own earlier output. Steering is curating that window.
+
+This is also the confabulation fix, restated: a plain LLM interpolates its compressed index; RAG and tools convert "recall" into "read" — the search-engine metaphor's failure mode, patched by engineering.
+
+## 06 — Where the metaphors break
+
+| Metaphor | What it gets right | Where it lies to you |
+| --- | --- | --- |
+| Search engine | query-shaped use; relevance ranking (attention literally does this) | implies retrieval of stored documents; there are none — answers are synthesized, confidence ≠ provenance |
+| Lossy compression (a ZIP of the internet) | explains fuzzy recall, confabulation at the edges, why rare facts are unreliable | implies decompression is passive; f generalizes and composes — it answers questions nothing in the archive contains |
+| Simulator | explains personas, "the assistant is a character", why the system prompt picks the world | under-sells the shared machinery beneath all characters; RLHF has permanently biased which characters are easy to summon |
+
+**A stateless text-continuation function, trained into a lossy generative index of human text, wrapped in a loop of ordinary code that gives it memory (the context window), hands (tools), and a steering wheel (everything you put in the window).**
+
+Prediction was never the point — it was the training signal and the wire format. The thing that learned to predict is the thing you are steering.
+
+## References
+
+**Mechanism**
+
+- [nanoGPT model.py](https://github.com/karpathy/nanoGPT/blob/master/model.py) — CausalSelfAttention; the whole mechanism is ~60 lines of PyTorch
+- [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — the paper that introduced the transformer
+- [3Blue1Brown — "Transformers, the tech behind LLMs"](https://www.youtube.com/watch?v=wjZofJX0v4M)
+- [3Blue1Brown — "Attention in transformers, step-by-step"](https://www.youtube.com/watch?v=eMlx5fFNoYc)
+- [Anthropic — "Toy Models of Superposition"](https://transformer-circuits.pub/2022/toy_model/index.html) — why matrix rows rarely map to clean human concepts
+- [Karpathy — "Let's build GPT: from scratch, in code, spelled out"](https://www.youtube.com/watch?v=kCc8FmEb1nY)
+
+**Templates & caches**
+
+- [Qwen2.5-7B-Instruct tokenizer_config.json](https://huggingface.co/Qwen/Qwen2.5-7B-Instruct/blob/main/tokenizer_config.json) — a real chat_template, tag markers and all
+- [HF chat templating docs](https://huggingface.co/docs/transformers/chat_templating)
+- [HF transformers cache_utils.py](https://github.com/huggingface/transformers/blob/main/src/transformers/cache_utils.py) — the KV cache
+
+**Tool use**
+
+- [Anthropic — "How tool use works"](https://platform.claude.com/docs/en/agents-and-tools/tool-use/how-tool-use-works)
+- [OpenAI — "Function calling"](https://developers.openai.com/api/docs/guides/function-calling)

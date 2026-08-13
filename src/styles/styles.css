@@ -94,6 +94,14 @@
   }
 
   h1,
+  h2,
+  h3,
+  h4 {
+    text-wrap: balance;
+    scroll-margin-top: 5rem;
+  }
+
+  h1,
   .h1 {
     @apply text-3xl font-bold md:text-5xl;
     font-family: var(--font-header);
@@ -139,6 +147,21 @@
     margin: 2rem 0;
     max-width: 100%;
     overflow-x: auto;
+  }
+
+  /* Dual-theme shiki emits only --shiki-* vars; map them to color per theme */
+  [data-rehype-pretty-code-figure] pre,
+  [data-rehype-pretty-code-figure] code[data-theme],
+  [data-rehype-pretty-code-figure] code[data-theme] span {
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+  }
+
+  .dark [data-rehype-pretty-code-figure] pre,
+  .dark [data-rehype-pretty-code-figure] code[data-theme],
+  .dark [data-rehype-pretty-code-figure] code[data-theme] span {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
   }
 
   /* Inline code */
