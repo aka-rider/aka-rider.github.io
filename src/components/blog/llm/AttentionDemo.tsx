@@ -2,81 +2,80 @@
 
 import { type FocusEvent, useRef, useState } from 'react';
 
-import { attentionStrings, type Lang } from '@/components/blog/llm/strings';
+import {
+  CHIP_INLINE_CLASSES,
+  CHIP_INTERACTIVE_CLASSES,
+  chipClasses,
+} from '@/components/blog/llm/Chip';
+import GuessGate from '@/components/blog/llm/GuessGate';
+import { attentionStrings } from '@/components/blog/llm/strings/attention';
 
-const SENTENCE: readonly string[] = [
-  'The',
-  'animal',
-  "didn't",
-  'cross',
-  'the',
-  'street',
-  'because',
-  'it',
-  'was',
-  'too',
-  'tired',
-];
+import type { Lang } from '@/i18n';
 
-const WEIGHTS: Record<number, Record<number, number>> = {
-  7: { 0: 0.02, 1: 0.62, 2: 0.03, 3: 0.05, 4: 0.02, 5: 0.19, 6: 0.07 },
-  10: {
-    0: 0.01,
-    1: 0.58,
-    2: 0.02,
-    3: 0.02,
-    4: 0.02,
-    5: 0.1,
-    6: 0.02,
-    7: 0.15,
-    8: 0.05,
-    9: 0.03,
-  },
-  5: { 0: 0.15, 1: 0.2, 2: 0.1, 3: 0.4, 4: 0.15 },
-  8: {
-    0: 0.125,
-    1: 0.125,
-    2: 0.125,
-    3: 0.125,
-    4: 0.125,
-    5: 0.125,
-    6: 0.125,
-    7: 0.125,
-  },
+type SentenceWord = {
+  readonly word: string;
+  readonly attention?: readonly number[];
+  readonly uniform?: boolean;
 };
 
-function softmax(logits: readonly number[], temperature = 1): number[] {
-  const scaled = logits.map((l) => l / temperature);
-  const max = Math.max(...scaled);
-  const exps = scaled.map((v) => Math.exp(v - max));
-  const sum = exps.reduce((a, b) => a + b, 0);
-  return exps.map((e) => e / sum);
-}
+const SENTENCE: readonly SentenceWord[] = [
+  { word: 'The' },
+  { word: 'animal' },
+  { word: "didn't" },
+  { word: 'cross' },
+  { word: 'the' },
+  { word: 'street', attention: [0.15, 0.2, 0.1, 0.4, 0.15] },
+  { word: 'because' },
+  { word: 'it', attention: [0.02, 0.62, 0.03, 0.05, 0.02, 0.19, 0.07] },
+  {
+    word: 'was',
+    attention: [0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125, 0.125],
+    uniform: true,
+  },
+  { word: 'too' },
+  {
+    word: 'tired',
+    attention: [0.01, 0.58, 0.02, 0.02, 0.02, 0.1, 0.02, 0.15, 0.05, 0.03],
+  },
+];
 
-const TOKEN_BASE_CLASSES =
-  'font-mono text-[0.85em] px-2 py-0.5 mx-0.5 my-0.5 rounded border whitespace-pre align-baseline inline-block transition-opacity duration-[250ms] ease-out motion-reduce:transition-none';
+SENTENCE.forEach(({ word, attention }, index) => {
+  if (attention && attention.length !== index)
+    throw new Error(
+      `AttentionDemo: '${word}' declares ${attention.length} weights but has ${index} preceding words`,
+    );
+});
 
-const TOKEN_PLAIN_CLASSES =
-  'bg-white dark:bg-slate-900 border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100';
+const TRANSITION_CLASSES =
+  'transition-opacity duration-[250ms] ease-out motion-reduce:transition-none';
 
-const TOKEN_HOVERABLE_CLASSES = `${TOKEN_BASE_CLASSES} ${TOKEN_PLAIN_CLASSES} border-dashed cursor-pointer focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2`;
+const TOKEN_HOVERABLE_CLASSES = chipClasses(
+  'plain',
+  CHIP_INLINE_CLASSES,
+  TRANSITION_CLASSES,
+  CHIP_INTERACTIVE_CLASSES,
+  'border-dashed',
+);
 
-const TOKEN_STATIC_CLASSES = `${TOKEN_BASE_CLASSES} ${TOKEN_PLAIN_CLASSES}`;
+const TOKEN_STATIC_CLASSES = chipClasses(
+  'plain',
+  CHIP_INLINE_CLASSES,
+  TRANSITION_CLASSES,
+);
 
 type AttentionStrings = (typeof attentionStrings)[Lang];
 
-export default function AttentionDemo({ lang = 'en' }: { lang?: Lang }) {
+export default function AttentionDemo({ lang }: { lang: Lang }) {
   const strings = attentionStrings[lang];
   const [highlighted, setHighlighted] = useState<number | null>(null);
   const containerRef = useRef<HTMLDivElement | null>(null);
 
   function opacityFor(i: number): number {
-    if (highlighted === null) return 1;
-    if (i === highlighted) return 1;
-    const weights = WEIGHTS[highlighted];
-    const w = weights ? weights[i] : undefined;
+    if (highlighted === null || i === highlighted) return 1;
+    const weights = SENTENCE[highlighted]?.attention;
+    const w = weights?.[i];
     if (weights === undefined || w === undefined) return 0.25;
-    const max = Math.max(...Object.values(weights));
+    const max = Math.max(...weights);
     return 0.3 + (0.7 * w) / max;
   }
 
@@ -92,90 +91,88 @@ export default function AttentionDemo({ lang = 'en' }: { lang?: Lang }) {
 
   return (
     <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
-      <div className='font-mono text-sm'>{strings.instruction}</div>
+      <GuessGate lang={lang} guess={strings.guess}>
+        <div className='font-mono text-sm'>{strings.instruction}</div>
 
-      <div
-        ref={containerRef}
-        onMouseLeave={reset}
-        onBlur={handleBlur}
-        className='flex flex-wrap gap-1 my-4'
-      >
-        {SENTENCE.map((word, i) => {
-          const hoverable = i in WEIGHTS;
-          const opacity = opacityFor(i);
-          if (hoverable) {
+        <div
+          ref={containerRef}
+          onMouseLeave={reset}
+          onBlur={handleBlur}
+          className='flex flex-wrap gap-1 my-4'
+        >
+          {SENTENCE.map(({ word, attention }, i) => {
+            const opacity = opacityFor(i);
+            if (attention) {
+              return (
+                <button
+                  key={i}
+                  type='button'
+                  onMouseEnter={() => setHighlighted(i)}
+                  onFocus={() => setHighlighted(i)}
+                  onClick={() => setHighlighted(i)}
+                  style={{ opacity }}
+                  className={TOKEN_HOVERABLE_CLASSES}
+                >
+                  {word}
+                </button>
+              );
+            }
             return (
-              <button
+              <span
                 key={i}
-                type='button'
-                onMouseEnter={() => setHighlighted(i)}
-                onFocus={() => setHighlighted(i)}
-                onClick={() => setHighlighted(i)}
                 style={{ opacity }}
-                className={TOKEN_HOVERABLE_CLASSES}
+                className={TOKEN_STATIC_CLASSES}
               >
                 {word}
-              </button>
+              </span>
             );
-          }
-          return (
-            <span key={i} style={{ opacity }} className={TOKEN_STATIC_CLASSES}>
-              {word}
-            </span>
-          );
-        })}
-      </div>
+          })}
+        </div>
 
-      <div
-        aria-live='polite'
-        className='font-mono text-sm text-slate-600 dark:text-slate-300'
-      >
-        {highlighted === null ? (
-          strings.readoutPlaceholder
-        ) : (
-          <Readout k={highlighted} strings={strings} />
-        )}
-      </div>
+        <div
+          aria-live='polite'
+          className='font-mono text-sm text-slate-600 dark:text-slate-300'
+        >
+          {highlighted === null ? (
+            strings.readoutPlaceholder
+          ) : (
+            <Readout k={highlighted} strings={strings} />
+          )}
+        </div>
+      </GuessGate>
     </div>
   );
 }
 
 function Readout({ k, strings }: { k: number; strings: AttentionStrings }) {
-  const weights = WEIGHTS[k];
-  if (!weights) return null;
+  const entry = SENTENCE[k];
+  if (!entry?.attention) return null;
 
-  const values = Object.values(weights);
-  const uniform = Math.max(...values) / Math.min(...values) < 1.01;
-
-  if (uniform) {
+  if (entry.uniform) {
     return (
       <span>
-        <span className='font-semibold'>{SENTENCE[k]}</span>{' '}
+        <span className='font-semibold'>{entry.word}</span>{' '}
         {strings.uniformNote}
       </span>
     );
   }
 
-  const entries = Object.keys(weights).map((key) => {
-    const idx = Number(key);
-    const w = weights[idx] ?? 0;
-    return { idx, token: SENTENCE[idx] ?? '', score: Math.log(w) };
-  });
-  const recomputed = softmax(entries.map((e) => e.score));
-  const withProb = entries.map((e, i) => ({ ...e, prob: recomputed[i] ?? 0 }));
-  withProb.sort((a, b) => b.prob - a.prob);
-  const top3 = withProb.slice(0, 3);
+  const top3 = entry.attention
+    .map((weight, idx) => ({ idx, weight, token: SENTENCE[idx]?.word ?? '' }))
+    .sort((a, b) => b.weight - a.weight)
+    .slice(0, 3);
 
   return (
     <div>
-      <span className='font-semibold'>{SENTENCE[k]}</span> {strings.attendsMost}
+      <span className='font-semibold'>{entry.word}</span> {strings.attendsMost}
       <table className='mt-2 w-full'>
         <tbody>
           {top3.map((e) => (
             <tr key={e.idx}>
               <td className='pr-3'>{e.token}</td>
-              <td className='pr-3'>q·k ≈ {e.score.toFixed(2)}</td>
-              <td>softmax → {(e.prob * 100).toFixed(1)}%</td>
+              <td>
+                {strings.weightWord} {(e.weight * 100).toFixed(1)}%
+              </td>
             </tr>
           ))}
         </tbody>
