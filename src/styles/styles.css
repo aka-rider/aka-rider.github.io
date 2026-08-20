@@ -135,23 +135,29 @@
     font-family: var(--font-mono);
     font-size: 0.9rem;
     margin: 2rem 0;
+    padding: 1rem 1.15rem;
     max-width: 100%;
     overflow-x: auto;
+    color: var(--shiki-light);
+    background-color: var(--shiki-light-bg);
+    @apply rounded-lg border border-slate-200 dark:border-slate-800;
   }
 
   /* Dual-theme shiki emits only --shiki-* vars; map them to color per theme */
-  [data-rehype-pretty-code-figure] pre,
   [data-rehype-pretty-code-figure] code[data-theme],
   [data-rehype-pretty-code-figure] code[data-theme] span {
     color: var(--shiki-light);
-    background-color: var(--shiki-light-bg);
+    background-color: transparent;
   }
 
-  .dark [data-rehype-pretty-code-figure] pre,
+  .dark [data-rehype-pretty-code-figure] pre {
+    color: var(--shiki-dark);
+    background-color: var(--shiki-dark-bg);
+  }
+
   .dark [data-rehype-pretty-code-figure] code[data-theme],
   .dark [data-rehype-pretty-code-figure] code[data-theme] span {
     color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
   }
 
   /* Inline code */
