@@ -55,7 +55,7 @@ export default function CodeBlock({
   }, [showFeedback]);
 
   return (
-    <figure ref={figureRef} {...props} className='relative group'>
+    <figure ref={figureRef} {...props} className='not-prose relative group'>
       {children}
       <div className='absolute top-2 right-2 flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity'>
         {language && (

@@ -15,7 +15,7 @@ export default function Spoiler({
         {title}
       </summary>
       <div className='not-prose mt-4 w-full overflow-x-auto text-slate-900 dark:text-slate-300'>
-        <div className='prose max-w-none text-[1rem] leading-normal dark:prose-invert prose-p:text-[1rem] prose-pre:text-[0.9rem] prose-p:text-slate-800 dark:prose-p:text-slate-300'>
+        <div className='prose max-w-none text-[1rem] leading-normal dark:prose-invert prose-p:text-[1rem] prose-p:text-slate-800 dark:prose-p:text-slate-300'>
           {children}
         </div>
       </div>

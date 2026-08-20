@@ -6,6 +6,7 @@ Items found during the whole-repository review that were out of scope to fix.
 
 - **Missing translations.** `Vibe-Coding-2026-Uncensored` exists only as `index.uk.mdx`, and `en` is the fallback language, so English readers get Ukrainian content. `a-beginners-guide-to-fpv-drones` lost its `index.uk.mdx` on this branch. `How-to-transfer-10-EUR-reliably`, `A-Better-Programmer` Part 1 and Part 2, `OOP-considered-harmful`, and `Dr--Testflow` are English only.
 - **Hotlinked hero images.** `A-Better-Programmer` Part 1 and Part 2 (Medium CDN), `OOP-considered-harmful` (Medium CDN, three images), and `Vibe-Coding-2026-Uncensored` uk (Wikimedia) load images from external hosts. They cannot be verified at build time and can rot or be blocked, while every other post self-hosts its assets. Download them into the post directories and reference them relatively.
+- **Typographic quotes inside shell fences.** `Makefiles-for-Python-and-beyond` uses curly quotes in code that readers copy: line 197 (`find . -type f -name ‘*.pyc’ -delete`) and the traceback at lines 106-111 (`File “./app.py”`, `No module named ‘requests’`). Pasted into a real shell they fail. The equivalent Makefile at line 284 already uses straight quotes.
 
 ## Accessibility
 
