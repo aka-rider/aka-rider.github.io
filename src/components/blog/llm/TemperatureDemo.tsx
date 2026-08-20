@@ -2,37 +2,29 @@
 
 import { useState } from 'react';
 
+import {
+  PRIMARY_BUTTON_CLASSES,
+  RESET_BUTTON_CLASSES,
+} from '@/components/blog/llm/buttons';
 import { Chip, ChipStream } from '@/components/blog/llm/Chip';
-import { type Lang, temperatureStrings } from '@/components/blog/llm/strings';
+import {
+  EXAMPLE_TOKENS,
+  NEXT_TOKEN_CANDIDATES,
+} from '@/components/blog/llm/example';
+import { softmax } from '@/components/blog/llm/math';
+import { ProbabilityBar } from '@/components/blog/llm/ProbabilityBar';
+import { temperatureStrings } from '@/components/blog/llm/strings/temperature';
 
-const CANDIDATES: ReadonlyArray<readonly [string, number]> = [
-  [' Paris', 9.1],
-  [' the', 6.3],
-  [' located', 5.4],
-  [' a', 5.0],
-  [' one', 4.2],
-  [' France', 3.1],
-  [' Lyon', 2.6],
-  [' beautiful', 2.2],
-];
+import type { Lang } from '@/i18n';
 
-const PROMPT: readonly string[] = ['The', ' capital', ' of', ' France', ' is'];
+const CANDIDATES: ReadonlyArray<readonly [string, number]> =
+  NEXT_TOKEN_CANDIDATES.map((c) => [c.token, c.logit] as const);
 
-function softmax(logits: readonly number[], temperature: number): number[] {
-  const scaled = logits.map((l) => l / temperature);
-  const max = Math.max(...scaled);
-  const exps = scaled.map((v) => Math.exp(v - max));
-  const sum = exps.reduce((a, b) => a + b, 0);
-  return exps.map((e) => e / sum);
-}
+const PROMPT: readonly string[] = EXAMPLE_TOKENS;
 
-const PRIMARY_BUTTON_CLASSES =
-  'font-mono text-sm rounded border border-cyan-700 dark:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-400 px-3 py-1.5 focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2';
+const BAR_COLUMNS = '8rem 1fr 3.4rem';
 
-const RESET_BUTTON_CLASSES =
-  'font-mono text-sm text-slate-500 dark:text-slate-400 underline focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2';
-
-export default function TemperatureDemo({ lang = 'en' }: { lang?: Lang }) {
+export default function TemperatureDemo({ lang }: { lang: Lang }) {
   const strings = temperatureStrings[lang];
   const [temperature, setTemperature] = useState(1);
   const [sampled, setSampled] = useState<string[]>([]);
@@ -72,7 +64,7 @@ export default function TemperatureDemo({ lang = 'en' }: { lang?: Lang }) {
           </Chip>
         ))}
         {sampled.map((t, idx) => (
-          <Chip key={`sampled-${idx}`} variant='model'>
+          <Chip key={`sampled-${idx}`} variant='tok'>
             {t}
           </Chip>
         ))}
@@ -102,22 +94,14 @@ export default function TemperatureDemo({ lang = 'en' }: { lang?: Lang }) {
         {CANDIDATES.map((c, idx) => {
           const pct = probs[idx]! * 100;
           return (
-            <div
+            <ProbabilityBar
               key={c[0]}
               title={`${c[0].trim()}: ${pct.toFixed(3)}%`}
-              className='grid grid-cols-[8rem_1fr_3.4rem] items-center gap-2 py-1'
-            >
-              <span className='font-mono text-sm'>{c[0]}</span>
-              <span className='relative h-1 rounded bg-slate-200 dark:bg-slate-700'>
-                <span
-                  className='absolute left-0 top-0 h-full rounded bg-cyan-700 dark:bg-cyan-400 transition-[width] duration-[250ms] ease-out motion-reduce:transition-none'
-                  style={{ width: `${pct}%` }}
-                />
-              </span>
-              <span className='font-mono tabular-nums text-sm text-right'>
-                {pct.toFixed(1)}%
-              </span>
-            </div>
+              columns={BAR_COLUMNS}
+              label={<span className='font-mono text-sm'>{c[0]}</span>}
+              percent={pct}
+              valueText={`${pct.toFixed(1)}%`}
+            />
           );
         })}
       </div>
@@ -126,14 +110,14 @@ export default function TemperatureDemo({ lang = 'en' }: { lang?: Lang }) {
         <button
           type='button'
           onClick={handleSample}
-          className={PRIMARY_BUTTON_CLASSES}
+          className={PRIMARY_BUTTON_CLASSES.cyan}
         >
           {strings.sampleBtn}
         </button>
         <button
           type='button'
           onClick={handleReset}
-          className={RESET_BUTTON_CLASSES}
+          className={RESET_BUTTON_CLASSES.cyan}
         >
           {strings.resetBtn}
         </button>

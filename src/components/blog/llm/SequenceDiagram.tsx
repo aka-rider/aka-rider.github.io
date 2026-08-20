@@ -1,8 +1,7 @@
-import { sequenceStrings } from '@/components/blog/llm/strings';
+import FigCaption from '@/components/blog/llm/FigCaption';
+import { sequenceStrings } from '@/components/blog/llm/strings/sequence';
 
-interface SequenceDiagramProps {
-  lang?: 'en' | 'uk';
-}
+import type { Lang } from '@/i18n';
 
 type ActorColor = 'model' | 'harness';
 
@@ -107,7 +106,7 @@ function SeqLabel({
   );
 }
 
-export default function SequenceDiagram({ lang = 'en' }: SequenceDiagramProps) {
+export default function SequenceDiagram({ lang }: { lang: Lang }) {
   const dict = sequenceStrings[lang];
 
   return (
@@ -117,8 +116,7 @@ export default function SequenceDiagram({ lang = 'en' }: SequenceDiagramProps) {
           viewBox='0 0 820 510'
           role='img'
           aria-label={dict.aria}
-          style={{ width: 820, minWidth: 820 }}
-          className='h-auto block mx-auto'
+          className='w-full h-auto max-w-[820px] min-w-[560px] mx-auto block'
         >
           <defs>
             <marker
@@ -225,9 +223,7 @@ export default function SequenceDiagram({ lang = 'en' }: SequenceDiagramProps) {
           </g>
         </svg>
       </div>
-      <figcaption className='font-mono text-xs text-slate-500 dark:text-slate-400 text-center mt-2'>
-        {dict.caption}
-      </figcaption>
+      <FigCaption>{dict.caption}</FigCaption>
     </figure>
   );
 }
