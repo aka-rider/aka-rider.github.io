@@ -7,31 +7,92 @@ import * as runtime from 'react/jsx-runtime';
 import remarkReplaceLinks from '@/lib/remark-i18n-links';
 import remarkImagePaths from '@/lib/remark-image-paths';
 
+import ActTransition from '@/components/blog/ActTransition';
 import CodeBlock from '@/components/blog/CodeBlock';
+import AgentLoopFigure from '@/components/blog/llm/AgentLoopFigure';
+import AutoregressiveLoop from '@/components/blog/llm/AutoregressiveLoop';
 import { Chip, ChipStream } from '@/components/blog/llm/Chip';
+import EmbeddingFigure from '@/components/blog/llm/EmbeddingFigure';
 import LadderDiagram from '@/components/blog/llm/LadderDiagram';
 import SequenceDiagram from '@/components/blog/llm/SequenceDiagram';
+import TrainingStagesFigure from '@/components/blog/llm/TrainingStagesFigure';
+import TransformerBlockDiagram from '@/components/blog/llm/TransformerBlockDiagram';
 import Spoiler from '@/components/blog/Spoiler';
 import TLDR from '@/components/blog/TLDR';
 import PrimaryLink from '@/components/links/PrimaryLink';
 import NextImage from '@/components/NextImage';
 
+import { common, Lang } from '@/i18n';
+
+import config from '../../../config';
+
 const TemperatureDemo = dynamic(
-  () => import('@/components/blog/llm/TemperatureDemo')
+  () => import('@/components/blog/llm/TemperatureDemo'),
 );
 const AttentionDemo = dynamic(
-  () => import('@/components/blog/llm/AttentionDemo')
+  () => import('@/components/blog/llm/AttentionDemo'),
 );
 const ToolCallDemo = dynamic(
-  () => import('@/components/blog/llm/ToolCallDemo')
+  () => import('@/components/blog/llm/ToolCallDemo'),
+);
+const TokenizerDemo = dynamic(
+  () => import('@/components/blog/llm/TokenizerDemo'),
+);
+const MatmulFigure = dynamic(
+  () => import('@/components/blog/llm/MatmulFigure'),
+);
+const MoERoutingDemo = dynamic(
+  () => import('@/components/blog/llm/MoERoutingDemo'),
+);
+const TrainingStepDemo = dynamic(
+  () => import('@/components/blog/llm/TrainingStepDemo'),
+);
+const WorldPickerDemo = dynamic(
+  () => import('@/components/blog/llm/WorldPickerDemo'),
+);
+const ChatTranscript = dynamic(
+  () => import('@/components/blog/llm/ChatTranscript'),
 );
 
 import { rehypePlugins, sharedRemarkPlugins } from '/mdx-config';
 
-const mdxComponents = {
-  a: (props: React.ComponentProps<'a'>) => (
-    <PrimaryLink {...props} />
-  ),
+const DEFAULT_IMAGE_WIDTH = 1920;
+const DEFAULT_IMAGE_HEIGHT = 1080;
+const ERROR_SOURCE_PREVIEW_LENGTH = 500;
+
+const llmComponents = {
+  TemperatureDemo,
+  AttentionDemo,
+  ToolCallDemo,
+  TokenizerDemo,
+  MatmulFigure,
+  MoERoutingDemo,
+  WorldPickerDemo,
+  ChatTranscript,
+  TrainingStepDemo,
+  LadderDiagram,
+  SequenceDiagram,
+  AgentLoopFigure,
+  AutoregressiveLoop,
+  EmbeddingFigure,
+  TrainingStagesFigure,
+  TransformerBlockDiagram,
+};
+
+function bindLang(lang: Lang) {
+  return Object.fromEntries(
+    Object.entries(llmComponents).map(([name, Component]) => [
+      name,
+      function LangBound(props: Record<string, unknown>) {
+        const Bound = Component as React.ComponentType<Record<string, unknown>>;
+        return <Bound lang={lang} {...props} />;
+      },
+    ]),
+  );
+}
+
+const mdxComponents = (lang: Lang) => ({
+  a: (props: React.ComponentProps<'a'>) => <PrimaryLink {...props} />,
   img: ({
     src,
     alt,
@@ -40,35 +101,28 @@ const mdxComponents = {
     className,
     ...props
   }: React.ComponentProps<'img'>) => {
-    // Convert HTML img props to Next.js Image props
-    const width = htmlWidth ? Number(htmlWidth) : 1920;
-    const height = htmlHeight ? Number(htmlHeight) : 1080;
-
-    // Ensure src is a string for Next.js Image component
-    const imageSrc = typeof src === 'string' ? src : '/public/images/blog-generic.webp';
+    const width = htmlWidth ? Number(htmlWidth) : DEFAULT_IMAGE_WIDTH;
+    const height = htmlHeight ? Number(htmlHeight) : DEFAULT_IMAGE_HEIGHT;
+    const imageSrc = typeof src === 'string' ? src : config.DEFAULT_POST_IMAGE;
 
     return (
       <NextImage
         src={imageSrc}
-        alt={alt || 'illustration'}
+        alt={alt || common[lang].illustration}
         width={width}
         height={height}
         useSkeleton={true}
         className={`block w-full h-auto rounded-[16px] overflow-hidden border border-neutral-200 dark:border-neutral-800 my-10 ${className || ''}`}
-        imgClassName="w-full h-auto"
+        imgClassName='w-full h-auto'
         {...props}
       />
     );
   },
   TLDR,
   Spoiler,
+  ActTransition,
   Chip,
   ChipStream,
-  TemperatureDemo,
-  AttentionDemo,
-  ToolCallDemo,
-  LadderDiagram,
-  SequenceDiagram,
   table: (props: React.ComponentProps<'table'>) => (
     <div className='overflow-x-auto my-6'>
       <table className='w-full border-collapse' {...props} />
@@ -86,25 +140,33 @@ const mdxComponents = {
       {...props}
     />
   ),
-  figure: (props: Record<string, any>) => {
+  figure: (props: React.ComponentProps<'figure'>) => {
     if ('data-rehype-pretty-code-figure' in props) {
-      return <CodeBlock {...props} />;
+      return <CodeBlock {...props} lang={lang} />;
     }
     return <figure {...props} />;
   },
   hr: () => (
-    <div className='my-16 flex justify-center text-slate-300 dark:text-slate-600 select-none' role='separator'>
+    <div
+      className='my-16 flex justify-center text-slate-300 dark:text-slate-600 select-none'
+      role='separator'
+    >
       <span className='tracking-[0.5em] text-lg'>···</span>
     </div>
   ),
-};
+});
 
 interface ServerMDXProps {
   source: string;
   postFilePath: string;
+  lang: Lang;
 }
 
-export default async function ServerMDX({ source, postFilePath }: ServerMDXProps) {
+export default async function ServerMDX({
+  source,
+  postFilePath,
+  lang,
+}: ServerMDXProps) {
   const isDev = process.env.NODE_ENV === 'development';
   try {
     const compiled = await compile(source, {
@@ -112,7 +174,7 @@ export default async function ServerMDX({ source, postFilePath }: ServerMDXProps
       development: isDev,
       remarkPlugins: [
         ...sharedRemarkPlugins,
-        remarkReplaceLinks,
+        remarkReplaceLinks(lang),
         remarkImagePaths(postFilePath),
       ] as any,
       rehypePlugins: rehypePlugins as any,
@@ -123,18 +185,21 @@ export default async function ServerMDX({ source, postFilePath }: ServerMDXProps
       baseUrl: import.meta.url,
     });
 
-    return <MDXContent components={mdxComponents} />;
+    return (
+      <MDXContent components={{ ...mdxComponents(lang), ...bindLang(lang) }} />
+    );
   } catch (error) {
-    // eslint-disable-next-line no-console
     console.error('MDX compilation error:', error);
     return (
       <div className='text-red-500'>
-        <h3>MDX Compilation Error</h3>
+        <h3>{common[lang].mdxCompilationError}</h3>
         <pre className='whitespace-pre-wrap text-sm'>{String(error)}</pre>
         <details className='mt-4'>
-          <summary>Source content (first 500 chars)</summary>
+          <summary>
+            {common[lang].mdxSourcePreview} {ERROR_SOURCE_PREVIEW_LENGTH}
+          </summary>
           <pre className='text-xs mt-2 whitespace-pre-wrap'>
-            {source.slice(0, 500)}...
+            {source.slice(0, ERROR_SOURCE_PREVIEW_LENGTH)}...
           </pre>
         </details>
       </div>

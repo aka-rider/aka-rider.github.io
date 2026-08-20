@@ -1,15 +1,11 @@
 import { ThemeProvider } from 'next-themes';
-import { HiOutlineCog } from 'react-icons/hi2';
-import { MdOutlineDarkMode, MdOutlineLightMode } from 'react-icons/md';
 
 import { fontBody, fontHeader, fontMono } from '@/lib/fonts';
 
 import Analytics from '@/components/Analytics';
-import LangSwitcher from '@/components/LangSwitcher';
 import Footer from '@/components/layout/Footer';
-import ThemeToggle from '@/components/ThemeToggle';
 
-import { Lang } from '@/i18n';
+import { common, Lang } from '@/i18n';
 
 const defaultFonts = [fontMono, fontBody, fontHeader];
 
@@ -28,18 +24,11 @@ export default function Layout({
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <a
             href='#main-content'
-            className='sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2'
+            className='sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-[100] focus:px-4 focus:py-2 focus:bg-white dark:focus:bg-slate-900 focus:border focus:border-slate-300 dark:focus:border-slate-700 focus:rounded'
           >
+            {common[lang].skipToContent}
           </a>
           <div className='flex flex-col min-h-screen w-11/12 xl:max-w-5xl mx-auto'>
-            <div className='w-full flex justify-end items-center gap-4 p-4'>
-              <LangSwitcher currentLang={lang} />
-              <ThemeToggle
-                iconSystem={<HiOutlineCog className='w-5 h-5' />}
-                iconDark={<MdOutlineDarkMode className='w-5 h-5' />}
-                iconLight={<MdOutlineLightMode className='w-5 h-5' />}
-              />
-            </div>
             <main id='main-content'>{children}</main>
             <Footer lang={lang} />
           </div>

@@ -17,30 +17,33 @@ export default async function HomePage({
 
   const content = rootPage[lang];
 
-  const navSections = (['blog', 'services', 'foss'] as const).map((sectionId) => ({
-    key: sectionId,
-    name: content[sectionId].name,
-  }));
+  const navSections = (['blog', 'services', 'foss'] as const).map(
+    (sectionId) => ({
+      key: sectionId,
+      name: content[sectionId].name,
+    }),
+  );
 
   return (
     <main>
       <Nav lang={lang}>
-        <SectionNavigation sections={navSections} />
+        <SectionNavigation lang={lang} sections={navSections} />
       </Nav>
 
       <About
+        lang={lang}
         title={content.about.name}
-        items={(content.about as any).items}
+        items={content.about.items}
       />
 
       <BlogPreview title={content.blog.name} lang={lang} />
 
       <Services
         title={content.services.name}
-        services={(content.services as any).items}
+        services={content.services.items}
       />
 
-      <Foss title={content.foss.name} foss={(content.foss as any).items} />
+      <Foss title={content.foss.name} foss={content.foss.items} />
     </main>
   );
 }

@@ -14,45 +14,33 @@ import Nav from '@/components/layout/Nav';
 
 import { Lang } from '@/i18n';
 
+import config from '../../../../../config';
+
+function findNode(lang: Lang, slug: string[]): BlogNode | null {
+  const blog = new Blog();
+  return slug.length === 0 ? blog.getRoot(lang) : blog.getBySlug(lang, slug);
+}
+
 export default async function BlogPage({
   params,
 }: {
   params: Promise<{ lang: Lang; slug?: string[] }>;
 }) {
   const { lang, slug = [] } = await params;
-  const blog = new Blog();
-
-  let node: BlogNode | null;
-
-  if (slug.length === 0) {
-    // Root blog page - get the root category
-    node = blog.getRoot(lang);
-  } else {
-    // Get specific node by slug path
-    node = blog.getBySlug(lang, slug);
-  }
+  const node = findNode(lang, slug);
 
   if (!node) {
     notFound();
   }
 
   if (node.type === 'Category') {
-    // Redirect all category pages to the main blog feed with the category selected
-    if (!node.parent) {
-      redirect(`/${lang}/blog`);
-    } else {
-      redirect(`/${lang}/blog#${node.slug}`);
-    }
+    redirect(node.parent ? `/${lang}/blog#${node.slug}` : `/${lang}/blog`);
   }
 
-  // Generate breadcrumbs by traversing up the parent chain
   const breadcrumbs: BlogNode[] = [];
-  let current: BlogNode | undefined = node;
-  while (current?.parent) {
-    breadcrumbs.unshift(current.parent);
-    current = current.parent;
+  for (let current = node.parent; current; current = current.parent) {
+    breadcrumbs.unshift(current);
   }
-  // Only include current node for category pages, not posts
   if (node.type !== 'Post') {
     breadcrumbs.push(node);
   }
@@ -60,7 +48,11 @@ export default async function BlogPage({
   return (
     <>
       <Nav lang={lang}>
-        <Breadcrumbs lang={lang} breadcrumbs={breadcrumbs} activeIndex={node.type === 'Post' ? -1 : undefined} />
+        <Breadcrumbs
+          lang={lang}
+          breadcrumbs={breadcrumbs}
+          activeIndex={node.type === 'Post' ? -1 : undefined}
+        />
       </Nav>
       <main>{renderNodeContent(node, lang)}</main>
     </>
@@ -68,41 +60,33 @@ export default async function BlogPage({
 }
 
 function renderNodeContent(node: BlogNode, lang: Lang) {
-  if (node.type === 'LoadFailure') {
-    return <BlogLoadFailure node={node} />;
+  switch (node.type) {
+    case 'LoadFailure':
+      return <BlogLoadFailure node={node} lang={lang} />;
+    case 'Category':
+      return <BlogCategory lang={lang} category={node} />;
+    case 'Post':
+      return (
+        <>
+          <BlogPost post={node} lang={lang} />
+          <PostNavigation post={node} lang={lang} />
+          <Giscus
+            repo={config.GISCUS.repo}
+            repoId={config.GISCUS.repoId}
+            category={config.GISCUS.category}
+            categoryId={config.GISCUS.categoryId}
+            mapping='pathname'
+            strict='0'
+            reactionsEnabled='0'
+            emitMetadata='0'
+            inputPosition='bottom'
+            lang={lang}
+          />
+        </>
+      );
+    default:
+      return node satisfies never;
   }
-
-  if (node.type === 'Category') {
-    return (
-      <BlogCategory
-        lang={lang}
-        category={node}
-      />
-    );
-  }
-
-  if (node.type === 'Post') {
-    return (
-      <>
-        <BlogPost post={node} lang={lang} />
-        <PostNavigation post={node} lang={lang} />
-        <Giscus
-          repo="aka-rider/aka-rider.github.io"
-          repoId="MDEwOlJlcG9zaXRvcnkyNjc3MDM0MTc="
-          category="General"
-          categoryId="DIC_kwDOD_TUec4CO4sM"
-          mapping="pathname"
-          strict="0"
-          reactionsEnabled="1"
-          emitMetadata="0"
-          inputPosition="bottom"
-          lang={lang}
-        />
-      </>
-    );
-  }
-
-  return <div>Unknown node type: {(node as any).type}</div>;
 }
 
 export async function generateStaticParams() {
@@ -116,15 +100,7 @@ export async function generateMetadata({
   params: Promise<{ lang: Lang; slug?: string[] }>;
 }): Promise<Metadata> {
   const { lang, slug = [] } = await params;
-  const blog = new Blog();
-
-  let node: BlogNode | null;
-
-  if (slug.length === 0) {
-    node = blog.getRoot(lang);
-  } else {
-    node = blog.getBySlug(lang, slug);
-  }
+  const node = findNode(lang, slug);
 
   if (!node || node.type !== 'Post') {
     return {

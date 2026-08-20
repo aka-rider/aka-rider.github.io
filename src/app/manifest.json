@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "iurii.net — Iurii (Yurii) Krasnoshchok",
+  "short_name": "iurii.net",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",

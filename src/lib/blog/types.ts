@@ -13,7 +13,7 @@ export type BlogNode = Category | Post | LoadFailure;
 
 export interface Category extends NodeProperties {
   type: 'Category';
-  thumbnails?: boolean; // Controls whether to show thumbnails in list view
+  thumbnails?: boolean;
   tags?: Record<string, Post[]>;
   featured?: Post;
   getPosts(): Post[];
@@ -23,6 +23,7 @@ export interface Category extends NodeProperties {
 export interface Post extends NodeProperties {
   type: 'Post';
   image: string;
+  hideHero: boolean;
   excerpt: string;
   content: string;
   date?: Date;

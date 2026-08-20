@@ -4,8 +4,12 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import clsx from '@/lib/clsxm';
 
-import { NAV_CONTAINER_CLASSES, NavigationItem } from '@/components/layout/NavigationPrimitives';
+import {
+  NAV_CONTAINER_CLASSES,
+  NavigationItem,
+} from '@/components/layout/NavigationPrimitives';
 
+import { common, Lang } from '@/i18n';
 
 interface Section {
   key: string;
@@ -13,16 +17,19 @@ interface Section {
 }
 
 interface SectionNavigationProps {
+  lang: Lang;
   sections: Section[];
-  onSectionClick?: () => void; // Callback for mobile menu close
+  onSectionClick?: () => void;
 }
 
 export default function SectionNavigation({
+  lang,
   sections,
   onSectionClick,
 }: SectionNavigationProps) {
   const [activeIndex, setActiveIndex] = useState(0);
   const ratiosRef = useRef<Map<string, number>>(new Map());
+  const navRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     const ratios = ratiosRef.current;
@@ -41,12 +48,15 @@ export default function SectionNavigation({
     };
 
     const thresholds = Array.from({ length: 11 }, (_, i) => i / 10);
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        ratios.set(entry.target.id, entry.intersectionRatio);
-      });
-      updateActive();
-    }, { threshold: thresholds });
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          ratios.set(entry.target.id, entry.intersectionRatio);
+        });
+        updateActive();
+      },
+      { threshold: thresholds },
+    );
 
     sections.forEach((section) => {
       const el = document.getElementById(section.key);
@@ -67,8 +77,7 @@ export default function SectionNavigation({
 
     const element = document.getElementById(section.key);
     if (element) {
-      const navElement = document.querySelector('nav');
-      const navHeight = navElement?.getBoundingClientRect().height ?? 0;
+      const navHeight = navRef.current?.getBoundingClientRect().height ?? 0;
 
       window.scrollTo({
         top: element.getBoundingClientRect().top + window.scrollY - navHeight,
@@ -79,21 +88,18 @@ export default function SectionNavigation({
 
   return (
     <nav
+      ref={navRef}
       className={clsx(NAV_CONTAINER_CLASSES)}
-      aria-label='Page sections'
+      aria-label={common[lang].pageSections}
     >
-      {sections.map((section, index) => {
-        const isActive = activeIndex === index;
-        return (
-          <NavigationItem
-            key={`section-${index}`}
-            isActive={isActive}
-            label={section.name}
-            onClick={() => scrollToSection(index)}
-            aria-current={isActive ? 'true' : undefined}
-          />
-        );
-      })}
+      {sections.map((section, index) => (
+        <NavigationItem
+          key={section.key}
+          isActive={activeIndex === index}
+          label={section.name}
+          onClick={() => scrollToSection(index)}
+        />
+      ))}
     </nav>
   );
 }

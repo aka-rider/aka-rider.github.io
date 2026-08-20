@@ -6,8 +6,15 @@ describe('NotFound Component', () => {
   it('renders a heading', () => {
     render(<NotFound lang='en' />);
 
-    const heading = screen.getByText(/not found/i);
+    expect(screen.getByRole('heading', { level: 1 })).toBeInTheDocument();
+  });
 
-    expect(heading).toBeInTheDocument();
+  it('links back to the home page of the current language', () => {
+    render(<NotFound lang='uk' />);
+
+    expect(screen.getByRole('link', { name: /на головну/i })).toHaveAttribute(
+      'href',
+      '/uk',
+    );
   });
 });

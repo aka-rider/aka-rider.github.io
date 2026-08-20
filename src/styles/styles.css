@@ -1,7 +1,7 @@
 @import 'tailwindcss';
+@config '../../tailwind.config.ts';
 
 @theme {
-  --font-mono: var(--font-mono);
   --font-display: var(--font-header);
   --font-sans: var(--font-body);
 }
@@ -88,11 +88,6 @@
     scroll-behavior: smooth;
   }
 
-  /* Typography hierarchy */
-  .h0 {
-    @apply text-3xl font-bold md:text-5xl;
-  }
-
   h1,
   h2,
   h3,
@@ -101,15 +96,13 @@
     scroll-margin-top: 5rem;
   }
 
-  h1,
-  .h1 {
+  h1 {
     @apply text-3xl font-bold md:text-5xl;
     font-family: var(--font-header);
     letter-spacing: -0.015em;
   }
 
-  h2,
-  .h2 {
+  h2 {
     @apply text-xl font-bold md:text-3xl;
     font-family: var(--font-header);
     letter-spacing: -0.015em;
@@ -117,16 +110,14 @@
     padding-bottom: 1rem;
   }
 
-  h3,
-  .h3 {
+  h3 {
     @apply text-lg font-bold md:text-2xl;
     letter-spacing: 0;
     padding-top: 2rem;
     padding-bottom: 0.5rem;
   }
 
-  h4,
-  .h4 {
+  h4 {
     @apply text-base font-bold md:text-lg;
     letter-spacing: 0;
     padding-top: 1rem;
@@ -134,8 +125,7 @@
   }
 
   body,
-  p,
-  .p {
+  p {
     font-family: var(--font-body);
     line-height: 1.7;
   }
@@ -188,91 +178,52 @@
   }
 }
 
-/* Timeline Component Enhanced Animations */
-@keyframes timeline-fade-in {
-  0% {
-    opacity: 0;
-    transform: translateY(20px) scale(0.95);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateY(0) scale(1);
-  }
-}
-
-@keyframes timeline-slide-in {
-  0% {
-    opacity: 0;
-    transform: translateX(-30px) scale(0.95);
-  }
-
-  100% {
-    opacity: 1;
-    transform: translateX(0) scale(1);
-  }
-}
-
-@keyframes timeline-pulse {
+/*
+ * llm figures: ambient phase animation.
+ * A figure marks its root with .llm-anim and each step group with
+ * .llm-phase llm-phase-{1..4}. Each group brightens during its quarter
+ * of an 8s cycle. Reduced motion: all phases render fully visible, so
+ * figures must stay legible as static diagrams (numbered steps).
+ */
+@keyframes llm-phase {
   0%,
-  100% {
-    transform: scale(1);
-    opacity: 0.8;
-  }
-
-  50% {
-    transform: scale(1.05);
+  22% {
     opacity: 1;
   }
-}
-
-@keyframes timeline-glow {
-  0%,
+  28%,
   100% {
-    box-shadow: 0 0 0 0 rgba(59, 130, 246, 0.3);
-  }
-
-  50% {
-    box-shadow: 0 0 0 6px rgba(59, 130, 246, 0.1);
+    opacity: 0.3;
   }
 }
 
-/* Hover-activated animations */
-.timeline-fade-in {
-  animation: timeline-fade-in 0.8s ease-out forwards;
+.llm-anim .llm-phase {
+  animation: llm-phase 8s linear infinite;
+}
+.llm-anim .llm-phase-1 {
+  animation-delay: 0s;
+}
+.llm-anim .llm-phase-2 {
+  animation-delay: -6s;
+}
+.llm-anim .llm-phase-3 {
+  animation-delay: -4s;
+}
+.llm-anim .llm-phase-4 {
+  animation-delay: -2s;
 }
 
-.timeline-pulse {
-  animation: none;
-}
-
-.timeline-glow {
-  animation: none;
-}
-
-/* Only animate on group hover */
-.group:hover .timeline-pulse {
-  animation: timeline-pulse 2s ease-in-out infinite;
-}
-
-.group:hover .timeline-glow {
-  animation: timeline-glow 2s ease-in-out infinite;
-}
-
-/* Reduced motion support - respect user preferences */
 @media (prefers-reduced-motion: reduce) {
+  .llm-anim .llm-phase {
+    animation: none !important;
+    opacity: 1;
+  }
+
   .animate-blink,
   .animate-shimmer,
-  .animate-flicker,
-  .timeline-fade-in,
-  .timeline-pulse,
-  .timeline-glow,
-  .group:hover .timeline-pulse,
-  .group:hover .timeline-glow {
+  .animate-flicker {
     animation: none;
   }
 
-  /* Disable transitions for users who prefer reduced motion */
   *,
   *::before,
   *::after {

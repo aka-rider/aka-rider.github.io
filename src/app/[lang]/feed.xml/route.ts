@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { Blog } from '@/lib/blog/Blog';
 import { BlogNode, Post } from '@/lib/blog/types';
 
-import { common, Lang, Languages } from '@/i18n';
+import { common, Languages } from '@/i18n';
 
 import config from '../../../../config';
 
@@ -27,9 +27,13 @@ function getAllPosts(node: BlogNode): Post[] {
 
 export async function GET(
   _request: NextRequest,
-  { params }: { params: Promise<{ lang: string }> }
+  { params }: { params: Promise<{ lang: string }> },
 ) {
-  const { lang } = (await params) as { lang: Lang };
+  const { lang } = await params;
+  if (!Languages.has(lang)) {
+    return new NextResponse('Not found', { status: 404 });
+  }
+
   const blog = new Blog();
   const root = blog.getRoot(lang);
 
@@ -38,7 +42,7 @@ export async function GET(
   }
 
   const posts = getAllPosts(root).sort(
-    (a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0)
+    (a, b) => (b.date?.getTime() || 0) - (a.date?.getTime() || 0),
   );
 
   const siteUrl = config.SITE_URL;

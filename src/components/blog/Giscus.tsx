@@ -3,6 +3,8 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';
 
+import { common, Lang } from '@/i18n';
+
 interface GiscusProps {
   repo: string;
   repoId: string;
@@ -13,7 +15,7 @@ interface GiscusProps {
   reactionsEnabled?: '0' | '1';
   emitMetadata?: '0' | '1';
   inputPosition?: 'top' | 'bottom';
-  lang?: string;
+  lang: Lang;
 }
 
 export default function Giscus({
@@ -26,18 +28,16 @@ export default function Giscus({
   reactionsEnabled = '1',
   emitMetadata = '0',
   inputPosition = 'bottom',
-  lang = 'en',
+  lang,
 }: GiscusProps) {
-  const ref = useRef<any>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
-  // Wait for component to mount to avoid hydration mismatch
   useEffect(() => {
     setMounted(true);
   }, []);
 
-  // Determine the actual theme to use
   const resolvedTheme = theme === 'system' ? systemTheme : theme;
   const giscusTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
 
@@ -47,13 +47,11 @@ export default function Giscus({
     const container = ref.current;
     if (!container) return;
 
-    // Remove any existing giscus iframe and script
     const existingScript = container.querySelector('script');
     const existingIframe = container.querySelector('iframe.giscus-frame');
     if (existingScript) existingScript.remove();
     if (existingIframe) existingIframe.remove();
 
-    // Create and configure the script element
     const script = document.createElement('script');
     script.src = 'https://giscus.app/client.js';
     script.setAttribute('data-repo', repo);
@@ -72,25 +70,36 @@ export default function Giscus({
 
     container.appendChild(script);
 
-    // Cleanup function
     return () => {
       if (container && script.parentNode) {
         script.parentNode.removeChild(script);
       }
     };
-  }, [mounted, repo, repoId, category, categoryId, mapping, strict, reactionsEnabled, emitMetadata, inputPosition, giscusTheme, lang]);
+  }, [
+    mounted,
+    repo,
+    repoId,
+    category,
+    categoryId,
+    mapping,
+    strict,
+    reactionsEnabled,
+    emitMetadata,
+    inputPosition,
+    giscusTheme,
+    lang,
+  ]);
 
-  // Don't render until mounted to avoid hydration issues
   if (!mounted) {
     return (
-      <div className="giscus-container mt-8 p-4">
-        <div className="h-32 animate-pulse bg-slate-100 dark:bg-slate-800 rounded-lg" />
-        <div className="mt-2 text-center text-sm text-slate-500 dark:text-slate-400">
-          Loading comments...
+      <div className='giscus-container mt-8 p-4'>
+        <div className='h-32 animate-pulse bg-slate-100 dark:bg-slate-800 rounded-lg' />
+        <div className='mt-2 text-center text-sm text-slate-500 dark:text-slate-400'>
+          {common[lang].loadingComments}
         </div>
       </div>
     );
   }
 
-  return <div ref={ref} className="giscus-container mt-8" />;
+  return <div ref={ref} className='giscus-container mt-8' />;
 }

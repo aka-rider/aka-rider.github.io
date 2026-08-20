@@ -1,5 +1,4 @@
-import Link from 'next/link';
-
+import UnstyledLink from '@/components/links/UnstyledLink';
 import TypingText from '@/components/TypingText';
 
 import { common, Lang } from '@/i18n';
@@ -17,9 +16,9 @@ export default function NotFound({ lang }: { lang: Lang }) {
         <TypingText text={'404 - ' + common[lang].notFound} />
       </h1>
       <nav>
-        <Link className='btn' href='/'>
+        <UnstyledLink className='btn' href={`/${lang}`}>
           {common[lang].returnHome}
-        </Link>
+        </UnstyledLink>
       </nav>
     </div>
   );

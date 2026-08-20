@@ -1,12 +1,11 @@
 import { Lang } from '../index';
 
-// Define the structure first
 const foss = [
   {
     name: 'cachelot',
     description: {
       en: 'Lightning-fast embeddable Memcached. Low memory footprint.',
-      uk: 'Блискавично швидкий вбудований Memcached. Мінімальний розхід пам\'яті.',
+      uk: "Блискавично швидкий вбудований Memcached. Мінімальний розхід пам'яті.",
     },
     role: {
       en: 'Author',
@@ -20,13 +19,14 @@ const foss = [
     name: 'nanoQ aka nQ',
     description: {
       en: 'Brokerless golang Pub/Sub for streaming real-time data. IoT, sensors, VoIP, clicks, multimedia data for backend infra.',
-      uk: 'Go бібліотека Pub/Sub для потокової передачі даних у реальному часі. IoT, сенсори, VoIP, клікі та мультимедійних поміж backend сервісами.',
+      uk: 'Go бібліотека Pub/Sub для потокової передачі даних у реальному часі. IoT, сенсори, VoIP, кліки та мультимедійні дані поміж backend-сервісами.',
     },
     role: {
       en: 'Author',
       uk: 'Автор',
     },
-    website: 'https://medium.com/aigent/meet-nanoq-high-performance-brokerless-pub-sub-for-streaming-real-time-data-with-golang-6630d3067f4e',
+    website:
+      'https://medium.com/aigent/meet-nanoq-high-performance-brokerless-pub-sub-for-streaming-real-time-data-with-golang-6630d3067f4e',
     github: 'https://github.com/aka-rider/nq',
     image: '/images/gopher-hiking-by-egonelbre.svg',
   },
@@ -46,9 +46,8 @@ const foss = [
   },
 ] as const;
 
-// Helper function to transform foss for a specific language
 export function translateFoss(lang: Lang) {
-  return foss.map(project => ({
+  return foss.map((project) => ({
     name: project.name,
     description: project.description[lang],
     role: project.role[lang],

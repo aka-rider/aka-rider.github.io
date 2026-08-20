@@ -6,23 +6,24 @@ interface TypingTextProps {
   text: string;
   cursor?: string;
   typingSpeed?: number;
-  className?: string; // Added className prop
+  className?: string;
 }
 
 export default function TypingText({
   text,
   cursor = '_',
   typingSpeed = 0.8,
-  className = '', // Set default value to empty string
+  className = '',
 }: TypingTextProps) {
   const [displayedText, setDisplayedText] = useState('');
-  const [isTypingComplete, setIsTypingComplete] = useState(false);
+  const isTypingComplete = displayedText.length >= text.length;
 
   useEffect(() => {
-    if (displayedText.length >= text.length) {
-      setIsTypingComplete(true);
-      return;
-    }
+    setDisplayedText('');
+  }, [text]);
+
+  useEffect(() => {
+    if (displayedText.length >= text.length) return;
 
     const charInterval = (typingSpeed * 1000) / text.length;
 

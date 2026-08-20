@@ -3,13 +3,35 @@
 import { useTheme } from 'next-themes';
 import { useEffect, useState } from 'react';
 
+import { common, Lang } from '@/i18n';
+
+type ThemeKey = 'light' | 'dark' | 'system';
+
+const NEXT_THEME: Record<ThemeKey, ThemeKey> = {
+  light: 'dark',
+  dark: 'system',
+  system: 'light',
+};
+
+const THEME_LABEL_KEY = {
+  light: 'themeLight',
+  dark: 'themeDark',
+  system: 'themeSystem',
+} as const satisfies Record<ThemeKey, keyof (typeof common)['en']>;
+
 interface ThemeToggleProps {
+  lang: Lang;
   iconSystem: React.ReactNode;
   iconDark: React.ReactNode;
   iconLight: React.ReactNode;
 }
 
-export default function ThemeToggle({ iconSystem, iconDark, iconLight }: ThemeToggleProps) {
+export default function ThemeToggle({
+  lang,
+  iconSystem,
+  iconDark,
+  iconLight,
+}: ThemeToggleProps) {
   const { theme, setTheme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
 
@@ -19,61 +41,41 @@ export default function ThemeToggle({ iconSystem, iconDark, iconLight }: ThemeTo
     return (
       <div className='flex items-center justify-end w-max'>
         <div className='flex items-center p-2 rounded-lg'>
-          <span className='relative inline-flex h-5 w-10 items-center rounded-full bg-slate-300 dark:bg-slate-600'>
-            <span className='inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-200 translate-x-1' />
-          </span>
-          <span className='pl-2 w-5 h-5' />
+          <span className='w-5 h-5' />
         </div>
       </div>
     );
   }
 
-  const cycleTheme = () => {
-    if (theme === 'light') {
-      setTheme('dark');
-    } else if (theme === 'dark') {
-      setTheme('system');
-    } else {
-      setTheme('light');
-    }
-  };
+  const currentTheme: ThemeKey =
+    theme === 'light' || theme === 'dark' ? theme : 'system';
+  const effectiveTheme =
+    currentTheme === 'system' ? systemTheme || 'light' : currentTheme;
 
-  const getDisplayTheme = () => {
-    if (theme === 'system') {
-      return systemTheme || 'light';
-    }
-    return theme || 'light';
-  };
+  const icon =
+    currentTheme === 'system'
+      ? iconSystem
+      : effectiveTheme === 'dark'
+        ? iconDark
+        : iconLight;
 
-  const getIcon = () => {
-    if (theme === 'system') return iconSystem;
-    return getDisplayTheme() === 'dark' ? iconDark : iconLight;
-  };
+  const strings = common[lang];
+  const label = (key: ThemeKey) => strings[THEME_LABEL_KEY[key]];
 
-  const getTooltip = () => {
-    if (theme === 'system') {
-      return `System (${systemTheme || 'light'})`;
-    }
-    return theme === 'dark' ? 'Dark' : 'Light';
-  };
+  const tooltip =
+    currentTheme === 'system'
+      ? `${label('system')} (${label(effectiveTheme === 'dark' ? 'dark' : 'light')})`
+      : label(currentTheme);
 
   return (
     <div className='flex items-center justify-end w-max'>
       <button
-        onClick={cycleTheme}
+        onClick={() => setTheme(NEXT_THEME[currentTheme])}
         className='flex items-center cursor-pointer p-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors duration-200'
-        title={getTooltip()}
-        aria-label={`Switch to ${theme === 'light' ? 'dark' : theme === 'dark' ? 'system' : 'light'} theme`}
+        title={tooltip}
+        aria-label={`${strings.switchTheme}: ${label(NEXT_THEME[currentTheme])}`}
       >
-        <span className='relative inline-flex h-5 w-10 items-center rounded-full bg-slate-300 dark:bg-slate-600 transition-colors duration-200'>
-          <span
-            className={`inline-block h-4 w-4 transform rounded-full bg-white dark:bg-slate-200 transition-transform duration-200 ${getDisplayTheme() === 'dark' ? 'translate-x-5' : 'translate-x-1'
-              }`}
-          />
-        </span>
-        <span className='pl-2'>
-          {getIcon()}
-        </span>
+        {icon}
       </button>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { HiListBullet, HiXMark } from 'react-icons/hi2';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
@@ -13,11 +13,8 @@ interface TocItem {
   level: number;
 }
 
-/**
- * Desktop (xl+): sticky right sidebar with progressive disclosure — h2 always visible,
- * h3/h4 revealed only for the currently active section.
- * Mobile/tablet: FAB at bottom-right that opens a bottom-sheet TOC.
- */
+const ACTIVE_HEADING_OFFSET_PX = 120;
+
 export default function TableOfContents({
   containerSelector = 'article',
   lang,
@@ -28,8 +25,9 @@ export default function TableOfContents({
   const [items, setItems] = useState<TocItem[]>([]);
   const [activeH2Id, setActiveH2Id] = useState<string | null>(null);
   const [sheetOpen, setSheetOpen] = useState(false);
+  const fabRef = useRef<HTMLButtonElement>(null);
+  const sheetCloseRef = useRef<HTMLButtonElement>(null);
 
-  // Extract headings from DOM
   useEffect(() => {
     const container = document.querySelector(containerSelector);
     if (!container) return;
@@ -49,7 +47,6 @@ export default function TableOfContents({
     setItems(tocItems);
   }, [containerSelector]);
 
-  // Track which h2 section the user is reading
   useEffect(() => {
     if (items.length === 0) return;
 
@@ -59,7 +56,7 @@ export default function TableOfContents({
     const firstId = h2Items[0]!.id;
 
     const handleScroll = () => {
-      const scrollY = window.scrollY + 120;
+      const scrollY = window.scrollY + ACTIVE_HEADING_OFFSET_PX;
       let current: string | null = firstId;
 
       for (const item of h2Items) {
@@ -78,7 +75,6 @@ export default function TableOfContents({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [items]);
 
-  // Lock body scroll & handle Escape when sheet is open
   useEffect(() => {
     if (!sheetOpen) return;
 
@@ -88,9 +84,14 @@ export default function TableOfContents({
     };
     document.addEventListener('keydown', handleKey);
 
+    const fab = fabRef.current;
+    const opener = (document.activeElement as HTMLElement | null) ?? fab;
+    sheetCloseRef.current?.focus();
+
     return () => {
       document.body.style.overflow = '';
       document.removeEventListener('keydown', handleKey);
+      opener?.focus();
     };
   }, [sheetOpen]);
 
@@ -98,7 +99,6 @@ export default function TableOfContents({
 
   const title = common[lang].tableOfContents;
 
-  // Progressive disclosure: h2 always shown, h3/h4 only under the active h2
   const desktopItems = (() => {
     const result: TocItem[] = [];
     let currentH2: string | null = null;
@@ -117,7 +117,6 @@ export default function TableOfContents({
 
   return (
     <>
-      {/* Desktop (xl+): sticky sidebar to the right of article */}
       <aside
         className='hidden xl:block absolute top-0 left-full h-full ml-8 w-44'
         aria-label={title}
@@ -130,7 +129,11 @@ export default function TableOfContents({
             {desktopItems.map((item) => (
               <li
                 key={item.id}
-                style={item.level > 2 ? { paddingLeft: `${(item.level - 2) * 0.75}rem` } : undefined}
+                style={
+                  item.level > 2
+                    ? { paddingLeft: `${(item.level - 2) * 0.75}rem` }
+                    : undefined
+                }
               >
                 <UnstyledLink
                   href={`#${item.id}`}
@@ -148,10 +151,9 @@ export default function TableOfContents({
         </nav>
       </aside>
 
-      {/* Mobile / tablet: FAB + bottom sheet */}
       <div className='xl:hidden'>
-        {/* Floating action button */}
         <button
+          ref={fabRef}
           onClick={() => setSheetOpen(true)}
           className='fixed bottom-6 right-6 z-40 flex h-12 w-12 items-center justify-center rounded-full bg-slate-800 text-white shadow-lg transition-transform hover:scale-105 active:scale-95 dark:bg-slate-200 dark:text-slate-900'
           aria-label={title}
@@ -159,7 +161,6 @@ export default function TableOfContents({
           <HiListBullet className='h-5 w-5' />
         </button>
 
-        {/* Bottom sheet */}
         {sheetOpen && (
           <div
             className='fixed inset-0 z-50 flex flex-col justify-end'
@@ -167,16 +168,13 @@ export default function TableOfContents({
             aria-label={title}
             aria-modal='true'
           >
-            {/* Backdrop */}
             <div
               className='absolute inset-0 bg-black/40 backdrop-blur-sm'
               onClick={() => setSheetOpen(false)}
               aria-hidden='true'
             />
 
-            {/* Sheet content */}
             <div className='relative max-h-[70vh] overflow-y-auto rounded-t-2xl bg-white px-6 pb-8 pt-6 shadow-2xl animate-slide-up dark:bg-slate-900'>
-              {/* Decorative drag handle */}
               <div className='absolute left-1/2 top-2 h-1 w-10 -translate-x-1/2 rounded-full bg-slate-300 dark:bg-slate-600' />
 
               <div className='mb-4 flex items-center justify-between'>
@@ -184,9 +182,10 @@ export default function TableOfContents({
                   {title}
                 </span>
                 <button
+                  ref={sheetCloseRef}
                   onClick={() => setSheetOpen(false)}
                   className='rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600 dark:hover:bg-slate-800 dark:hover:text-slate-300'
-                  aria-label='Close'
+                  aria-label={common[lang].close}
                 >
                   <HiXMark className='h-5 w-5' />
                 </button>

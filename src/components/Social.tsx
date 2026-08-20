@@ -2,7 +2,7 @@ import { SiGithub, SiLinkedin, SiRss } from 'react-icons/si';
 
 import IconLink from '@/components/IconLink';
 
-import { Lang } from '@/i18n';
+import { common, Lang } from '@/i18n';
 
 import config from '/config';
 
@@ -17,17 +17,17 @@ export default function Social({ lang, className }: SocialProps) {
       <IconLink
         href={config.LINKED_IN}
         icon={SiLinkedin}
-        aria-label='LinkedIn profile'
+        aria-label={common[lang].linkedinProfile}
       />
       <IconLink
         href={config.GIT_HUB}
         icon={SiGithub}
-        aria-label='GitHub profile'
+        aria-label={common[lang].githubProfile}
       />
       <IconLink
         href={`/${lang}/feed.xml`}
         icon={SiRss}
-        aria-label='RSS feed'
+        aria-label={common[lang].rssFeed}
       />
     </div>
   );
