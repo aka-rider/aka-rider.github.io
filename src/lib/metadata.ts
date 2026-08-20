@@ -2,6 +2,8 @@ import { Metadata } from 'next';
 
 import { common, Lang } from '@/i18n';
 
+import config from '../../config';
+
 export async function defaultMetadata({
   params,
 }: {
@@ -9,8 +11,7 @@ export async function defaultMetadata({
 }): Promise<Metadata> {
   const { lang } = await params;
   return {
-    // eslint-disable-next-line no-undef
-    metadataBase: new URL('https://iurii.net'),
+    metadataBase: new URL(config.SITE_URL),
     title: common[lang].title,
     description: common[lang].description,
     keywords: common[lang].keywords,

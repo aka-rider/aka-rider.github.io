@@ -1,8 +1,9 @@
+import { notFound } from 'next/navigation';
 import { ReactNode } from 'react';
 
 import Layout from '@/components/layout/Layout';
 
-import { Lang } from '@/i18n';
+import { Languages } from '@/i18n';
 
 export default async function RootLayout({
   children,
@@ -12,5 +13,8 @@ export default async function RootLayout({
   params: Promise<{ lang: string }>;
 }) {
   const { lang } = await params;
-  return <Layout lang={lang as Lang}>{children}</Layout>;
+  if (!Languages.has(lang)) {
+    notFound();
+  }
+  return <Layout lang={lang}>{children}</Layout>;
 }

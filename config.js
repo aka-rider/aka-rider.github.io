@@ -1,9 +1,6 @@
-const path = require('path');
-
 module.exports = {
-
   get CNAME() {
-    return "iurii.net";
+    return 'iurii.net';
   },
 
   get SITE_URL() {
@@ -22,7 +19,19 @@ module.exports = {
     return 'https://github.com/aka-rider';
   },
 
-  // Paths
+  get GISCUS() {
+    return {
+      repo: 'aka-rider/aka-rider.github.io',
+      repoId: 'MDEwOlJlcG9zaXRvcnkyNjc3MDM0MTc=',
+      category: 'General',
+      categoryId: 'DIC_kwDOD_TUec4CO4sM',
+    };
+  },
+
+  get DEFAULT_POST_IMAGE() {
+    return '/images/blog-generic.webp';
+  },
+
   get ROOT_DIR() {
     return process.cwd();
   },
@@ -31,7 +40,6 @@ module.exports = {
     return '_posts';
   },
 
-  // Environment
   get DEBUG() {
     return process.env.NODE_ENV === 'development';
   },

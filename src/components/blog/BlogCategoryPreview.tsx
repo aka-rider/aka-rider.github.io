@@ -15,8 +15,6 @@ export default function BlogCategoryPreview({
   category: Category;
 }) {
   const showThumbnails = category.thumbnails ?? false;
-  // If thumbnails enabled: Show Featured + 1 Next Post (50/50)
-  // If thumbnails disabled: Show Featured + 4 List Posts (60/40)
   const listLimit = showThumbnails ? 1 : 4;
 
   let posts = category.getPosts();
@@ -32,9 +30,13 @@ export default function BlogCategoryPreview({
   return (
     <div className='flex flex-col'>
       <div className='flex w-full flex-col md:flex-row gap-8'>
-        {/* Featured post preview (Left Column) */}
         {category.featured && (
-          <div className={clsxm(showThumbnails ? 'md:w-1/2' : 'md:w-[60%]', 'w-full')}>
+          <div
+            className={clsxm(
+              showThumbnails ? 'md:w-1/2' : 'md:w-[60%]',
+              'w-full',
+            )}
+          >
             <BlogPostPreview
               lang={lang}
               post={category.featured}
@@ -45,13 +47,16 @@ export default function BlogCategoryPreview({
           </div>
         )}
 
-        {/* Other posts preview (Right Column) */}
-        <div className={clsxm(
-          category.featured
-            ? (showThumbnails ? 'md:w-1/2' : 'md:w-[40%]')
-            : 'w-full',
-          'w-full flex flex-col gap-6'
-        )}>
+        <div
+          className={clsxm(
+            category.featured
+              ? showThumbnails
+                ? 'md:w-1/2'
+                : 'md:w-[40%]'
+              : 'w-full',
+            'w-full flex flex-col gap-6',
+          )}
+        >
           {posts.map((post) => (
             <div
               key={post.slug}
@@ -67,11 +72,10 @@ export default function BlogCategoryPreview({
             </div>
           ))}
 
-          {/* Archive Link */}
           <div className='flex justify-end mt-2'>
             <UnstyledLink
               href={Blog.getLink(lang, category)}
-              className='text-sm font-medium hover:text-primary-500 transition-colors'
+              className='text-sm font-medium hover:text-sky-600 dark:hover:text-sky-400 transition-colors'
             >
               {common[lang].viewArchive}
             </UnstyledLink>

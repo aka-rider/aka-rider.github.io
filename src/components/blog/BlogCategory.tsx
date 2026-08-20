@@ -17,19 +17,22 @@ export default function BlogCategory({
 
   return (
     <div className='flex flex-col'>
-      {/* Category Title */}
       <h2 className='text-3xl font-bold mb-4'>{category.title}</h2>
 
-      {/* Tags */}
       {category.tags && Object.keys(category.tags).length > 0 && (
-        <div className="flex flex-wrap gap-2 mb-8">
-          {Object.keys(category.tags).map(tag => (
-            <span key={tag} className="px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400">#{tag} ({category.tags![tag]?.length})</span>
+        <div className='flex flex-wrap gap-2 mb-8'>
+          {Object.keys(category.tags).map((tag) => (
+            <span
+              key={tag}
+              className='px-2 py-1 bg-slate-100 dark:bg-slate-800 rounded text-xs text-slate-600 dark:text-slate-400'
+            >
+              #{tag} ({category.tags![tag]?.length})
+            </span>
           ))}
         </div>
       )}
 
-      {(posts.length > 0) && (
+      {posts.length > 0 && (
         <div className='flex flex-col gap-8'>
           <div
             className={

@@ -11,11 +11,8 @@ type NextImageProps = {
   alt: string;
 } & ImageProps;
 
-/**
- *
- * @description Must set width using `w-` className
- * @param useSkeleton add background with pulse animation, don't use it if image is transparent
- */
+const WIDTH_UTILITY = /(^|\s)w-/;
+
 export default function NextImage({
   useSkeleton = false,
   src,
@@ -30,15 +27,18 @@ export default function NextImage({
   const [status, setStatus] = React.useState(
     useSkeleton ? 'loading' : 'complete',
   );
-  const widthIsSet = className?.includes('w-') ?? false;
+  const widthIsSet = WIDTH_UTILITY.test(className ?? '');
 
   return (
     <span
-      style={!widthIsSet ? { width: `${width}px` } : undefined}
+      style={
+        !widthIsSet && width !== undefined ? { width: `${width}px` } : undefined
+      }
       className={className}
     >
       <Image
         className={clsxm(
+          'dark:brightness-75',
           imgClassName,
           status === 'loading' && clsxm('animate-pulse', blurClassName),
         )}

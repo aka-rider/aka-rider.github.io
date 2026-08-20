@@ -23,16 +23,24 @@ const services = {
   },
 } as const;
 
+const cta = {
+  en: 'Open for engagements — message me on LinkedIn.',
+  uk: 'Відкритий до співпраці — напишіть мені в LinkedIn.',
+} as const;
+
 export function translateServices(lang: Lang) {
   return {
-    cto: {
-      title: services.cto.title[lang],
-      proposition: services.cto.proposition[lang],
+    items: {
+      cto: {
+        title: services.cto.title[lang],
+        proposition: services.cto.proposition[lang],
+      },
+      principal: {
+        title: services.principal.title[lang],
+        proposition: services.principal.proposition[lang],
+      },
     },
-    principal: {
-      title: services.principal.title[lang],
-      proposition: services.principal.proposition[lang],
-    },
+    cta: cta[lang],
   };
 }
 

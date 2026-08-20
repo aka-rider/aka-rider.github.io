@@ -1,9 +1,9 @@
+import typography from '@tailwindcss/typography';
 import type { Config } from 'tailwindcss';
 
 const config: Config = {
-  content: ['./src/**/*.{ts,tsx}'],
-  // Remove darkMode config for v4 - should work automatically
-  plugins: [require('@tailwindcss/typography')],
-} as const;
+  content: ['./src/**/*.{ts,tsx}', './_posts/**/*.mdx'],
+  plugins: [typography],
+};
 
 export default config;

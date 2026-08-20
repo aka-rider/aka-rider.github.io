@@ -2,11 +2,13 @@ import js from '@eslint/js';
 import nextPlugin from '@next/eslint-plugin-next';
 import typescript from '@typescript-eslint/eslint-plugin';
 import typescriptParser from '@typescript-eslint/parser';
+import prettierConfig from 'eslint-config-prettier';
 import jsxA11yPlugin from 'eslint-plugin-jsx-a11y';
 import reactPlugin from 'eslint-plugin-react';
 import reactHooksPlugin from 'eslint-plugin-react-hooks';
 import simpleImportSort from 'eslint-plugin-simple-import-sort';
 import unusedImports from 'eslint-plugin-unused-imports';
+import globals from 'globals';
 
 export default [
   js.configs.recommended,
@@ -22,34 +24,10 @@ export default [
         sourceType: 'module',
       },
       globals: {
+        ...globals.browser,
+        ...globals.node,
         React: 'readonly',
         JSX: 'readonly',
-        console: 'readonly',
-        process: 'readonly',
-        Buffer: 'readonly',
-        __dirname: 'readonly',
-        __filename: 'readonly',
-        module: 'readonly',
-        require: 'readonly',
-        global: 'readonly',
-        window: 'readonly',
-        document: 'readonly',
-        navigator: 'readonly',
-        fetch: 'readonly',
-        setTimeout: 'readonly',
-        clearTimeout: 'readonly',
-        sessionStorage: 'readonly',
-        // DOM element types
-        HTMLButtonElement: 'readonly',
-        HTMLAnchorElement: 'readonly',
-        HTMLDivElement: 'readonly',
-        HTMLElement: 'readonly',
-        // DOM event types
-        Event: 'readonly',
-        MouseEvent: 'readonly',
-        Node: 'readonly',
-        IntersectionObserver: 'readonly',
-        IntersectionObserverEntry: 'readonly',
       },
     },
     plugins: {
@@ -62,15 +40,12 @@ export default [
       'unused-imports': unusedImports,
     },
     rules: {
-      // Base ESLint rules
       'no-unused-vars': 'off',
-      'no-console': 'warn',
+      'no-console': ['warn', { allow: ['error'] }],
 
-      // TypeScript rules
       '@typescript-eslint/explicit-module-boundary-types': 'off',
       '@typescript-eslint/no-unused-vars': 'off',
 
-      // React rules
       'react/no-unescaped-entities': 'off',
       'react/display-name': 'off',
       'react/jsx-curly-brace-presence': [
@@ -156,30 +131,16 @@ export default [
     },
   },
   {
-    files: ['**/*.config.{js,mjs,cjs}', '**/next.config.{js,mjs}'],
+    files: ['**/*.config.{js,mjs,cjs}'],
     languageOptions: {
-      globals: {
-        module: 'readonly',
-        require: 'readonly',
-        __dirname: 'readonly',
-        process: 'readonly',
-      },
+      globals: globals.node,
     },
   },
   {
     files: ['**/*.test.{js,jsx,ts,tsx}', '**/*.spec.{js,jsx,ts,tsx}'],
     languageOptions: {
-      globals: {
-        describe: 'readonly',
-        it: 'readonly',
-        test: 'readonly',
-        expect: 'readonly',
-        beforeEach: 'readonly',
-        afterEach: 'readonly',
-        beforeAll: 'readonly',
-        afterAll: 'readonly',
-        jest: 'readonly',
-      },
+      globals: globals.jest,
     },
   },
+  prettierConfig,
 ];

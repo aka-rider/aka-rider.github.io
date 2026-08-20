@@ -13,7 +13,6 @@ import Nav from '@/components/layout/Nav';
 
 import { Lang } from '@/i18n';
 
-// Simplified category interface for client-side consumption
 export interface FeedCategory {
   slug: string;
   title: string;
@@ -32,20 +31,26 @@ function BlogFeedInner({ lang, categories }: BlogFeedProps) {
   const pathname = usePathname();
   const categoryParam = searchParams.get('category');
 
-  const activeTab = (categoryParam && categories.some(c => c.slug === categoryParam))
-    ? categoryParam
-    : categories[0]?.slug || '';
+  const activeTab =
+    categoryParam && categories.some((c) => c.slug === categoryParam)
+      ? categoryParam
+      : categories[0]?.slug || '';
 
-  const activeCategory = categories.find((c) => c.slug === activeTab) || categories[0];
+  const activeCategory =
+    categories.find((c) => c.slug === activeTab) || categories[0];
 
-  const handleTabChange = useCallback((id: string) => {
-    router.push(`${pathname}?category=${id}`, { scroll: false });
-  }, [router, pathname]);
+  const handleTabChange = useCallback(
+    (id: string) => {
+      router.push(`${pathname}?category=${id}`, { scroll: false });
+    },
+    [router, pathname],
+  );
 
   if (!activeCategory) return null;
 
   const navigation = (
     <TabNavigation
+      lang={lang}
       tabs={categories.map((c) => ({ id: c.slug, label: c.title }))}
       activeTab={activeTab}
       onTabChange={handleTabChange}
@@ -57,15 +62,13 @@ function BlogFeedInner({ lang, categories }: BlogFeedProps) {
 
   return (
     <>
-      <Nav lang={lang}>
-        {navigation}
-      </Nav>
+      <Nav lang={lang}>{navigation}</Nav>
 
       <div className='min-h-screen pb-20 mt-8'>
         <div className='layout'>
           <div
             key={activeTab}
-            className="animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both"
+            className='animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both'
           >
             {isVisualMode ? (
               <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8'>

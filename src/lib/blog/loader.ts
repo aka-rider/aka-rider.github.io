@@ -9,34 +9,37 @@ import { BlogNode, Category, LoadFailure, Post } from './types';
 import config from '../../../config';
 
 const META_FILE = '_meta.json';
+const EXCERPT_LENGTH = 200;
+const WORDS_PER_MINUTE: Record<Lang, number> = {
+  en: 200,
+  uk: 170,
+};
 
 interface CategoryMeta {
   title: Record<Lang, string>;
-  featuredPost?: string; // slug of featured post
+  featuredPost?: string;
   icon?: string;
   thumbnails?: boolean;
 }
 
 interface DirnameMeta {
   slug: string;
-  sortKey?: string; // optional sort key for ordering posts
+  sortKey?: string;
 }
 
 const normalizeSlug = (slug: string): string => {
   const s = slug
     .toLowerCase()
-    .replace(/[^a-z0-9-]+/g, '-') // non-alphanumeric to dashes
-    .replace(/^-+|-+$/g, ''); // remove leading/trailing dashes only
-  return s || 'untitled'; // ensure non-empty slug
+    .replace(/[^a-z0-9-]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+  return s || 'untitled';
 };
 
 const blogNodesCompare = (a: BlogNode, b: BlogNode): number => {
-  // If both nodes have dates, use them for sorting (newest first)
   if ('date' in a && 'date' in b && a.date && b.date) {
     return b.date.getTime() - a.date.getTime();
   }
 
-  // Sort by sortKey if both have it, otherwise by slug
   if (a.sortKey && b.sortKey) {
     return a.sortKey.localeCompare(b.sortKey);
   }
@@ -45,9 +48,6 @@ const blogNodesCompare = (a: BlogNode, b: BlogNode): number => {
 
 function parseFilePath(fp: string): DirnameMeta {
   const base = path.basename(fp);
-  // 003.title
-  // 2023-10-01.title
-  // 2023-10-01.title.en
   if (/^\d[\d-]*\./.test(base)) {
     const [sortKey, ...slug] = base.split('.');
     return {
@@ -67,9 +67,24 @@ function maybeReadMetadata(dir: string): CategoryMeta | null {
     const content = fs.readFileSync(path.join(dir, META_FILE), 'utf8');
     return JSON.parse(content);
   } catch (err: any) {
-    if (err.code === 'ENOENT') return null; // file does not exist
-    throw err; // other error (permissions, parse error, etc.)
+    if (err.code === 'ENOENT') return null;
+    throw err;
   }
+}
+
+function postImageUrl(rawImage: string, postFilename: string): string {
+  if (rawImage.startsWith('http://') || rawImage.startsWith('https://')) {
+    return rawImage;
+  }
+  if (rawImage.startsWith('/')) {
+    return `${config.SITE_URL}${rawImage}`;
+  }
+  return `${config.SITE_URL}${path.posix.join('/', path.dirname(postFilename), rawImage)}`;
+}
+
+function makeExcerpt(content: string): string {
+  const head = content.slice(0, EXCERPT_LENGTH);
+  return head.length < content.length ? `${head}...` : head;
 }
 
 export function loadDirectory(
@@ -80,13 +95,13 @@ export function loadDirectory(
   const meta = maybeReadMetadata(dirname);
   if (meta) {
     return loadCategory(dirname, meta, lang, parent);
-  } else {
-    return loadLocalizedPost(dirname, lang, parent);
   }
+  return loadLocalizedPost(dirname, lang, parent);
 }
 
 function loadPostFile(
   filename: string,
+  lang: Lang,
   parent?: BlogNode,
   dirSlug?: string,
   dirSortKey?: string,
@@ -102,21 +117,11 @@ function loadPostFile(
       date = new Date(sortKey);
     }
 
-    // Determine language from filename for accurate reading time
-    // index.uk.mdx -> uk (170 wpm)
-    // others -> en (200 wpm)
-    const isUk = filename.includes('.uk.md');
-    const wordsPerMinute = isUk ? 170 : 200;
-    const stats = readingTime(content, { wordsPerMinute });
+    const stats = readingTime(content, {
+      wordsPerMinute: WORDS_PER_MINUTE[lang],
+    });
 
-    const rawImage = data.hero || data.image || '/images/blog-generic.webp';
-
-    const image = rawImage.startsWith('http://') || rawImage.startsWith('https://')
-      ? rawImage // external URL
-      : `${config.SITE_URL}${path.join('/', path.dirname(filename), rawImage)}`; // posts mirrored in next.js `public`
-
-    // Store raw content for later serialization
-    const meta: Post = {
+    return {
       type: 'Post',
       slug,
       sortKey,
@@ -126,20 +131,23 @@ function loadPostFile(
       children: [],
       childrenBySlug: {},
       date,
-      image,
-      content: content, // Store raw content instead of serialized
-      excerpt: data.excerpt || content.slice(0, 200) + '...',
+      image: postImageUrl(
+        data.hero || data.image || config.DEFAULT_POST_IMAGE,
+        filename,
+      ),
+      hideHero: Boolean(data.hideHero),
+      content,
+      excerpt: data.excerpt || makeExcerpt(content),
       tags: data.tags,
       readingTime: Math.ceil(stats.minutes),
       featured: data.featured === true,
     };
-    return meta;
   } catch (err) {
     return {
       type: 'LoadFailure',
       slug,
       sortKey,
-      title: `Failed to load ${path.basename(filename)}`,
+      title: path.basename(filename),
       filePath: filename,
       err,
       parent,
@@ -156,7 +164,25 @@ function loadCategory(
   parent?: BlogNode,
 ): Category | LoadFailure {
   const { slug, sortKey } = parseFilePath(dirname);
-  let c: Category = {
+
+  let files: fs.Dirent[];
+  try {
+    files = fs.readdirSync(dirname, { withFileTypes: true });
+  } catch (err) {
+    return {
+      type: 'LoadFailure',
+      slug,
+      sortKey,
+      parent,
+      title: path.basename(dirname),
+      filePath: dirname,
+      err,
+      children: [],
+      childrenBySlug: {},
+    };
+  }
+
+  const category: Category = {
     type: 'Category',
     slug,
     sortKey,
@@ -168,100 +194,65 @@ function loadCategory(
     children: [],
     childrenBySlug: {},
     tags: {},
-    getPosts: () => {
-      if (!c.children || c.children.length === 0) {
-        return [];
-      }
-      return c.children
-        .filter(
-          (child): child is Post =>
-            child.type === 'Post',
-        )
-        .sort(blogNodesCompare);
-    },
-    getCategories: () => {
-      if (!c.children || c.children.length === 0) {
-        return [];
-      }
-      return c.children
+    getPosts: () =>
+      category.children
+        .filter((child): child is Post => child.type === 'Post')
+        .sort(blogNodesCompare),
+    getCategories: () =>
+      category.children
         .filter((child): child is Category => child.type === 'Category')
-        .sort(blogNodesCompare);
-    },
+        .sort(blogNodesCompare),
   };
 
-  try {
-    const files = fs.readdirSync(dirname, { withFileTypes: true });
-    for (const file of files) {
-      let childNode: BlogNode | undefined = undefined;
-      if (file.isDirectory()) {
-        childNode = loadDirectory(path.join(dirname, file.name), lang, c);
-      } else if (file.isFile() && /\.mdx?$/.test(file.name)) {
-        childNode = loadPostFile(path.join(dirname, file.name), c);
-      }
-      if (childNode) {
-        c.children = c.children || [];
-        c.children.push(childNode);
-        c.childrenBySlug = c.childrenBySlug || {};
-        c.childrenBySlug[childNode.slug] = childNode;
-      }
+  for (const file of files) {
+    let childNode: BlogNode | undefined = undefined;
+    if (file.isDirectory()) {
+      childNode = loadDirectory(path.join(dirname, file.name), lang, category);
+    } else if (file.isFile() && /\.mdx?$/.test(file.name)) {
+      childNode = loadPostFile(path.join(dirname, file.name), lang, category);
+    }
+    if (!childNode) {
+      continue;
     }
 
-    // featured post
-    let featuredSet = false;
-    // 1. Check if category metadata explicitly defines a featured post
-    if (meta.featuredPost) {
-      const feat = c.childrenBySlug?.[meta.featuredPost];
-      if (feat?.type === 'Post') {
-        (feat as Post).featured = true;
-        c.featured = feat as Post;
-        featuredSet = true;
-      }
+    const clash = category.childrenBySlug[childNode.slug];
+    if (clash) {
+      throw new Error(
+        `Duplicate slug '${childNode.slug}' in ${dirname}: ${clash.filePath} and ${childNode.filePath}`,
+      );
     }
 
-    // 2. If not set by meta, check if any post is explicitly featured in frontmatter
-    if (!featuredSet) {
-      const posts = c.getPosts();
-      const explicitFeatured = posts.find((p) => p.featured === true);
-
-      if (explicitFeatured) {
-        c.featured = explicitFeatured;
-        featuredSet = true;
-      } else if (posts.length > 0 && posts[0]) {
-        // 3. Fallback: feature the latest post only if no other post is featured
-        posts[0].featured = true;
-        c.featured = posts[0];
-      }
-    }
-
-    // Build tags index
-    if (c.children) {
-      c.children.forEach((child) => {
-        if (child.type === 'Post' && child.tags && Array.isArray(child.tags)) {
-          child.tags.forEach((tag) => {
-            if (!c.tags) c.tags = {};
-            if (!c.tags[tag]) {
-              c.tags[tag] = [];
-            }
-            c.tags[tag].push(child);
-          });
-        }
-      });
-    }
-  } catch (err) {
-    return {
-      type: 'LoadFailure',
-      slug,
-      sortKey,
-      parent,
-      title: `Failed to load ${dirname}`,
-      filePath: dirname,
-      err,
-      children: [],
-      childrenBySlug: {},
-    };
+    category.children.push(childNode);
+    category.childrenBySlug[childNode.slug] = childNode;
   }
 
-  return c;
+  const metaFeatured = meta.featuredPost
+    ? category.childrenBySlug[meta.featuredPost]
+    : undefined;
+  const posts = category.getPosts();
+  if (metaFeatured?.type === 'Post') {
+    metaFeatured.featured = true;
+    category.featured = metaFeatured;
+  } else {
+    const explicitFeatured = posts.find((post) => post.featured === true);
+    const latest = posts[0];
+    if (explicitFeatured) {
+      category.featured = explicitFeatured;
+    } else if (latest) {
+      latest.featured = true;
+      category.featured = latest;
+    }
+  }
+
+  const tags: Record<string, Post[]> = {};
+  for (const post of posts) {
+    for (const tag of post.tags ?? []) {
+      (tags[tag] ??= []).push(post);
+    }
+  }
+  category.tags = tags;
+
+  return category;
 }
 
 function loadLocalizedPost(
@@ -278,39 +269,24 @@ function loadLocalizedPost(
     `${dirname}/index.mdx`,
     `${dirname}/index.md`,
   ];
-  try {
-    let filename: string | undefined;
-    for (const f of variants) {
-      try {
-        const s = fs.statSync(f);
-        if (s && s.isFile()) {
-          filename = f;
-          break;
-        }
-      } catch (err) {
-        if ((err as any)?.code === 'ENOENT') {
-          continue; // File does not exist, try next variant
-        }
-        throw err; // Other error (permissions, etc.)
-      }
-    }
 
-    if (!filename) {
-      throw new Error(`No localized posts found in ${dirname}`);
-    }
+  const filename = variants.find(
+    (f) => fs.existsSync(f) && fs.statSync(f).isFile(),
+  );
 
-    return loadPostFile(filename, parent, slug, sortKey);
-  } catch (err) {
+  if (!filename) {
     return {
       type: 'LoadFailure',
       slug,
       sortKey,
-      title: dirname,
+      title: path.basename(dirname),
       filePath: dirname,
       parent,
-      err,
+      err: new Error(`No localized posts found in ${dirname}`),
       children: [],
       childrenBySlug: {},
     };
   }
+
+  return loadPostFile(filename, lang, parent, slug, sortKey);
 }
