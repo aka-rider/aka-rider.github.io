@@ -1,13 +1,12 @@
 ---
 title: A Beginners Guide to FPV Drones
 image: fpv-hobby.webp
-slug: a-beginners-guide-to-fpv-drones
 excerpt: |-
   This beginner's guide is arguably one of the best because it comes from a beginner. I write as I go.
   I couldn't explain anything I'm a pro at better, because I've forgotten what's easy and what's hard while my FPV journey is still fresh.
-  I also remember the unpatience "just let me fly already" feeling, so I'll keep it short and sweet.
+  I also remember the impatient "just let me fly already" feeling, so I'll keep it short and sweet.
 featured: true
-tags: ['drones', 'beginner']
+tags: ['drones', 'beginner', 'equipment']
 ---
 
 ## Intro I cannot skip
@@ -38,8 +37,8 @@ That said, flying an FPV drone (or just flying) is one of the most rewarding exp
 <TLDR title='Dive into the Sky' />
 
 - Fly 5-10 hours in [Liftoff®: Micro Drones simulator](https://store.steampowered.com/app/1432320/Liftoff_Micro_Drones/) using a gamepad.
-- Borrow or [buy a transmitter](/posts/01.beginner/30.choosing-transmitter/index.mdx) and continue practicing in the simulator.
-- [Buy a Tiny Whoop](/posts/01.beginner/40.1001-reason-to-tiny-whoop/index.mdx) and a pair of cheap used goggles.
+- Borrow or [buy a transmitter](#continue-with-a-real-transmitter) and continue practicing in the simulator.
+- [Buy a Tiny Whoop](#why-a-tiny-whoop) and a pair of cheap used goggles.
 - Crash 100 times before investing in a more expensive gear.
 - Personalize your drone by tuning flight controller and modding / repairing.
 - Join your local FPV community.
@@ -54,7 +53,7 @@ You might lose interest after 10-30 hours in a simulator, which could save you f
 I've seen some people advise against using a gamepad for piloting, but I started with a PlayStation controller connected to a PC, and it worked out fine for me.
 Especially if you are a seasoned gamer, no need to discard your years of experience. The transition to a real transmitter will be just fine.
 
-I recommend everyone to [start with a Tiny Whoop](/posts/01.beginner/40.1001-reason-to-tiny-whoop/index.mdx) and I will die on this hill.
+I recommend everyone [start with a Tiny Whoop](#why-a-tiny-whoop) and I will die on this hill.
 Considering this, [Liftoff®: Micro Drones](https://store.steampowered.com/app/1432320/Liftoff_Micro_Drones/) is an excellent choice.
 The experience it offers is close enough to flying a real drone. This simulator will help you choose your first Tiny Whoop drone.
 Whether it's 65mm, 75mm, or 85mm, 1S or 2S, bi-blades or tri-blades — there's a lot to consider.
@@ -66,17 +65,145 @@ Maybe there's something included in PlayStation Plus or Xbox Game Pass — go fo
 
 There are plenty of other simulators, [Drone Champions League released its official Game](https://store.steampowered.com/app/964570/DCL__The_Game/), and even though it could get you qualified for a real-life drone racing event, I still recommend to start with TinyWhoop.
 
+Once the simulator hooks you, the gamepad becomes the bottleneck — time for a real transmitter.
+
 ## Continue with a Real Transmitter
 
-One of the options at this point, is to buy an RTF (Ready-To-Fly) kit: a drone, a transmitter, and a pair of goggles in one box.
+An RTF (Ready-To-Fly) kit — a drone, a transmitter, and a pair of goggles in one box — is the shortcut option at this point.
+It spares you the compatibility puzzle below, at the cost of choosing each piece yourself.
 
-The next step is to pilot [using a real transmitter](/posts/01.beginner/30.choosing-transmitter/index.mdx).
+<TLDR title='I use Radiomaster Zorro (ExpressLRS)' />
+
+- I used to gamepad (thumber 👍)
+- I don't need an overwhelming number of switches; my go-to's are arm, mode, beeper, and turtle
+- I fly one quad
+- I'm a regular in the simulator (Bluetooth, baby - no wires attached!)
+- 2 hours of flying is plenty
+- I don't need a fancy screen (I'm wearing goggles anyway)
+
+### Compatibility
+
+Make sure the protocol lines up so your Transmitter (TX) and your drone can bind.
+
+### Protocols: ExpressLRS, TBS, Frsky, oh my 🤯
+
+Protocol is a language of transmitter (aka TX) in your hands and the drone's receiver (RX). They simply MUST understand the common language for the drone to fly.
+It works like:
+
+- You twist the throttle gimbal
+- Transmitter to drone: "throttle 42"
+- Drone: "42, understood — _motors buzzing_"
+
+So whatever letters are there: TBS, ELRS, Crossfire — they must be the same letters, and the same version (V1, V2, V3...), definitely the same radio frequency (900MHz, 2.4GHz).
+
+<TLDR title='Express LRS (ELRS)' />
+
+#### Pros
+
+- Long range allows to fly far
+- Low-latency
+- Very stable protocol, giving firm control over the flight
+- The equipment is cheaper than other long-range systems, both transmitters and receivers
+- Open, popular, and widely available. Some protocols are closed within the same ecosystem, meaning that the choice of drones, transmitters, accessories is limited by this ecosystem.
+
+#### Cons
+
+- Could require a bit of setup, not as plug-and-play as Frsky
+
+#### ExpressLRS FCC vs LBT
+
+FCC (Federal Communications Commission) is for the USA, LBT (Listen Before Talk) is for Europe. The difference is in the allowed power of the signal. FCC is more powerful, but it's illegal to use it in Europe. LBT is less powerful, but legal in Europe.
+LBT (Listen Before Talk) is a requirement in the European Union's radio regulations, governed by ETSI (European Telecommunications Standards Institute). LBT requires devices to check if a frequency channel is clear before transmitting, to reduce interference with other devices.
+
+#### Other protocols
+
+If you're still curious about other protocols, [RChobbylab has a great comparison table](https://rchobbylab.com/fpv-radio-protocol/)
+
+### Ergonomics
+
+Regardless of what you're flying, the controller in your hands can make or break the experience.
+However, trying to find the perfect transmitter right from the start can be challenging.
+You might not realize what suits you best until you've experimented with a few.
+Everyone's hands and preferences are different - long sticks or short sticks, no resistance or tactile feedback, switches, sliders, or buttons, and so forth.
+
+#### Pinchers🫰 vs Thumbers 👍.
+
+There's no right or wrong way to hold your transmitter; it's all about what works for you.
+Personally, I prefer thumbing. Pinching just ends up with my fingers fighting each other, and I get tired more quickly.
+
+### Range and Signal Strength
+
+<TLDR title='It depends 🤷‍♂️ I fly with 50mW TX' />
+
+There's a dependency between range and signal strength (which also impacts battery life). Although, it's not a linear relationship, and numerous factors are at play.
+Direct Line of Sight (LOS) is the most significant factor. The more obstacles, the more the signal will degrade.
+Interference from electrical lines, Wi-Fi, other pilots, and even the weather can impact your signal.
+
+On the example of ExpressLRS, they've got a [leaderboard](https://www.expresslrs.org/info/long-range/)
+
+The current (Mar 2024) records are:
+
+| Max Dist. | Freq | Pkt Rate | TX Power | Type |
+| --------- | ---- | -------- | -------- | ---- |
+| 31.56km   | 2.4G | 50Hz     | 50mW     | Wing |
+| ...       | ...  | ...      | ...      | ...  |
+| 10Km      | 2.4G | 500Hz    | 10mW     | Quad |
+
+This is an extreme example, but it's an indicator of what's possible.
+
+For ExpressLRS, the 100mW TX (with a good antenna) should be more than enough, the video feed will likely become the limiting factor earlier.
+
+### Number of channels
+
+When choosing a transmitter, consider the number of channels it supports.
+More channels mean more functions you can control on your drone, from the basics like throttle, pitch, and yaw, to extras like camera tilt and lights.
+
+### Module Expansion Bay
+
+A module bay enables the addition of another protocol, frequency, or increased power to your transmitter.
+It's essential to verify that the module is not only compatible with your transmitter but also fits properly within the module bay.
+
+### External Antenna Support
+
+An external antenna can significantly improve your transmitter's range and signal strength.
+
+### Telemetry capabilities
+
+Telemetry allows your drone to send real-time data back to your transmitter, like battery voltage, signal strength, and GPS position.
+If you plan to use telemetry in real-time, a big bright screen definitely won't hurt. But I have no idea how to use it simultaneously with FPV goggles.
+
+### FPV simulator support (Joystick mode)
+
+This feature lets you use your transmitter as a joystick, providing a seamless transition from virtual to real-world flying.
+It's a fantastic way to practice without risking your drone.
+
+With a transmitter in hand, the only missing piece is the drone itself — and I insist it should be a Tiny Whoop.
+
+## Why a Tiny Whoop
+
+1. It's fun
+2. You can fly it indoor (regardless of the weather)
+3. You can fly it outdoor (should the weather be nice)
+4. You won't hurt yourself
+5. You won't hurt anyone else or break anything (may get tangled in hair though)
+6. Not as easy to break as a bigger drone, survives head-on collisions with walls
+7. 3x cheaper to buy (than a bigger drone)
+8. 3x cheaper to repair
+9. Real-world flying experience
+10. ...including seeing yourself from 3rd person out of body experience
+11. Endless tweaking and tuning flight controller
+12. Understanding Battery!!!
+13. The gear is already compatible with bigger drones
+14. Did I mention it's fun?
+15. Racing with buddies
+
+Convinced? Good — now let's pick one.
 
 ## Choosing a Tiny Whoop
 
 There is a lot to consider, and it's all about personal preference. I can only guide you with questions and personal experience.
 
-## Budget & Fun!
+### Budget & Fun!
 
 There are decent drones and kits aimed for beginners, they could be cheaper and / or more durable, often easier to start with. Problem is, one overgrows them fairly quickly, and they become boring.
 Of course, 'fairly quickly' could be months if you're not flying often.
@@ -84,20 +211,20 @@ Of course, 'fairly quickly' could be months if you're not flying often.
 My budget was tight, so I went straight for a used Mobula7 and I love it. (I was also considering Meteor 75, but the second-hand market is limiting, Mobula came first).
 On the downside, I had spent at least 20 hours (a few weekends and evenings) in Betaflight, ESC configurator, and Edge TX, before I could fly it. On the upside, I learned a lot, and I tuned mine to my liking.
 
-### Cinamatic vs Racing & Freestyle
+### Cinematic vs Racing & Freestyle
 
-Anything able to shoot a decent footage is at least twise as expensive, learning to fly on it is riskier. On the other hand, buying something cheaper and then upgrading bears its own costs <nobr>¯\_(ツ)\_/¯</nobr>.
-I went for the cheapest used Eachine EV800 googles (analog VTX), and I'm OK with it. I can not record my flights, the signal strength is far from great, and the image is not the best, but I fly a real drone.
+Anything able to shoot a decent footage is at least twice as expensive, learning to fly on it is riskier. On the other hand, buying something cheaper and then upgrading bears its own costs <nobr>¯\_(ツ)\_/¯</nobr>.
+I went for the cheapest used Eachine EV800 goggles (analog VTX), and I'm OK with it. I can not record my flights, the signal strength is far from great, and the image is not the best, but I fly a real drone.
 People new to FPV often ask if analog is that bad and should they go straight for digital — "it depends, and I know the answer for myself now."
 
 ### Two-blade vs Three-blade propellers
 
-Two-blade propellers are more efficient, they have dymamic response — better acceleration and max speed. In theory, they provide longer flight time.
+Two-blade propellers are more efficient, they have dynamic response — better acceleration and max speed. In theory, they provide longer flight time.
 Three-blade propellers provide better grip, enabling sharper turns and better control with less inertia.
 
 ### Frame size: 65mm vs 75mm vs 85mm
 
-This is where simulators shine. You can try different drones without buying. The frame size is more about the fill: maneurability, speed, acceleration, flight time — everything comes to play at once, and it's hard to describe.
+This is where simulators shine. You can try different drones without buying. The frame size is more about the feel: maneuverability, speed, acceleration, flight time — everything comes to play at once, and it's hard to describe.
 
 I would go with 65mm for **indoors**, but I don't fly indoors because drones (even tiny ones) are loud, and I have a small kid. On the other hand, rain (even a drizzle), or a mild wind makes outdoors flying impossible — something to consider.
 75mm feel great **outdoors**, and I was able to tame it indoors, especially with motors locked at 70% throttle.
@@ -107,7 +234,7 @@ I would go with 65mm for **indoors**, but I don't fly indoors because drones (ev
 ### Battery size: 1S vs 2S
 
 I was thinking that battery size affects the flight time, boy was I wrong.
-First of all, the battery size affects the weight, so inertia and maneurability. Second, the weight affects the flight time (smaller battery could provide longer flight time due to its weight).
+First of all, the battery size affects the weight, so inertia and maneuverability. Second, the weight affects the flight time (smaller battery could provide longer flight time due to its weight).
 But most of all, the battery size affects the power output, so the speed and acceleration. With the real drone, throttle is never truly linear. With some batteries, you give the full throttle, and they lag, with others, they give power instantly but have a noticeable sag afterwards.
 So again, it's more about the feel, but in this case, simulators show only a part of the picture.
 
@@ -118,60 +245,99 @@ So again, it's more about the feel, but in this case, simulators show only a par
 **Racing Drones**: Built for speed and agility, used in FPV racing.
 **Freestyle Drones**: Optimized for acrobatics and creative flying styles.
 
-### Types of FPV Kits
+Whatever you pick, it flies on LiPo batteries — and those demand respect.
 
-#### RTF (Ready-To-Fly)
+## LiPo batteries
 
-Description: RTF kits are the most user-friendly option, coming fully assembled and with everything you need to start flying right out of the box. This includes the drone, a transmitter (remote controller), batteries, and often a charger. The drone is pre-configured, so you won't need to bind the transmitter or install any components before your first flight.
-**Ideal For**: Beginners or those looking for a hassle-free entry into FPV flying, as well as experienced pilots who prefer not to deal with assembly or configuration processes.
+<TLDR>
 
-Getting Started with FPV
+- Store at ~80% charge
+- Never discharge below 20%
 
-Start with a Tiny Whoop or a beginner-friendly RTF (Ready-To-Fly) kit. These are less expensive and more durable, ideal for learning the basics.
+</TLDR>
 
-Understanding the Gear:
+Li-Po batteries store large amounts of energy in a lightweight package, and are able to discharge that energy quickly.
+This makes your drone agile and responsive, capable of impressive feats in the air. However, their chemistry also makes them more volatile than wide spread Li-Ion batteries.
 
-Drone: The vehicle you'll be flying, equipped with motors, ESCs (Electronic Speed Controllers), a flight controller, and an FPV camera.
-Transmitter (Radio Controller): The handheld device used to control the drone.
-Goggles: The headset that provides the FPV feed from the drone's camera.
-Batteries: FPV drones typically use LiPo (Lithium Polymer) batteries.
+To put it simply, Li-Po batteries 🔋 **burn** 🔥 hot and fast when things go wrong.
 
-Basic Flight Concepts
-Throttle Control: Controls the altitude of your drone. More throttle lifts the drone, less throttle lowers it.
+### Storage
 
-Safety and Regulations
-Know the Rules:
+Li-Po batteries charged to 100% and not used for 1-2 days will degrade faster and can swell. Store them at **~3.8V per cell**.
+So 4S battery should be stored at around 15.2V (3.8V \* 4 cells).
 
-Always be aware of your local regulations regarding drone flying. This may include no-fly zones, altitude limits, and registration requirements.
+### Charging
 
-Safety First:
+Use a charger _specifically designed_ for Li-Po batteries, and never leave them unattended while charging.
 
-Never fly near people, private property, or sensitive areas.
+Cheap charges can be dangerous as they can overcharge the battery and/or overheat itself with the similar consequences.
+Overcharging is a big no-no, as it can lead to fires.
 
-Always keep your drone within line of sight, unless using FPV goggles under specific conditions allowed by regulations.
+Patience is a virtue; charge at a moderate rate 🔌 to prolong battery life.
 
-Maintenance and Troubleshooting
+A fireproof charging bag is a small investment for peace of mind. Search for "Li-Po safe" or "Li-Po fireproof bag".
 
-Regular Checks:
+![Li-Po batteries safe fireproof bag](/images/li-po-safe.webp)
 
-Before each flight, check your drone for any loose parts or damage.
+### Discharging
 
-Ensure your batteries are charged and stored safely.
+Never discharge a Li-Po battery below **3.0V per cell**. This can cause a battery to die on the spot, and extreme discharge definitely will reduce the battery's lifespan.
 
-Learning Repairs:
+### Handling
 
-Crashes are part of the learning process. Learning to repair your drone is an invaluable skill in the FPV world.
+The drone would often crash on a battery, so it's important to check the battery for any damage after a crash.
+If the battery is punctured, swollen, or damaged in any way, it's best to retire it not risking turning your drone into a blazing fireball.
 
-Joining the Community
+Avoid extreme temperatures, both hot and cold, as they can damage the battery, and don't leave them in direct sunlight.
 
-Connect with Others:
+### Gear
 
-The FPV community is vast and welcoming. Join online forums, social media groups, and local flying clubs to learn from experienced pilots and stay updated on the latest in FPV.
-Practice and Patience
-Take Your Time:
+Avoid cheap chargers and batteries. You risking your drone and your home.
+A good charger could not only charge but also discharge and balance the cells. It's a good idea to have a charger that can charge multiple batteries at once.
 
-Mastery takes time and practice. Start with basic maneuvers and gradually progress to more complex flights.
-Enjoy the Journey:
+#### 4-6S Li-Po Battery Charger
 
-FPV flying is not just about the destination but the thrill of the flight. Enjoy every moment, from the first hover to acrobatic flips.
-FPV drones offer a unique and immersive flying experience, blending the lines between technology, sport, and art. Welcome to the world of FPV flying—your adventure begins now!
+##### iMax B6AC — avoid 🚫
+
+I saw this [reddit post](https://www.reddit.com/r/fpv/comments/1akxvmq/daily_reminder_to_charge_in_a_safe_place/) about burning Li-Po batteries and in the comments they named iMax B6AC as the culprit.
+[![reddit post about burning Li-Po batteries](/images/reddit-imaxb6ac.webp)](https://www.reddit.com/r/fpv/comments/1akxvmq/daily_reminder_to_charge_in_a_safe_place/)
+
+I bought my Mobula 7 from a guy who burned four 1S batteries with the same charger. I saw V2 of the charger on the market, but I'm not sure if it's safe to use.
+
+##### HOTA D6 Pro — recommended ✅
+
+Everyone and their dog recommends the [HOTA D6 Pro](https://hobbymatehobby.com/products/hobbymate-d6-duo-pro-lipo-battery-charger-support-ac-dc-input) charger.
+**Disclaimer**: I don't have it, so do your own research.
+
+Here is a review by Matt Pochwat:
+[![YouTube video "What Makes a Great LiPo Charger? - Hobbymate D6 Duo Pro" by Matt Pochwat](https://img.youtube.com/vi/No0sv3GgwdE/0.jpg)](https://www.youtube.com/watch?v=No0sv3GgwdE)
+
+#### 1S Tiny Whoop Li-Po Battery Charger
+
+Whether to use a dedicated charger for 1S batteries or a "grown-up" 4-6S charger with a parallel charging board is a somewhat polarizing topic.
+I don't have enough knowledge about batteries chemistry but if you plan to fly only Tiny Whoop, then 1S charger is **3-5 times cheaper** than a big one.
+
+##### Betafpv 6 Ports 1S Battery Charger — on a tight budget
+
+I bought the [Betafpv 6 Ports 1S Battery Charger](https://betafpv.com/products/bt2-0-ph2-0-1s-lipo-charger-adapter) and it's a good charger for the price.
+[![betafpv 6 ports 1s battery charger](/images/betafpv-6-ports-1s-battery-charger.webp)](https://betafpv.com/products/bt2-0-ph2-0-1s-lipo-charger-adapter)
+It can charge up to 6 batteries, both BT2.0 and PH2.0 connectors.
+It has a USB-C input, so you can use a power bank to charge the batteries on the go.
+
+I had to return it because it doesn't have discharge function, and it was a deal breaker for me.
+I would charge multiple batteries, fly one, and then got to do something else, or the weather changed, and I had to discharge the batteries with the drone at home to store them safely.
+
+##### VIFLY WhoopStor 3 1S Battery Storage Charger and Discharger
+
+I own the [VIFLY WhoopStor 3 1S Battery Storage Charger and Discharger](https://viflydrone.com/collections/hot-products/products/vifly-whoopstor-6-ports-1s-battery-storage-charger-discharger) now and I love it.
+[![vifly whoopstor 6 ports 1s battery storage charger discharger](/images/vifly-whoopstor-6-ports-1s-battery-storage-charger-discharger.webp)](https://viflydrone.com/collections/hot-products/products/vifly-whoopstor-6-ports-1s-battery-storage-charger-discharger)
+It can charge and discharge up to 6 batteries at once, meaning I don't have to care which battery is charged and which is discharged — put all of them in and press the button.
+It also has USB-C input, and BT2.0 and PH2.0 connectors, Additionally, it has XT60 input, so one could use 2S-6S battery to charge 1S batteries.
+
+It can handle 6V-26V (XT60 2S-6S Battery, DC), or 9V-20V (USB-C), in case you are in a hurry and want to charge faster, you can use more power (for the price of battery life).
+
+## Go fly
+
+Crashes are part of the learning process, and learning to repair your drone is a skill in itself — remember, mine took 20 hours of tinkering before the first flight.
+Join your local FPV community and the online ones: experienced pilots will save you weeks of frustration, and flying with buddies beats flying alone.
+See you in the sky.
