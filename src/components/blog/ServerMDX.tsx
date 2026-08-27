@@ -13,6 +13,7 @@ import AgentLoopFigure from '@/components/blog/llm/AgentLoopFigure';
 import AutoregressiveLoop from '@/components/blog/llm/AutoregressiveLoop';
 import { Chip, ChipStream } from '@/components/blog/llm/Chip';
 import EmbeddingFigure from '@/components/blog/llm/EmbeddingFigure';
+import InterpolationFigure from '@/components/blog/llm/InterpolationFigure';
 import LadderDiagram from '@/components/blog/llm/LadderDiagram';
 import SequenceDiagram from '@/components/blog/llm/SequenceDiagram';
 import TrainingStagesFigure from '@/components/blog/llm/TrainingStagesFigure';
@@ -75,6 +76,7 @@ const llmComponents = {
   AgentLoopFigure,
   AutoregressiveLoop,
   EmbeddingFigure,
+  InterpolationFigure,
   TrainingStagesFigure,
   TransformerBlockDiagram,
 };

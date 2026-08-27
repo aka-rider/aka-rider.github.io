@@ -1,23 +1,24 @@
 export const matmulStrings = {
   en: {
     plain: {
-      aria: 'Matrix multiplication: the row vector x times the weight matrix W gives the output vector y; the highlighted row of x and column of W produce the highlighted cell of y; below, ReLU clamps the negative cell of y to zero',
+      aria: 'Matrix multiplication: the vector of the token " sky" times the weight matrix W gives the output vector y; each column of W is labeled with the pattern it detects — nature, colour, code; the highlighted row and column produce the highlighted cell of y; below, ReLU clamps the negative code reading to zero',
       hint: 'tap any cell of y to see where its value comes from',
-      aLabel: 'x (1×4)',
+      aLabel: 'x = ␣sky (1×4)',
       bLabel: 'W (4×3)',
       cLabel: 'y (1×3)',
+      detectorLabels: ['nature?', 'colour?', 'code?'],
       reluLabel: 'ReLU(y) (1×3)',
       reluNote:
         'the nonlinearity: negative = pattern contradicted → clamped to 0 — filtered out',
       legend: [
-        'x — one token’s vector (1×d)',
-        'W — weights (d×n): each column is one learned detector',
-        'y — how strongly each detector fired',
+        'x — ␣sky’s vector: the first 4 of its 12,288 coordinates (1.2)',
+        'W — weights (4×3): each column is one learned direction = one detector',
+        'y — how far ␣sky leans along each direction',
       ],
       interpretation:
         'positive = the pattern is present; negative = evidence against it',
       honesty:
-        'toy sizes: d = 4 and n = 3 instead of thousands — but the arithmetic is real and computed on this page.',
+        'toy sizes: 4 of 12,288 dims and 3 detectors instead of tens of thousands, and real columns carry no clean labels like "nature" (superposition, below) — but the arithmetic is real and computed on this page.',
     },
     attention: {
       aria: 'Attention scores as a matrix multiplication: queries Q times transposed keys Kᵀ give a 6 by 6 score matrix; the strictly upper triangle is masked out because a token may not look at future tokens',
@@ -43,23 +44,24 @@ export const matmulStrings = {
   },
   uk: {
     plain: {
-      aria: 'Матричне множення: вектор-рядок x, помножений на матрицю ваг W, дає вихідний вектор y; підсвічені рядок x і стовпець W дають підсвічену комірку y; нижче ReLU затискає від’ємну комірку y в нуль',
+      aria: 'Матричне множення: вектор токена " sky", помножений на матрицю ваг W, дає вихідний вектор y; кожен стовпець W підписано патерном, який він виявляє — природа, колір, код; підсвічені рядок і стовпець дають підсвічену комірку y; нижче ReLU затискає від’ємну оцінку коду в нуль',
       hint: 'торкніться будь-якої комірки y, щоб побачити, звідки береться її значення',
-      aLabel: 'x (1×4)',
+      aLabel: 'x = ␣sky (1×4)',
       bLabel: 'W (4×3)',
       cLabel: 'y (1×3)',
+      detectorLabels: ['природа?', 'колір?', 'код?'],
       reluLabel: 'ReLU(y) (1×3)',
       reluNote:
         'нелінійність: від’ємне = патерн спростовано → затиснуто в 0 — відфільтровано',
       legend: [
-        'x — вектор одного токена (1×d)',
-        'W — ваги (d×n): кожен стовпець — один вивчений детектор',
-        'y — наскільки сильно спрацював кожен детектор',
+        'x — вектор ␣sky: перші 4 з його 12 288 координат (1.2)',
+        'W — ваги (4×3): кожен стовпець — один вивчений напрямок = один детектор',
+        'y — наскільки ␣sky нахилений уздовж кожного напрямку',
       ],
       interpretation:
         'додатне = патерн присутній; від’ємне = свідчення проти нього',
       honesty:
-        'іграшкові розміри: d = 4 і n = 3 замість тисяч — але арифметика справжня й обчислюється на цій сторінці.',
+        'іграшкові розміри: 4 із 12 288 вимірів і 3 детектори замість десятків тисяч, а справжні стовпці не мають чистих підписів на кшталт "природа" (суперпозиція, нижче) — але арифметика справжня й обчислюється на цій сторінці.',
     },
     attention: {
       aria: 'Оцінки уваги як матричне множення: запити Q, помножені на транспоновані ключі Kᵀ, дають матрицю оцінок 6 на 6; строго верхній трикутник замасковано, бо токен не може дивитися на майбутні токени',

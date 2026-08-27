@@ -3,6 +3,7 @@
 import { useState } from 'react';
 
 import { EXAMPLE_TOKENS } from '@/components/blog/llm/example';
+import { visibleSpaces } from '@/components/blog/llm/format';
 import { matmulStrings } from '@/components/blog/llm/strings/matmul';
 
 import type { Lang } from '@/i18n';
@@ -11,13 +12,15 @@ type Variant = 'plain' | 'attention';
 
 type Matrix = readonly (readonly number[])[];
 
-const X_ROW: Matrix = [[2.0, 0.0, 1.0, -1.0]];
+const SUBJECT_WORD = visibleSpaces(EXAMPLE_TOKENS[3]);
+
+const X_ROW: Matrix = [[0.8, -0.2, 0.4, -0.6]];
 
 const W_MATRIX: Matrix = [
-  [0.5, 0.9, -0.3],
-  [1.0, -0.2, 0.4],
-  [-0.5, 0.1, 0.8],
-  [0.0, 0.0, 0.6],
+  [1.0, 0.5, -0.5],
+  [0.0, -0.5, 0.5],
+  [0.5, 0.5, 0.0],
+  [-0.5, 0.0, 1.0],
 ];
 
 const Q_MATRIX: Matrix = [
@@ -94,10 +97,10 @@ const LAYOUTS: Record<Variant, Layout> = {
     cell: 34,
     fontSize: 10,
     aX: 8,
-    aY: 188,
+    aY: 218,
     bX: 156,
-    bY: 40,
-    viewBox: '0 0 268 306',
+    bY: 70,
+    viewBox: '0 0 268 340',
     maxWidthClass: 'max-w-[320px]',
   },
   attention: {
@@ -168,6 +171,8 @@ export default function MatmulFigure({
   const { cell, fontSize, aX, aY, bX, bY } = layout;
 
   const isAttention = variant === 'attention';
+  const detectorLabels =
+    'detectorLabels' in strings ? strings.detectorLabels : null;
   const a = isAttention ? Q_MATRIX : X_ROW;
   const b = isAttention ? transpose(K_MATRIX) : W_MATRIX;
   const c = matmul(a, b);
@@ -195,7 +200,7 @@ export default function MatmulFigure({
   const reluSuffix = !isAttention && selValue < 0 ? ' → ReLU → 0.0' : '';
   const expansion = isAttention
     ? `${scoreWord}('${EXAMPLE_TOKENS[sel.row]}', '${EXAMPLE_TOKENS[sel.col]}') = ${terms} = ${result}`
-    : `y${SUBSCRIPTS[sel.col]} = ${terms} = ${result}${reluSuffix}`;
+    : `y${SUBSCRIPTS[sel.col]} = ${detectorLabels?.[sel.col]}(${SUBJECT_WORD}) = ${terms} = ${result}${reluSuffix}`;
 
   const reluY = aY + cell + 28;
   const arrowX = bX + 1.5 * cell;
@@ -223,9 +228,9 @@ export default function MatmulFigure({
             {strings.aLabel}
           </text>
           <text
-            x={isAttention ? bX - 8 : bX}
-            y={isAttention ? bY + (3 * cell) / 2 : bY - 8}
-            textAnchor={isAttention ? 'end' : 'start'}
+            x={bX - 8}
+            y={bY + (inner * cell) / 2 + 3}
+            textAnchor='end'
             fontSize={fontSize + 1}
             className={CYAN_TEXT}
           >
@@ -263,6 +268,20 @@ export default function MatmulFigure({
                 </g>
               ))
             : null}
+
+          {detectorLabels?.map((label, j) => (
+            <text
+              key={label}
+              x={bX + j * cell + cell / 2}
+              y={bY - 6}
+              textAnchor='start'
+              fontSize={fontSize - 1}
+              transform={`rotate(-45 ${bX + j * cell + cell / 2} ${bY - 6})`}
+              className={CYAN_TEXT}
+            >
+              {label}
+            </text>
+          ))}
 
           <line
             x1={aX + inner * cell}
@@ -339,7 +358,7 @@ export default function MatmulFigure({
                   aria-label={
                     isAttention
                       ? `${scoreWord} ${EXAMPLE_TOKENS[r]} × ${EXAMPLE_TOKENS[j]} = ${fmt(value)}`
-                      : `y${SUBSCRIPTS[j]} = ${fmt(value)}`
+                      : `y${SUBSCRIPTS[j]} = ${detectorLabels?.[j]}(${SUBJECT_WORD}) = ${fmt(value)}`
                   }
                   onClick={() => selectCell(r, j)}
                   onFocus={() => selectCell(r, j)}

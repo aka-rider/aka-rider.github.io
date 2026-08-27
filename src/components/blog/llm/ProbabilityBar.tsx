@@ -29,7 +29,12 @@ export function ProbabilityBar({
     >
       {label}
       <span className={BAR_TRACK_CLASSES}>
-        <span className={BAR_FILL_CLASSES} style={{ width: `${percent}%` }} />
+        {/* rounded because Math.exp differs across JS engines in the last bits;
+            a full-precision width breaks hydration of the SSR HTML */}
+        <span
+          className={BAR_FILL_CLASSES}
+          style={{ width: `${percent.toFixed(3)}%` }}
+        />
       </span>
       <span className='font-mono tabular-nums text-sm text-right'>
         {valueText}

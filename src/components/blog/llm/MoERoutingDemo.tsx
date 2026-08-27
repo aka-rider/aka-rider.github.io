@@ -123,7 +123,7 @@ export default function MoERoutingDemo({ lang }: { lang: Lang }) {
                 </div>
                 <div className='mt-1.5 h-1.5 rounded bg-slate-200 dark:bg-slate-700'>
                   <div
-                    style={{ width: `${score * 100}%` }}
+                    style={{ width: `${(score * 100).toFixed(3)}%` }}
                     className={`h-full rounded transition-[width] duration-[250ms] ease-out motion-reduce:transition-none ${
                       isActive
                         ? 'bg-cyan-700 dark:bg-cyan-400'

@@ -10,9 +10,13 @@ import { tokenizerStrings } from '@/components/blog/llm/strings/tokenizer';
 
 import type { Lang } from '@/i18n';
 
-const RARE_WORD = 'unbelievably';
+const RARE_WORD_QUERY = 'Why is the sky unbelievably blue?';
 
-const PRESET_TEXTS = [EXAMPLE_QUERY, RARE_WORD, 'Чому небо синє?'] as const;
+const PRESET_TEXTS = [
+  EXAMPLE_QUERY,
+  RARE_WORD_QUERY,
+  'Чому небо синє?',
+] as const;
 
 const MERGES: ReadonlyArray<readonly [string, string]> = [
   ['t', 'h'],
@@ -39,6 +43,7 @@ const MERGES: ReadonlyArray<readonly [string, string]> = [
   ['th', 'e'],
   ['sk', 'y'],
   ['bl', 'ue'],
+  [SPACE_MARK, 'un'],
   [SPACE_MARK, 'is'],
   [SPACE_MARK, 'the'],
   [SPACE_MARK, 'sky'],
@@ -79,6 +84,7 @@ const VOCAB_IDS: Readonly<Record<string, number>> = {
   the: 1820,
   sky: 26577,
   blue: 12866,
+  [`${SPACE_MARK}un`]: 653,
   [`${SPACE_MARK}a`]: 264,
   [`${SPACE_MARK}an`]: 459,
   [`${SPACE_MARK}in`]: 304,
@@ -190,7 +196,7 @@ export default function TokenizerDemo({ lang }: { lang: Lang }) {
       <GuessGate
         lang={lang}
         guess={strings.guess}
-        onReveal={() => setText(RARE_WORD)}
+        onReveal={() => setText(RARE_WORD_QUERY)}
       >
         <div
           role='group'

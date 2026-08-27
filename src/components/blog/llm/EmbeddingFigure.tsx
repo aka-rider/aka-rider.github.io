@@ -12,28 +12,43 @@ const SUBJECT_TOKEN_INDEX = 3;
 const SUBJECT_TOKEN = EXAMPLE_TOKENS[SUBJECT_TOKEN_INDEX];
 const SUBJECT_TOKEN_ID = EXAMPLE_TOKEN_IDS[SUBJECT_TOKEN_INDEX];
 
-const VECTOR = [0.83, -0.2, 0.44, -0.61, 0.12, 0.95, -0.37, 0.58] as const;
+const VECTOR = [0.8, -0.2, 0.4, -0.6, 0.1, 0.9, -0.4, 0.6] as const;
 
-const CLUSTER_SKY = [
-  { word: 'sky', u: 0.22, v: 0.8 },
-  { word: 'sun', u: 0.34, v: 0.88 },
-  { word: 'cloud', u: 0.12, v: 0.68 },
-  { word: 'blue', u: 0.38, v: 0.7 },
+const TABLE_X = 80;
+const TABLE_WIDTH = 200;
+const TABLE_TOP = 70;
+const ROW_HEIGHT = 16;
+const ROW_GAP = 3;
+const VISIBLE_ROW_IDS = [13178, 13179, 13180, 13181, 13182] as const;
+const HIGHLIGHT_ROW_INDEX = VISIBLE_ROW_IDS.indexOf(SUBJECT_TOKEN_ID);
+
+const VECTOR_Y = 210;
+const VECTOR_CELL = 40;
+const VECTOR_X = 20;
+
+const OUR_POINTS = [
+  { word: 'Why', u: 0.66, v: 0.86 },
+  { word: ' is', u: 0.8, v: 0.74 },
+  { word: ' the', u: 0.7, v: 0.66 },
+  { word: '?', u: 0.85, v: 0.87 },
+  { word: ' sky', u: 0.16, v: 0.66 },
+  { word: ' blue', u: 0.32, v: 0.54 },
 ] as const;
 
-const CLUSTER_CAR = [
-  { word: 'car', u: 0.72, v: 0.25 },
-  { word: 'road', u: 0.85, v: 0.12 },
-  { word: 'engine', u: 0.64, v: 0.06 },
+const NEIGHBOR_POINTS = [
+  { word: 'sun', u: 0.3, v: 0.78 },
+  { word: 'cloud', u: 0.07, v: 0.5 },
+  { word: 'grass', u: 0.14, v: 0.3 },
+  { word: 'green', u: 0.3, v: 0.18 },
 ] as const;
 
-const PAIR_GRASS = [
-  { word: 'grass', u: 0.2, v: 0.45 },
-  { word: 'green', u: 0.34, v: 0.33 },
-] as const;
+const SKY_POINT = OUR_POINTS[4];
+const BLUE_POINT = OUR_POINTS[5];
+const GRASS_POINT = NEIGHBOR_POINTS[2];
+const GREEN_POINT = NEIGHBOR_POINTS[3];
 
-const Y_NEAR = 430;
-const Y_FAR = 210;
+const Y_NEAR = 560;
+const Y_FAR = 330;
 const W_NEAR = 330;
 const W_FAR = 180;
 
@@ -76,34 +91,56 @@ function relationArrow(
 }
 
 const RELATION_ARROWS = [
-  relationArrow(CLUSTER_SKY[0], CLUSTER_SKY[3]),
-  relationArrow(PAIR_GRASS[0], PAIR_GRASS[1]),
+  relationArrow(SKY_POINT, BLUE_POINT),
+  relationArrow(GRASS_POINT, GREEN_POINT),
 ] as const;
 
 const MUTED_TEXT_CLASSES = 'fill-slate-500 dark:fill-slate-400';
-const POINT_CLASSES = 'fill-cyan-700 dark:fill-cyan-400';
-const POINT_LABEL_CLASSES = 'fill-slate-700 dark:fill-slate-300';
-const ARROW_CLASSES = 'stroke-amber-700 dark:stroke-amber-400';
 const AMBER_TEXT_CLASSES = 'fill-amber-700 dark:fill-amber-400';
+const CYAN_TEXT_CLASSES = 'fill-cyan-700 dark:fill-cyan-400';
+const AMBER_POINT_CLASSES = 'fill-amber-700 dark:fill-amber-400';
+const CYAN_POINT_CLASSES = 'fill-cyan-700 dark:fill-cyan-400';
+const ARROW_CLASSES = 'stroke-cyan-700 dark:stroke-cyan-400';
 
 function formatValue(value: number): string {
-  const abs = Math.abs(value).toFixed(2);
+  const abs = Math.abs(value).toFixed(1);
   return value < 0 ? `−${abs}` : abs;
 }
 
-function ScatterPoint({ word, u, v }: { word: string; u: number; v: number }) {
+function rowY(index: number): number {
+  return TABLE_TOP + index * (ROW_HEIGHT + ROW_GAP);
+}
+
+function ScatterPoint({
+  word,
+  u,
+  v,
+  ours,
+}: {
+  word: string;
+  u: number;
+  v: number;
+  ours: boolean;
+}) {
   const { x, y } = proj(u, v);
   const r = pointRadius(v);
   return (
     <g>
-      <circle cx={x} cy={y} r={r} className={POINT_CLASSES} />
+      <circle
+        cx={x}
+        cy={y}
+        r={r}
+        className={ours ? AMBER_POINT_CLASSES : CYAN_POINT_CLASSES}
+      />
       <text
         x={x + r + 4}
         y={y + 3}
         fontSize={10}
-        className={POINT_LABEL_CLASSES}
+        className={
+          ours ? AMBER_TEXT_CLASSES : 'fill-slate-700 dark:fill-slate-300'
+        }
       >
-        {word}
+        {visibleSpaces(word)}
       </text>
     </g>
   );
@@ -111,18 +148,21 @@ function ScatterPoint({ word, u, v }: { word: string; u: number; v: number }) {
 
 export default function EmbeddingFigure({ lang }: { lang: Lang }) {
   const strings = embeddingStrings[lang];
+  const highlightTop = rowY(HIGHLIGHT_ROW_INDEX);
+  const highlightBottom = highlightTop + ROW_HEIGHT;
+  const tableBottom = rowY(VISIBLE_ROW_IDS.length - 1) + ROW_HEIGHT;
 
   return (
     <figure className='my-8'>
       <svg
-        viewBox='0 0 360 460'
+        viewBox='0 0 360 600'
         role='img'
         aria-label={strings.svgAria}
         className='w-full h-auto max-w-[400px] mx-auto block'
       >
         <defs>
           <marker
-            id='llmEmbeddingArrowAmber'
+            id='llmEmbeddingArrowCyan'
             viewBox='0 0 8 8'
             refX='7'
             refY='4'
@@ -132,7 +172,7 @@ export default function EmbeddingFigure({ lang }: { lang: Lang }) {
           >
             <path
               d='M0 0L8 4L0 8Z'
-              className='fill-amber-700 dark:fill-amber-400'
+              className='fill-cyan-700 dark:fill-cyan-400'
             />
           </marker>
           <marker
@@ -173,20 +213,109 @@ export default function EmbeddingFigure({ lang }: { lang: Lang }) {
             x1={180}
             y1={36}
             x2={180}
-            y2={56}
+            y2={TABLE_TOP - 16}
             strokeWidth={1.5}
             markerEnd='url(#llmEmbeddingArrowSlate)'
             className='stroke-slate-500 dark:stroke-slate-400'
           />
 
+          <text
+            x={180}
+            y={TABLE_TOP - 4}
+            textAnchor='middle'
+            fontSize={9}
+            className={MUTED_TEXT_CLASSES}
+          >
+            ⋮
+          </text>
+          {VISIBLE_ROW_IDS.map((id, index) => {
+            const highlighted = index === HIGHLIGHT_ROW_INDEX;
+            return (
+              <g key={id}>
+                <text
+                  x={TABLE_X - 6}
+                  y={rowY(index) + ROW_HEIGHT / 2 + 3}
+                  textAnchor='end'
+                  fontSize={8}
+                  className={
+                    highlighted ? AMBER_TEXT_CLASSES : MUTED_TEXT_CLASSES
+                  }
+                >
+                  {id}
+                </text>
+                <rect
+                  x={TABLE_X}
+                  y={rowY(index)}
+                  width={TABLE_WIDTH}
+                  height={ROW_HEIGHT}
+                  className={
+                    highlighted
+                      ? 'fill-amber-50 dark:fill-amber-950/60 stroke-amber-700 dark:stroke-amber-400'
+                      : 'fill-white dark:fill-slate-900 stroke-slate-300 dark:stroke-slate-600'
+                  }
+                />
+                {Array.from({ length: 7 }, (_, k) => (
+                  <line
+                    key={k}
+                    x1={TABLE_X + (k + 1) * 25}
+                    y1={rowY(index) + 2}
+                    x2={TABLE_X + (k + 1) * 25}
+                    y2={rowY(index) + ROW_HEIGHT - 2}
+                    strokeWidth={1}
+                    opacity={0.35}
+                    className='stroke-slate-300 dark:stroke-slate-600'
+                  />
+                ))}
+              </g>
+            );
+          })}
+          <text
+            x={180}
+            y={tableBottom + 10}
+            textAnchor='middle'
+            fontSize={9}
+            className={MUTED_TEXT_CLASSES}
+          >
+            ⋮
+          </text>
+          <text
+            x={180}
+            y={tableBottom + 26}
+            textAnchor='middle'
+            fontSize={9}
+            className={MUTED_TEXT_CLASSES}
+          >
+            {strings.tableLabel}
+          </text>
+
+          <g
+            strokeWidth={1}
+            strokeDasharray='3 3'
+            opacity={0.55}
+            className='stroke-slate-500 dark:stroke-slate-400'
+          >
+            <line
+              x1={TABLE_X}
+              y1={highlightBottom}
+              x2={VECTOR_X}
+              y2={VECTOR_Y}
+            />
+            <line
+              x1={TABLE_X + TABLE_WIDTH}
+              y1={highlightBottom}
+              x2={VECTOR_X + VECTOR.length * VECTOR_CELL}
+              y2={VECTOR_Y}
+            />
+          </g>
+
           {VECTOR.map((value, idx) => {
-            const x = 20 + idx * 40;
+            const x = VECTOR_X + idx * VECTOR_CELL;
             return (
               <g key={idx}>
                 <rect
                   x={x}
-                  y={64}
-                  width={40}
+                  y={VECTOR_Y}
+                  width={VECTOR_CELL}
                   height={30}
                   className={
                     value >= 0
@@ -196,8 +325,8 @@ export default function EmbeddingFigure({ lang }: { lang: Lang }) {
                   fillOpacity={Math.abs(value) * 0.85}
                 />
                 <text
-                  x={x + 20}
-                  y={110}
+                  x={x + VECTOR_CELL / 2}
+                  y={VECTOR_Y + 46}
                   textAnchor='middle'
                   fontSize={8.5}
                   className={MUTED_TEXT_CLASSES}
@@ -209,17 +338,17 @@ export default function EmbeddingFigure({ lang }: { lang: Lang }) {
           })}
           <text
             x={180}
-            y={132}
+            y={VECTOR_Y + 64}
             textAnchor='middle'
             fontSize={9}
             className={MUTED_TEXT_CLASSES}
           >
-            {strings.dimsShown}
+            {strings.vectorNote}
           </text>
 
           <text
             x={180}
-            y={195}
+            y={312}
             textAnchor='middle'
             fontSize={10}
             className={MUTED_TEXT_CLASSES}
@@ -264,27 +393,41 @@ export default function EmbeddingFigure({ lang }: { lang: Lang }) {
             })}
           </g>
 
-          {[...CLUSTER_SKY, ...PAIR_GRASS, ...CLUSTER_CAR].map((point) => (
-            <ScatterPoint key={point.word} {...point} />
-          ))}
-
           {RELATION_ARROWS.map((arrow, idx) => (
             <line
               key={idx}
               {...arrow}
               strokeWidth={1.8}
-              markerEnd='url(#llmEmbeddingArrowAmber)'
+              markerEnd='url(#llmEmbeddingArrowCyan)'
               className={ARROW_CLASSES}
             />
           ))}
+
+          {NEIGHBOR_POINTS.map((point) => (
+            <ScatterPoint key={point.word} {...point} ours={false} />
+          ))}
+          {OUR_POINTS.map((point) => (
+            <ScatterPoint key={point.word} {...point} ours />
+          ))}
+
           <text
-            x={188}
-            y={312}
+            x={104}
+            y={464}
             fontSize={9.5}
             fontStyle='italic'
-            className={AMBER_TEXT_CLASSES}
+            className={CYAN_TEXT_CLASSES}
           >
             {strings.relationNote}
+          </text>
+          <text
+            x={240}
+            y={430}
+            textAnchor='middle'
+            fontSize={9.5}
+            fontStyle='italic'
+            className={MUTED_TEXT_CLASSES}
+          >
+            {strings.grammarNote}
           </text>
         </g>
       </svg>
