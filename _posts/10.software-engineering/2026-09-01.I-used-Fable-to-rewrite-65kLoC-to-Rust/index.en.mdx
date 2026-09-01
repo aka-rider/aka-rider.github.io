@@ -1,0 +1,86 @@
+---
+title: 'I used Fable to rewrite 65kLoC to Rust. It cost $400.'
+excerpt: 'I rewrote rune, my 65kLoC Go terminal editor, to Rust with Fable 5 for about $400. The trick is to turn a code problem into a data problem.'
+image: 'hero.webp'
+tags: ['software', 'llm', 'rust']
+---
+
+I kept joking that I would have learned Rust a long time ago, but C++ money is not enough for a decent fursuit. Moreover, I'm bald, so I cannot simply dye my hair blue.
+
+But then two things happened at once.
+
+First, I tried the `/teach` skill by Matt Pocock [^teach-skill] to learn Rust, and it clicked: "Teach a C++ programmer idiomatic Rust, skip syntax and helloworld, only focus on main differences."
+This skill is like a personal trainer — overcoming the pleasant challenge keeps me engaged, and at the same time, the material never gets overwhelming. I recommend trying it.
+
+Around the same time, I came across "Rewriting Bun in Rust" [^bun-rust] and got curious about the method:
+
+> Each dynamic workflow was a loop like this - a workflow for:
+>
+> - Generate a porting guide mapping Zig patterns & types to Rust patterns & types
+> - Mechanically port every `.zig` file to a `.rs` file, matching the PORTING.md and LIFETIMES.tsv
+> - Fix every crate's compiler errors
+> - Get subcommands like `bun test` or `bun build` to work
+> - Get every test in Bun's entire test suite to pass
+> - Several large refactors and cleanup passes
+
+I had an idea that a rewrite could be done much cheaper.
+
+> Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won't usually need your flowcharts; they'll be obvious. --- Fred Brooks
+
+This applies to any LLM, but Fable 5 specifically traces the data flow with insane precision. If you can rephrase your problem as a data problem, it can autonomously do complex refactorings, rewrite from one language to another, extract or merge services — in other words, make fundamental changes.
+
+### The three steps
+
+#### 1. Extract the data representation
+
+Ask the LLM to represent your code as any combination of:
+
+- graphs
+- ontologies
+- hierarchical state machines
+- UML process charts
+- constraints
+- math formulae
+
+#### 2. Operate on the representation
+
+At this point, you can ask it to simplify the state machine by reducing the number of states, or to remove hidden channels of communication (e.g. via a shared table, or by sharing addresses in RAM).
+
+#### 3. Put the representation back into code
+
+Now ask for the code — even in another programming language.
+
+### The secret sauce
+
+> For some time now, agents have excelled at tool use, and insofar as they are able to treat other agents as tool invocations. --- a post by Anthropic [^multiagent]
+
+You can add to Fable's prompt:
+
+```markdown
+avoid extensive `Glob`/`Grep`/`WebSearch`/`Bash` - use `Explore` agents instead
+avoid extensive `Edit`/`Bash` - use `general-purpose` sonnet or haiku subagents instead
+use `Read` sparingly, to verify critical claims yourself
+```
+
+`Glob`, `Grep`, and `WebSearch` are names of Claude Code's built-in tools.
+
+I hope that helps. Happy coding.
+
+P.S. The 65kLoC is [rune — a terminal editor for the LLM era](https://github.com/aka-rider/rune):
+
+- Obsidian × VSCode in your terminal, with **⌘ -** keystrokes
+- The main focus is markdown and syntax highlight; language servers and debuggers are for agents
+  - Markdown tables
+  - Obsidian vaults, with `[[wikilinks]]`
+  - `- [x] buy the milk` tasks
+- Auto-merge, crash data recovery, and much more...
+
+---
+
+Photo by [Laura Rivera](https://unsplash.com/@laurar1vera) on [Unsplash](https://unsplash.com/photos/green-and-black-typewriter-on-green-table-9ZQzrLWV52M)
+
+[^teach-skill]: [`/teach` skill by Matt Pocock](https://github.com/mattpocock/skills/tree/main/skills/productivity/teach)
+
+[^bun-rust]: [Rewriting Bun in Rust](https://bun.com/blog/bun-in-rust)
+
+[^multiagent]: [Patterns and problems in emerging multiagent systems](https://www.anthropic.com/research/multiagent-systems)

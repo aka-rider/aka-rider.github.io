@@ -1,0 +1,86 @@
+---
+title: 'Я переписав 65 тисяч рядків коду на Rust за допомогою Fable. Це коштувало $400.'
+excerpt: 'Я переписав rune, свій текстовий редактор на Go обсягом 65 тисяч рядків, на Rust за допомогою Fable 5 приблизно за $400. Фокус у тому, щоб перетворити проблему коду на проблему даних.'
+image: 'hero.webp'
+tags: ['software', 'llm', 'rust']
+---
+
+Я весь час жартував, що вивчив би Rust ще давно, але грошей за C++ не вистачає навіть на пристойний фурсьют. Та й лисий я, тож просто пофарбувати волосся в синій колір не вийде.
+
+Але потім сталися одразу дві речі.
+
+По-перше, я спробував скілл `/teach` від Метта Покока [^teach-skill], щоб вивчити Rust, і воно поїхало: "Навчи C++-програміста ідіоматичного Rust, пропусти синтаксис і helloworld, зосередься тільки на головних відмінностях."
+Цей скілл — це як особистий тренер: подолання приємної складності заохочує вчитися, і водночас матеріал ніколи не буває заскладним. Раджу спробувати.
+
+Приблизно тоді ж мені трапився допис "Rewriting Bun in Rust" [^bun-rust], і мене зацікавив сам метод:
+
+> Each dynamic workflow was a loop like this - a workflow for:
+>
+> - Generate a porting guide mapping Zig patterns & types to Rust patterns & types
+> - Mechanically port every `.zig` file to a `.rs` file, matching the PORTING.md and LIFETIMES.tsv
+> - Fix every crate's compiler errors
+> - Get subcommands like `bun test` or `bun build` to work
+> - Get every test in Bun's entire test suite to pass
+> - Several large refactors and cleanup passes
+
+У мене виникла ідея, що переписати можна значно дешевше.
+
+> Show me your flowcharts and conceal your tables, and I shall continue to be mystified. Show me your tables, and I won't usually need your flowcharts; they'll be obvious. --- Fred Brooks
+
+Це стосується будь-якої ВММ, але Fable 5 відстежує потік даних з неймовірною увагою до деталей. Якщо ви можете сформулювати свою проблему як проблему представлення даних, вона здатна автономно робити складні рефакторинги, переписувати код з однієї мови на іншу, витягати чи зливати сервіси — тобто робити фундаментальні зміни.
+
+### Три кроки
+
+#### 1. Витягніть представлення даних
+
+Попросіть ВММ представити ваш код у вигляді будь-якої комбінації:
+
+- графів
+- онтологій
+- ієрархічних скінченних автоматів
+- UML-діаграм процесів
+- обмежень (constraints)
+- математичних формул
+
+#### 2. Трансформуйте проміжний результат
+
+На цьому етапі можна попросити спростити скінченний автомат або прибрати приховані канали комунікації (наприклад, через запис у спільну таблицю чи адреси в оперативній пам'яті).
+
+#### 3. Покладіть представлення назад у код
+
+Тепер можна попросити код, навіть іншою мовою програмування.
+
+### Секретний інгредієнт
+
+> For some time now, agents have excelled at tool use, and insofar as they are able to treat other agents as tool invocations. --- з допису Anthropic [^multiagent]
+
+До промпту Fable можна додати:
+
+```markdown
+avoid extensive `Glob`/`Grep`/`WebSearch`/`Bash` - use `Explore` agents instead
+avoid extensive `Edit`/`Bash` - use `general-purpose` sonnet or haiku subagents instead
+use `Read` sparingly, to verify critical claims yourself
+```
+
+`Glob`, `Grep` і `WebSearch` — це назви вбудованих інструментів Claude Code.
+
+Бажаю файного програмування і сподіваюся, цей допис допоможе.
+
+P.S. Ці 65 тисяч рядків коду — це [rune, консольний текстовий редактор](https://github.com/aka-rider/rune):
+
+- Це як Obsidian × VSCode з підтримкою **⌘ -** комбінацій клавіш
+- Головний фокус — на markdown і підсвітці синтаксису; мовні сервери та дебагери — це вже для агентів
+  - Таблиці markdown
+  - Сховища Obsidian, з `[[wikilinks]]`
+  - Таски `- [x] buy the milk`
+- Авто-merge, відновлення даних після крешей та багато іншого...
+
+---
+
+Фото від [Laura Rivera](https://unsplash.com/@laurar1vera) на [Unsplash](https://unsplash.com/photos/green-and-black-typewriter-on-green-table-9ZQzrLWV52M)
+
+[^teach-skill]: [скілл `/teach` від Метта Покока](https://github.com/mattpocock/skills/tree/main/skills/productivity/teach)
+
+[^bun-rust]: [Rewriting Bun in Rust](https://bun.com/blog/bun-in-rust)
+
+[^multiagent]: [Патерни і проблеми в мультиагентних системах, що формуються](https://www.anthropic.com/research/multiagent-systems)
