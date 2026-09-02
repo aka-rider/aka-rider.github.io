@@ -56,6 +56,8 @@ Now ask for the code — even in another programming language.
 
 > For some time now, agents have excelled at tool use, and insofar as they are able to treat other agents as tool invocations. --- a post by Anthropic [^multiagent]
 
+What it means on practice is, prohibit Fable read and write code, and instruct to orchestrate subagents instead. In that way Fable will spare its context window during tens-hours-long runs, and token cost will be also reasonable.
+
 You can add to Fable's prompt:
 
 ```markdown
