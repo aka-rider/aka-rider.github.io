@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import { SiLinkedin } from 'react-icons/si';
+import { FaLinkedin } from 'react-icons/fa';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
 import Section from '@/components/Section';
@@ -54,7 +54,7 @@ export default function About({ lang, title, items }: AboutProps) {
             href={LINKED_IN}
             className='inline-flex items-center gap-2 px-5 py-2.5 bg-[#0077b5] text-white rounded-lg hover:bg-[#006097] transition-colors font-medium text-sm md:text-base w-fit'
           >
-            <SiLinkedin className='w-5 h-5' />
+            <FaLinkedin className='w-5 h-5' />
             <span>{linkedinCta}</span>
           </UnstyledLink>
 

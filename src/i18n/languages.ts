@@ -2,10 +2,12 @@ const LANGUAGE_DATA = {
   en: {
     name: 'English',
     emoji: '🇬🇧',
+    tag: 'ENG',
   },
   uk: {
     name: 'Українська',
     emoji: '🇺🇦',
+    tag: 'УКР',
   },
 } as const;
 

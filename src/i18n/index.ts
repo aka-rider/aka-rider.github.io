@@ -51,6 +51,7 @@ const en = {
   mdxCompilationError: 'MDX compilation error',
   mdxSourcePreview: 'Source content, first characters:',
   loadingComments: 'Loading comments...',
+  footnotes: 'Footnotes',
 } as const;
 
 type CommonStrings = Record<keyof typeof en, string>;
@@ -103,6 +104,7 @@ const uk = {
   mdxCompilationError: 'Помилка компіляції MDX',
   mdxSourcePreview: 'Вихідний вміст, перші символи:',
   loadingComments: 'Завантаження коментарів...',
+  footnotes: 'Примітки',
 } as const satisfies CommonStrings;
 
 export const common = { en, uk } satisfies Record<Lang, CommonStrings>;

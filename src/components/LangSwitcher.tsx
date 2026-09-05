@@ -1,49 +1,39 @@
 'use client';
 
-import { usePathname, useRouter } from 'next/navigation';
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
-import type { Lang } from '@/i18n';
-import { common, Languages } from '@/i18n';
+import { Lang, Languages } from '@/i18n';
 
-interface LangSwitcherProps {
-  currentLang: Lang;
-}
-
-export default function LangSwitcher({ currentLang }: LangSwitcherProps) {
-  const router = useRouter();
+export default function LangSwitcher({ lang }: { lang: Lang }) {
   const pathname = usePathname();
+  const [query, setQuery] = useState('');
 
-  const handleLanguageChange = (newLang: Lang) => {
-    const segments = pathname.split('/').filter(Boolean);
+  useEffect(() => {
+    setQuery(window.location.search);
+  }, []);
 
-    while (segments.length > 0 && segments[0] && Languages.has(segments[0])) {
-      segments.shift();
-    }
-
-    const newPath = `/${newLang}${segments.length > 0 ? '/' + segments.join('/') : ''}`;
-    router.push(newPath);
-  };
+  const segments = pathname.split('/').filter(Boolean);
+  const rest = segments
+    .slice(1)
+    .map((segment) => `${segment}/`)
+    .join('');
 
   return (
-    <div className='relative'>
-      <select
-        value={currentLang}
-        onChange={(e) => handleLanguageChange(e.target.value as Lang)}
-        aria-label={common[currentLang].language}
-        className='border rounded px-2 py-1 text-sm
-                   text-slate-900 dark:text-slate-100 bg-white dark:bg-slate-800
-                   cursor-pointer hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors'
-      >
-        {Languages.map((lang) => (
-          <option
-            key={lang}
-            value={lang}
-            className='bg-white dark:bg-slate-800 text-slate-900 dark:text-slate-100'
-          >
-            {lang.toUpperCase()}
-          </option>
-        ))}
-      </select>
+    <div className='seg'>
+      {Languages.map((code, info) => (
+        <Link
+          key={code}
+          href={`/${code}/${rest}${query}`}
+          hrefLang={code}
+          aria-label={info.name}
+          aria-current={code === lang ? 'page' : undefined}
+          className={code === lang ? 'on' : undefined}
+        >
+          {code.toUpperCase()}
+        </Link>
+      ))}
     </div>
   );
 }
