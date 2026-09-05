@@ -1,0 +1,30 @@
+{
+  "projectId": "c99f7029-b925-48ee-b92b-e6c8b40aa033",
+  "shape": "package",
+  "pkg": "iurii.net",
+  "globalName": "IuriiNet",
+  "srcDir": "src/components",
+  "entry": ".design-sync/.pkg-dir-anchor.js",
+  "tsconfig": ".design-sync/tsconfig.json",
+  "buildCmd": "npx --prefix .ds-sync @tailwindcss/cli -i .design-sync/tailwind-entry.css -o .design-sync/.cache/compiled.css",
+  "cssEntry": ".design-sync/.cache/compiled.css",
+  "provider": {
+    "component": "ThemeProvider",
+    "props": {
+      "attribute": "class",
+      "defaultTheme": "light",
+      "enableSystem": false
+    }
+  },
+  "extraEntries": [
+    "./.design-sync/shims/theme-provider.ts"
+  ],
+  "componentSrcMap": {
+    "TLDR": "src/components/blog/TLDR.tsx"
+  },
+  "libOverrides": {
+    "source-kit.mjs": "synth-entry mode: always merge full src-derived components even when componentSrcMap pins one name (disambiguation, not enumeration) — upstream's components.length-gate suppressed full derivation",
+    "dts.mjs": "allow all-caps TLDR component past the enum-name heuristic; and THE critical fix — synth-entry mode has no dist/.d.ts at all, so upstream's .d.ts-only loadDts/propsBodyFor found zero source files and every component fell back to the empty-stub props. Forked to parse cfg.srcDir's real .tsx/.ts sources through cfg.tsconfig when no .d.ts tree exists, extended the call-signature fallback to scan in-package source directly (covers inline-object-literal prop types with no named <Name>Props, and forwardRef), and depth-capped typeText's expansion of non-global named types (+ an unresolved-identifier safety net) since emitted .d.ts files only `import * as React` — a bare reference to any other named type would be invalid standalone TS"
+  },
+  "overrides": {}
+}

@@ -1,0 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible+Next:ital,wght@0,200..800;1,200..800&family=Wix+Madefor+Text:ital,wght@0,400..800;1,400..800&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  --f-en: 'Atkinson Hyperlegible Next';
+  --f-uk: 'Wix Madefor Text';
+  --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+}

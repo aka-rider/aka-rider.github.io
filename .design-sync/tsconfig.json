@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "baseUrl": "..",
+    "jsx": "react-jsx",
+    "paths": {
+      "@/i18n": ["./src/i18n/index.ts"],
+      "@/*": ["./src/*"],
+      "~/*": ["./public/*"],
+      "/config": ["./config.js"],
+      "/mdx-config": ["./mdx-config.mjs"],
+      "next/link": ["./.design-sync/shims/next-link.tsx"],
+      "next/image": ["./.design-sync/shims/next-image.tsx"],
+      "next/navigation": ["./.design-sync/shims/next-navigation.ts"],
+      "next/script": ["./.design-sync/shims/next-script.tsx"],
+      "next/font/google": ["./.design-sync/shims/next-font-google.ts"],
+      "fs": ["./.design-sync/shims/node-fs.ts"],
+      "path": ["./.design-sync/shims/node-path.ts"],
+      "stream": ["./.design-sync/shims/node-stream.ts"],
+      "util": ["./.design-sync/shims/node-util.ts"]
+    }
+  }
+}
