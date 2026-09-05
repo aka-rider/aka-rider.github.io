@@ -28,9 +28,11 @@ export default async function BlogPost({ post, lang }: { post: Post; lang: Lang 
           )}
           {formatReadingTime(post.readingTime, lang)}
         </p>
-        <div className='hero-img'>
-          <Image src={post.image} alt={post.title} width={1350} height={1080} priority />
-        </div>
+        {!post.hideHero && (
+          <div className='hero-img'>
+            <Image src={post.image} alt={post.title} width={1350} height={1080} priority />
+          </div>
+        )}
         {toc.length > 0 && <TableOfContents items={toc} label={common[lang].tableOfContents} />}
         <div className='prose'>{content}</div>
         <RssPrompt lang={lang} />

@@ -5,11 +5,11 @@ import readingTime from 'reading-time';
 
 import { defaultLang, Lang } from '@/i18n';
 
+import { plainExcerpt } from './excerpt';
 import { BlogNode, Category, LoadFailure, Post } from './types';
 import config from '../../../config';
 
 const META_FILE = '_meta.json';
-const EXCERPT_LENGTH = 200;
 const WORDS_PER_MINUTE: Record<Lang, number> = {
   en: 200,
   uk: 170,
@@ -82,11 +82,6 @@ function postImageUrl(rawImage: string, postFilename: string): string {
   return `${config.SITE_URL}${path.posix.join('/', path.dirname(postFilename), rawImage)}`;
 }
 
-function makeExcerpt(content: string): string {
-  const head = content.slice(0, EXCERPT_LENGTH);
-  return head.length < content.length ? `${head}...` : head;
-}
-
 export function loadDirectory(
   dirname: string,
   lang: Lang,
@@ -137,7 +132,7 @@ function loadPostFile(
       ),
       hideHero: Boolean(data.hideHero),
       content,
-      excerpt: data.excerpt || makeExcerpt(content),
+      excerpt: data.excerpt || plainExcerpt(content),
       tags: data.tags,
       readingTime: Math.ceil(stats.minutes),
       featured: data.featured === true,

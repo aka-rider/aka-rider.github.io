@@ -16,7 +16,7 @@ const en = {
   showLess: 'Show less',
   readingTime: 'min',
   viewArchive: 'View Archive →',
-  tableOfContents: 'Table of Contents',
+  tableOfContents: 'Contents',
   authorName: 'Iurii Krasnoshchok',
   authorBio:
     'Software architect. I build high-scale software and engineering teams.',

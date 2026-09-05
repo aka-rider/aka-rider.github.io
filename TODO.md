@@ -26,3 +26,56 @@ Items found during the whole-repository review that were out of scope to fix.
 - **Tailwind class sorting is not enabled.** `prettier-plugin-tailwindcss` was installed but never referenced in `.prettierrc.js`, so sorting never ran; the dead dependency was removed. Re-adding it is worthwhile but reorders every `className` in the repo, so it deserves its own commit.
 - **`npm run lint` still calls `next lint`,** which Next.js 15 deprecates in favour of invoking ESLint directly. Consider folding it into `lint:strict`.
 - **`ToolCallDemo` transcript is English in both languages.** The user question, the thinking line, and the final answer now live in `strings/toolCall.ts`, but the `uk` values repeat the English text, because they represent model input and output shown verbatim. Translate them if Ukrainian readers should see a localized transcript.
+
+## Found during the redesign rebase
+
+- **The repo has two lockfiles.** `package-lock.json` (npm) is what `.github/workflows/deploy.yml` actually uses (`npm ci`), but `pnpm-lock.yaml`/`pnpm-workspace.yaml` also exist, seemingly from experimenting with pnpm locally — `pnpm-workspace.yaml` even has unfilled `allowBuilds` placeholders. Decide: migrate CI to pnpm, or delete the pnpm artifacts.
+
+## `rehype-autolink-headings` injects empty anchors into headings
+
+`mdx-config.mjs` runs `rehypeAutolinkHeadings` after `rehypeSlug`, which adds an
+empty `<a>` (no visible text) inside every heading for the anchor link. Fine
+for the anchor behavior itself, but worth revisiting the link content/behavior
+(icon, `aria-label`, or a `::before` symbol) so it isn't a silent empty anchor
+in the accessibility tree.
+
+## Some posts contain their own `# h1` under the page `h1`
+
+At least five posts in `_posts/` start their body with a first-level Markdown
+heading, which then renders as a second, redundant `h1`/`.prose h2` below the
+page's real `<h1>{title}</h1>`. Not fixed site-wide — would need either a
+content sweep of the affected posts or a compile-time rule (e.g. demote a
+leading `h1` in MDX content).
+
+## No frontmatter convention for photo credit / quote attribution
+
+The design's `.credit` (image credit) and `.who` (blockquote attribution)
+classes exist in `src/styles/styles.css` but nothing in `_posts/` frontmatter
+or the MDX component map feeds them — no post currently has photo-credit or
+quote-attribution data. Needs a frontmatter convention (e.g. `imageCredit`,
+or a quote component prop) before these can be used.
+
+## `remark-i18n-links` hardcodes `en|uk`
+
+`src/lib/remark-i18n-links.ts` matches language segments with a hardcoded
+`en|uk` alternation instead of deriving it from `src/i18n/languages.ts`'s
+`Languages` map. Adding a third language would silently break this plugin.
+
+## `generateStaticParams` emits category/redirect-shell pages into the sitemap
+
+`Blog`'s `generateStaticParams` walks every node (posts, categories, and
+`LoadFailure` nodes) and emits a static page for each, including categories
+that immediately redirect via `permanentRedirect()`. `next-sitemap` picks up
+every emitted route, so the sitemap lists redirect-shell URLs alongside real
+content pages.
+
+## `redirect()`/`permanentRedirect()` export an empty shell under `output: 'export'`
+
+Verified in Next 15.5.12: under static export, `redirect()` and
+`permanentRedirect()` do not perform a build-time redirect — they render an
+empty `__next_error__` shell into the exported HTML, and the meta-refresh
+mechanism they normally rely on never fires from that shell. `[...slug]`
+category pages avoid the API entirely and render an explicit
+`<meta httpEquiv='refresh'>` plus a visible fallback link instead. Worth an
+upstream report, or revisiting if a real build-time redirect is ever needed
+under `output: 'export'`.

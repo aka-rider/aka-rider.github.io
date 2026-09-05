@@ -1,3 +1,4 @@
+import { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 
 import { Blog } from '@/lib/blog/Blog';
@@ -8,6 +9,20 @@ import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
 import Nav from '@/components/layout/Nav';
 
 import { common, Lang } from '@/i18n';
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ lang: Lang }>;
+}): Promise<Metadata> {
+  const { lang } = await params;
+  const root = new Blog().getRoot(lang);
+  const title = root?.title ?? common[lang].title;
+
+  return {
+    title: `${title} · ${common[lang].authorName}`,
+  };
+}
 
 export default async function BlogPage({
   params,
