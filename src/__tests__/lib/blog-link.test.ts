@@ -38,6 +38,7 @@ function makePost(parent: Category): Post {
     childrenBySlug: {},
     parent,
     image: '/images/my-post.png',
+    hideHero: false,
     excerpt: 'An excerpt.',
     content: 'Content.',
     readingTime: 3,

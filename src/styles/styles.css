@@ -1254,11 +1254,11 @@ html.dark {
     font-size: inherit;
   }
 
-  .prose pre span {
+  .prose .code pre span {
     color: var(--shiki-light);
   }
 
-  html.dark .prose pre span {
+  html.dark .prose .code pre span {
     color: var(--shiki-dark);
   }
 

@@ -1,4 +1,5 @@
 import Nav from '@/components/layout/Nav';
+import UnstyledLink from '@/components/links/UnstyledLink';
 import About from '@/components/root-page/About';
 import BlogPreview from '@/components/root-page/BlogPreview';
 import Foss from '@/components/root-page/Foss';
@@ -19,9 +20,9 @@ export default async function HomePage({
     <>
       <Nav lang={lang}>
         <nav className='navlinks' aria-label={common[lang].pageSections}>
-          <a href='#blog'>{content.blog.name}</a>
-          <a href='#services'>{content.services.name}</a>
-          <a href='#foss'>{content.foss.name}</a>
+          <UnstyledLink href='#blog'>{content.blog.name}</UnstyledLink>
+          <UnstyledLink href='#services'>{content.services.name}</UnstyledLink>
+          <UnstyledLink href='#foss'>{content.foss.name}</UnstyledLink>
         </nav>
       </Nav>
       <main id='main-content' className='wrap'>

@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { SiGithub } from 'react-icons/si';
 
+import UnstyledLink from '@/components/links/UnstyledLink';
+
 import { FossContent } from '@/i18n/root-page/foss';
 
 export default function Foss({ title, items }: { title: string; items: FossContent[] }) {
@@ -13,14 +15,14 @@ export default function Foss({ title, items }: { title: string; items: FossConte
             <Image src={project.image} alt={project.name} width={64} height={64} />
             <div>
               <div className='head'>
-                <a href={project.website}>{project.name}</a>
+                <UnstyledLink href={project.website}>{project.name}</UnstyledLink>
                 <span className='role'>{project.role}</span>
               </div>
               <p>{project.description}</p>
-              <a className='gh' href={project.github}>
+              <UnstyledLink className='gh' href={project.github}>
                 <SiGithub />
                 GitHub
-              </a>
+              </UnstyledLink>
             </div>
           </div>
         ))}

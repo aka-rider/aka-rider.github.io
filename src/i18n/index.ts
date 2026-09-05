@@ -44,6 +44,7 @@ const en = {
   mdxSourcePreview: 'Source content, first characters:',
   loadingComments: 'Loading comments...',
   footnotes: 'Footnotes',
+  footnoteBack: 'Back to reference',
   noPosts: 'No posts yet.',
 } as const;
 
@@ -90,6 +91,7 @@ const uk = {
   mdxSourcePreview: 'Вихідний вміст, перші символи:',
   loadingComments: 'Завантаження коментарів...',
   footnotes: 'Примітки',
+  footnoteBack: 'Повернутися до тексту',
   noPosts: 'Ще немає дописів.',
 } as const satisfies CommonStrings;
 

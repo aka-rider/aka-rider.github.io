@@ -17,8 +17,7 @@ import { Lang } from '@/i18n';
 import config from '/config';
 
 function findNode(lang: Lang, slug: string[]): BlogNode | null {
-  const blog = new Blog();
-  return slug.length === 0 ? blog.getRoot(lang) : blog.getBySlug(lang, slug);
+  return new Blog().getBySlug(lang, slug);
 }
 
 function buildTrail(lang: Lang, node: BlogNode): Crumb[] {
@@ -32,9 +31,9 @@ function buildTrail(lang: Lang, node: BlogNode): Crumb[] {
 export default async function BlogPage({
   params,
 }: {
-  params: Promise<{ lang: Lang; slug?: string[] }>;
+  params: Promise<{ lang: Lang; slug: string[] }>;
 }) {
-  const { lang, slug = [] } = await params;
+  const { lang, slug } = await params;
   const node = findNode(lang, slug);
 
   if (!node) {
@@ -101,9 +100,9 @@ export async function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ lang: Lang; slug?: string[] }>;
+  params: Promise<{ lang: Lang; slug: string[] }>;
 }): Promise<Metadata> {
-  const { lang, slug = [] } = await params;
+  const { lang, slug } = await params;
   const node = findNode(lang, slug);
 
   if (!node || node.type !== 'Post') {

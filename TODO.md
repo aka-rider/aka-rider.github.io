@@ -79,3 +79,30 @@ category pages avoid the API entirely and render an explicit
 `<meta httpEquiv='refresh'>` plus a visible fallback link instead. Worth an
 upstream report, or revisiting if a real build-time redirect is ever needed
 under `output: 'export'`.
+
+## `new Blog()` re-walks `_posts` on every call, with no memoization
+
+Every route that needs blog content constructs its own `new Blog()`, which
+walks `_posts/` for both languages from scratch — 7 call sites today,
+including three separate ones in `src/app/[lang]/blog/[...slug]/page.tsx`
+(`BlogPage`, `generateStaticParams`, `generateMetadata`). A previous commit
+deliberately removed a module-level singleton, so re-adding one isn't a
+drop-in fix — a per-build cache needs its own design decision (e.g. scoped to
+the static-export build process, not a long-lived server process).
+
+## `?category=<slug>` links collide if two categories share a leaf slug
+
+`TabNavigation` and `Blog.getLink` build category links from the leaf slug
+only (`?category=<slug>`), not the full path. Content is one level deep
+today, so this can't collide yet, but a nested category structure with two
+categories sharing a leaf slug would send both tabs to the same panel.
+
+## Static export can't pre-render the `?category=` selection
+
+`output: 'export'` produces one static HTML file per route, so a category
+permalink (`/blog/?category=foo`) always serves the same static shell with
+the first category active; `BlogFeed`'s `useEffect` reads
+`window.location.search` and switches panels client-side after hydration.
+A non-JS client landing on such a link sees the first category, not `foo`.
+Tabs are now `<Link>` elements, so keyboard/non-JS navigation between
+categories works — only the direct permalink-to-category case is affected.

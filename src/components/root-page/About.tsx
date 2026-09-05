@@ -1,6 +1,8 @@
 import Image from 'next/image';
 import { FaLinkedin } from 'react-icons/fa';
 
+import UnstyledLink from '@/components/links/UnstyledLink';
+
 import { common, Lang } from '@/i18n';
 
 import config from '/config';
@@ -45,10 +47,10 @@ export default function About({
         ))}
       </ul>
       <div className='cta'>
-        <a className='btn' href={config.LINKED_IN}>
+        <UnstyledLink className='btn' href={config.LINKED_IN}>
           <FaLinkedin />
           {linkedinCta}
-        </a>
+        </UnstyledLink>
         <span className='tag-line'>{cta}</span>
       </div>
     </section>

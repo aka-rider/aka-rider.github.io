@@ -1,10 +1,12 @@
 import { compile, run } from '@mdx-js/mdx';
 import type { Toc } from '@stefanprobst/rehype-extract-toc';
+import type { Element, Root } from 'hast';
 import dynamic from 'next/dynamic';
 import Image from 'next/image';
 import React, { isValidElement, ReactElement } from 'react';
 import * as devRuntime from 'react/jsx-dev-runtime';
 import * as runtime from 'react/jsx-runtime';
+import { visit } from 'unist-util-visit';
 
 import remarkReplaceLinks from '@/lib/remark-i18n-links';
 import remarkImagePaths from '@/lib/remark-image-paths';
@@ -45,6 +47,9 @@ export interface TocItem {
   text: string;
   depth: 2 | 3;
 }
+
+const DEFAULT_IMAGE_WIDTH = 1920;
+const DEFAULT_IMAGE_HEIGHT = 1080;
 
 function isToc(value: unknown): value is Toc {
   return Array.isArray(value);
@@ -124,8 +129,8 @@ function mdxComponents(lang: Lang) {
         <Image
           src={src}
           alt={alt ?? common[lang].illustration}
-          width={width ? Number(width) : 1920}
-          height={height ? Number(height) : 1080}
+          width={width ? Number(width) : DEFAULT_IMAGE_WIDTH}
+          height={height ? Number(height) : DEFAULT_IMAGE_HEIGHT}
         />
       );
     },
@@ -177,10 +182,14 @@ function mdxComponents(lang: Lang) {
   };
 }
 
-const footnoteDefinitionPattern = /^\[\^[^\]]+\]:/m;
-
-function hasFootnoteDefinitions(source: string): boolean {
-  return footnoteDefinitionPattern.test(source);
+function rehypeDetectFootnotes(onFootnotes: () => void) {
+  return () => (tree: Root) => {
+    visit(tree, 'element', (node: Element) => {
+      if ('dataFootnotes' in node.properties) {
+        onFootnotes();
+      }
+    });
+  };
 }
 
 export async function compilePost(
@@ -189,15 +198,23 @@ export async function compilePost(
   lang: Lang,
 ): Promise<{ content: ReactElement; toc: TocItem[]; hasFootnotes: boolean }> {
   const isDev = process.env.NODE_ENV === 'development';
+  let footnotesRendered = false;
+
   try {
     const compiled = await compile(source, {
       outputFormat: 'function-body',
       development: isDev,
       remarkPlugins: [...sharedRemarkPlugins, remarkReplaceLinks(lang), remarkImagePaths(filePath)],
-      rehypePlugins,
+      rehypePlugins: [
+        ...rehypePlugins,
+        rehypeDetectFootnotes(() => {
+          footnotesRendered = true;
+        }),
+      ],
       remarkRehypeOptions: {
         footnoteLabel: common[lang].footnotes,
         footnoteLabelProperties: {},
+        footnoteBackLabel: common[lang].footnoteBack,
       },
     });
 
@@ -211,7 +228,7 @@ export async function compilePost(
     return {
       content: <MDXContent components={mdxComponents(lang)} />,
       toc,
-      hasFootnotes: hasFootnoteDefinitions(source),
+      hasFootnotes: footnotesRendered,
     };
   } catch (error) {
     console.error('MDX compilation error:', error);

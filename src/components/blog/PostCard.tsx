@@ -13,13 +13,7 @@ export default function PostCard({ lang, post }: { lang: Lang; post: PostSummary
   return (
     <Link href={post.href} className='card'>
       <div className='thumb'>
-        <Image
-          src={post.image}
-          alt={post.title}
-          width={600}
-          height={600}
-          sizes='(max-width: 600px) 100vw, (max-width: 1000px) 50vw, 33vw'
-        />
+        <Image src={post.image} alt={post.title} width={600} height={600} />
       </div>
       <h3>
         {post.title}

@@ -3,13 +3,14 @@ import { act, render, screen } from '@testing-library/react';
 import NotFound from '@/components/NotFound';
 
 describe('NotFound Component', () => {
-  it('renders a heading', async () => {
+  it('renders a heading once the typing animation finishes', async () => {
     jest.useFakeTimers();
 
     render(<NotFound lang='en' />);
-    for (let i = 0; i < 20; i++) {
+
+    while (jest.getTimerCount() > 0) {
       await act(async () => {
-        await jest.advanceTimersByTimeAsync(100);
+        await jest.runOnlyPendingTimersAsync();
       });
     }
 
@@ -23,7 +24,7 @@ describe('NotFound Component', () => {
 
     expect(screen.getByRole('link', { name: /на головну/i })).toHaveAttribute(
       'href',
-      '/uk',
+      '/uk/',
     );
   });
 });

@@ -10,6 +10,7 @@ function makePost(slug: string): Post {
     children: [],
     childrenBySlug: {},
     image: `/images/${slug}.png`,
+    hideHero: false,
     excerpt: `Excerpt for ${slug}`,
     content: 'Content.',
     readingTime: 3,

@@ -24,16 +24,19 @@ export default function TabNavigation({
       {tabs.map((tab) => {
         const isActive = tab.id === activeTab;
         return (
-          <button
+          <Link
             key={tab.id}
-            type='button'
+            href={`?category=${tab.id}`}
             className={isActive ? 'on' : undefined}
             role='tab'
             aria-selected={isActive}
-            onClick={() => onSelect(tab.id)}
+            onClick={(event) => {
+              event.preventDefault();
+              onSelect(tab.id);
+            }}
           >
             {tab.label}
-          </button>
+          </Link>
         );
       })}
     </nav>

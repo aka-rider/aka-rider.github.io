@@ -1,3 +1,5 @@
+import UnstyledLink from '@/components/links/UnstyledLink';
+
 import { ServicesContent } from '@/i18n/root-page/services';
 
 import config from '/config';
@@ -23,7 +25,7 @@ export default function Services({
         ))}
       </div>
       <p className='foot'>
-        <a href={config.LINKED_IN}>{foot}</a>
+        <UnstyledLink href={config.LINKED_IN}>{foot}</UnstyledLink>
       </p>
     </section>
   );
