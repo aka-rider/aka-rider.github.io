@@ -15,8 +15,18 @@ function stripInlineCode(text: string): string {
   return text.replace(/`([^`]*)`/g, '$1');
 }
 
-function stripHeadingMarkers(text: string): string {
-  return text.replace(/^\s{0,3}#{1,6}\s+/gm, '');
+function stripHeadingLines(text: string): string {
+  return text
+    .split('\n')
+    .filter((line) => !/^\s{0,3}#{1,6}\s+/.test(line))
+    .join('\n');
+}
+
+function stripJsxOnlyLines(text: string): string {
+  return text
+    .split('\n')
+    .filter((line) => !/^\s*<\/?[A-Za-z][^\n>]*\/?>\s*$/.test(line))
+    .join('\n');
 }
 
 function stripImages(text: string): string {
@@ -57,8 +67,9 @@ export function plainExcerpt(content: string): string {
   let text = content;
   text = stripCodeFences(text);
   text = stripJsxImportExportLines(text);
+  text = stripHeadingLines(text);
+  text = stripJsxOnlyLines(text);
   text = stripInlineCode(text);
-  text = stripHeadingMarkers(text);
   text = stripImages(text);
   text = stripLinks(text);
   text = stripEmphasis(text);
