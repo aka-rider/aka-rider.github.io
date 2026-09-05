@@ -139,75 +139,104 @@ and `Breadcrumbs` all have props-driven previews now (they take the blog
 data as plain props rather than reading `Blog` themselves) rather than
 relying on that fallback.
 
-## Known render warns (validate exit 0, non-blocking, post-authoring)
+## Known render warns (re-verified WP7 — `resync.mjs`, no `--remote`, full scope)
 
-**Stale — recorded against the pre-redesign component set, not re-verified
-since.** The redesign (WP1–WP5) deleted many of the components this section
-discusses and changed the props of most of the rest; the counts and per-
-component claims below describe an actual `validate`/`capture` run that
-predates all of that. Treat this section as historical until the next
-`resync.mjs --remote` run (WP7) regenerates it against the current
-`src/components` tree and its own real `.render-check.json`/`validate`
-output — don't assume any specific number or bullet still holds. Two
-corrections already known to be wrong purely from reading the current
-source (not from re-running anything):
+This section now reflects an actual run against the current (post-redesign)
+`src/components` tree: 28 components discovered, `validate`/`capture` both
+exit 0, render-check `bad: 0` across all 28 entries, no `[GRID_OVERFLOW]`
+(fixed via `cfg.overrides.<Name>.cardMode: "column"` — see below), no
+`[SYNC_STALE]`. The two corrections noted in the prior version of this
+section (BlogPreview's crash is fixed upstream; LangSwitcher is a `div.seg`
+of two `Link`s, not a `<select>`) are confirmed correct by this run and
+folded into the bullets below.
 
-- The `BlogPreview` bullet below describes a crash (`getRoot` returning a
-  `LoadFailure` that the component `as Category`-casts and calls
-  `.getCategories()` on) that no longer exists —
-  `src/components/root-page/BlogPreview.tsx` now checks `root.type` before
-  calling any `Category`-only method. The TODO.md item this bullet cited
-  has been removed for the same reason.
-- The `LangSwitcher` bullet below describes it rendering "a native
-  `<select>`"; the redesigned `LangSwitcher` renders a `div.seg` of two
-  `Link`s (EN/UK), not a `<select>` — that specific false-positive
-  explanation no longer applies, though the component may still warrant a
-  fresh look at capture time.
+**Floor cards (4, unauthored by design — not a failure):**
 
-- **`Analytics`** — floor card, not authored. Renders a shimmed-to-null
-  `<Script>` plus a `<noscript><img>` tracking pixel; nothing visual exists
-  to compose a preview around, and any attempt would be a lookalike box
-  faking a component that's intentionally invisible.
-- **`Giscus`** — floor card, not authored. Script-injecting third-party
-  widget (`giscus.app`); cannot render statically, per campaign instruction
-  to skip it.
-- **`BlogPost`** — floor card (preview deleted; see below). `export default
-  async function BlogPost(...)` is a React Server Component — an async
-  function component, which cannot run as a plain client component in this
-  converter's single-bundle-no-RSC-boundary model. Throws `Error: An
-  unknown Component is an async Client Component...` on render. Not
-  fixable from a preview `.tsx`; revisit only if the converter ever gains
-  an RSC boundary.
-- **`BlogPreview`** — floor card (preview deleted; see below). Real,
-  pre-existing site bug, independent of design-sync: `BlogPreview.tsx` does
-  `blog.getRoot(lang) as Category` (unsafe cast) and then calls
-  `rootCategory?.getCategories()`; when the fs shim's always-ENOENT
-  filesystem makes `Blog()` fail to load, `getRoot` actually returns a
-  `LoadFailure`, which has no `getCategories`, so it throws `TypeError:
-  rootCategory?.getCategories is not a function` and the cell renders fully
-  blank (no `Section` wrapper, no fallback text). Filed in TODO.md. A real
-  fix touches `src/components/root-page/BlogPreview.tsx` (out of scope for
-  design-sync).
-- **`About`** — authored but graded `needs-work` on both cells, not a
-  floor card. `About.tsx` calls `next/image` with a hardcoded
+- **`Analytics`** — renders a shimmed-to-null `<Script>` plus a
+  `<noscript><img>` tracking pixel; nothing visual exists to compose a
+  preview around.
+- **`Giscus`** — script-injecting third-party widget (`giscus.app`); cannot
+  render statically, per campaign instruction to skip it.
+- **`BlogPost`** — `export default async function BlogPost(...)` is a React
+  Server Component (async function component); throws `Error: An unknown
+  Component is an async Client Component...` in this converter's
+  single-bundle-no-RSC-boundary model. Not fixable from a preview `.tsx`.
+- **`RssPrompt`** — **not actually a floor-card candidate**: a small, purely
+  presentational component (`{ lang }` prop, static link, no data
+  fetching). It had no authored preview yet only because it's new since the
+  redesign. Authored this run (`.design-sync/previews/RssPrompt.tsx`,
+  English/Ukrainian) and graded `good` on both cells.
+
+**`BlogPreview`** is classified with the floor cards above (no authored
+preview, "nothing to capture" in the driver's capture log) but is worth
+calling out separately: it is **not** hitting the typographic floor-card
+fallback — with the upstream crash fixed, the floor mechanism's crash-
+prevention-props render attempt actually succeeds and shows a real
+"Error Loading Content / Failed to load: posts / Error: No localized posts
+found in _posts" state (the fs shim's always-ENOENT filesystem correctly
+degrading `Blog()`). Confirmed via `.render-check.json`:
+`fallbackCard: false`, `rootEmpty: false`, `bad: false`. Authoring a real
+preview for it would need actual post data reachable through the fs shim,
+which the shim deliberately never provides — leaving it on the floor path
+is the right call, just note that what it shows is a genuine (degraded)
+render, not a placeholder.
+
+**Authored but `needs-work` (unfixable from the preview — new findings this
+run, both confirmed reproducible on a solo recapture, not one-off flakes):**
+
+- **`About`** — both cells. `About.tsx` calls `next/image` with a hardcoded
   `src='/images/iurii-avatar.webp'`; no prop exists to redirect it, and
   `ds-bundle/` ships no `/images/*` assets, so the portrait always 404s.
-  Everything else in both cells (subhead, proofs list, gradient CTA,
-  LinkedIn button) renders correctly. Not fixable without adding an
-  `image`/`src` prop to `About` in `src/` (out of scope).
+  Everything else (subhead, proofs list, gradient CTA, LinkedIn button)
+  renders correctly. Needs an `image`/`src` prop on `About` in `src/` (out
+  of scope for design-sync).
+- **`NotFound`** — both cells, **new finding this run**. `NotFound.tsx`
+  composes `<TypingText text={'404 - ' + notFound} />` with `TypingText`'s
+  hardcoded default `typingSpeed=0.8` and no prop to override or skip the
+  animation. `package-capture.mjs`'s harness screenshots right after
+  `networkidle` + `settle()` (fonts/images only, no extra wait), and on
+  this repo's timing that lands mid-animation — captured as `404 - Page _`
+  / `404 - Сторінку _` instead of the finished string, reproducibly (not a
+  one-off — recaptured solo and got the same truncation both times). Not
+  fixable from the preview: no prop on `NotFound` forces the completed
+  state. The standalone `TypingText` preview itself is fine (its `Default`
+  export is tuned to finish before capture) — this is specific to
+  `NotFound`'s internal composition. Root cause is in
+  `src/components/NotFound.tsx`/`TypingText.tsx` (out of scope).
+- **`TocSidebar`** — both cells, **new finding this run**. Renders fully
+  blank at the 900px capture viewport even though the ToC text is present
+  in the DOM (`.render-check.json`'s `texts` field has "Contents The
+  problem Lock modes The checklist" etc.) — `src/styles/styles.css`'s
+  `.toc { display: none; }` only flips to `display: block` at `@media
+  (min-width: 1500px)`, well above the fixed 900px capture viewport (same
+  root cause as `TableOfContents`' unreachable desktop-sidebar variant,
+  below — but here the *entire* component is that desktop variant, so both
+  cells capture as blank instead of falling back to a visible mobile
+  alternative). Not fixable from the preview without hacking
+  `styles.css` or the capture harness's viewport (both out of scope).
 
-Any `[RENDER_BLANK]`/`[RENDER_THIN]` other than the four floor-card
-components above, or any warn on a component other than `About`, is new and
-should be investigated, not waved through.
+**Accepted warns, confirmed benign by eye:**
 
-One more accepted warn, confirmed benign by eye:
+- **`TableOfContents`** — both cells show only the mobile collapsed
+  "CONTENTS"/"ЗМІСТ" pill, no expanded content. Correct: the capture
+  viewport (900px, fixed in `package-capture.mjs`) is below Tailwind's `xl`
+  (1280px) breakpoint, so `TableOfContents`' desktop sticky-sidebar variant
+  is unreachable here — only the mobile FAB/bottom-sheet variant can ever
+  be photographed at this capture size. (Also: keep composed stories short
+  — `fixed`-positioned elements anchor to the `translateZ(0)` capture
+  wrapper, not the real viewport; a tall story pushes them off-screen even
+  though they render correctly.)
+- **`Spoiler`** — both cells show the collapsed `<details>` state only.
+  Correct and the only reachable state: the component hardcodes `<details>`
+  with no `open`/`defaultOpen` prop and no prop-spreading, so there is no
+  way to force the expanded state from a preview.
+- **`LangSwitcher`** — no longer a `[RENDER_THIN]`/`variantsIdentical`
+  false positive (that was against the pre-redesign `<select>`
+  implementation). The current `div.seg` of two `Link`s renders distinctly
+  per export (`EN`/`UK` highlighted) and graded `good` cleanly this run.
 
-- **`LangSwitcher`** — `[RENDER_THIN]` `variantsIdentical: true`. The
-  component renders as a native `<select>`; validate's text-scan reads all
-  `<option>` text in the DOM regardless of which one is selected, so
-  `English`/`Ukrainian` come out textually identical even though the
-  screenshot shows a different selected value (`ENG` vs `УКР`) per export.
-  False positive in the check, not a broken preview.
+Any `[RENDER_BLANK]`/`[RENDER_THIN]`/`[GRID_OVERFLOW]` other than the items
+above is new and should be investigated, not waved through.
 
 ## User directives for this campaign (recorded for the next agent)
 
@@ -438,3 +467,63 @@ One more accepted warn, confirmed benign by eye:
   `Giscus` (intentionally skipped) and `BlogPost`/`BlogPreview` (authored
   then deleted — see "Known render warns"), which ship the floor card by
   design.
+
+## WP7 re-sync (post-redesign) — what changed
+
+- **28 components today** (down from 47 pre-redesign — the redesign deleted
+  the rest). `_ds_bundle.js` is now **11,320,715 bytes (~10.8 MB)**, safely
+  under the 12 MB cap even with the extra `RssPrompt` component authored.
+  Re-check this after any future component add — the excluded-components
+  margin from the old 47-component set no longer directly applies to a
+  28-component bundle, so don't assume the same headroom.
+- **`cfg.buildCmd` working form, confirmed again this run**:
+  `./.ds-sync/node_modules/.bin/tailwindcss -i .design-sync/tailwind-entry.css -o .design-sync/.cache/compiled.css`
+  — this is now what `config.json`'s `buildCmd` actually holds (previously
+  it held the documented-but-non-resolving `npx --prefix .ds-sync
+  @tailwindcss/cli ...` form; see "Direct invocation note" above for why
+  that one doesn't resolve here).
+- **`.design-sync/shims/next-font-google.ts` was stale and broke the
+  build**: it still exported `Manrope`/`Merriweather` (the pre-redesign
+  font names) instead of `Atkinson_Hyperlegible_Next`/`Wix_Madefor_Text`
+  (what `src/lib/fonts.ts` actually imports post-redesign). Fixed by
+  renaming the two shim exports to match. This must have been missed when
+  `fonts.css` was updated for the rebrand (see "Fonts" above, "Redesign
+  update" bullet) — the shim export names are a second place the rebrand
+  needed to touch, easy to miss because the build only fails on this when
+  the shim is actually re-staged/re-run, not on a `git diff` review.
+- **`RssPrompt`** — new component since the redesign, previously
+  undiscovered by NOTES.md. Authored a preview for it this run (see "Known
+  render warns" above) rather than leaving it on the floor card, since
+  it's a small, purely presentational, statically-renderable component —
+  exactly the kind this campaign's "author everything" directive covers.
+- **`[GRID_OVERFLOW]` fixed via `cardMode: "column"`** for `BlogFeed`,
+  `CodeBlock`, `PostRow`, `About`, `Services` — all five flagged one export
+  wider than its grid cell on the first run; added to `cfg.overrides` in
+  `config.json` and the targeted rebuild cleared the warning (column cards
+  can't re-flag `wide` by construction, per the SKILL).
+- **Two new unfixable-from-preview `needs-work` findings**: `NotFound`
+  (TypingText animation races the capture harness) and `TocSidebar`
+  (`.toc`'s `min-width: 1500px` media query is unreachable at the fixed
+  900px capture viewport) — both detailed under "Known render warns"
+  above. Neither is a regression from this run; both are pre-existing
+  properties of the real components, just newly discovered because this
+  is the first re-verify of the post-redesign preview set.
+- **Full clean run**: `validate` and `capture` both exit 0, render-check
+  `bad: 0` across all 28 entries, no `[SYNC_STALE]`, no
+  `[LEARNINGS_UNMERGED]`. `.design-sync/overrides/{dts,source-kit}.mjs`
+  were diffed against the freshly re-staged `.ds-sync/lib/{dts,source-
+  kit}.mjs` — only cosmetic (em-dash) changes upstream, no functional
+  drift, so the forks still apply as-is; no merge was needed.
+- **Re-sync risks for the next agent**: the `About`/`NotFound`/`TocSidebar`
+  `needs-work` grades are terminal, not "in progress" — don't spend a
+  cycle trying to fix them from `.design-sync/previews/*.tsx` again
+  without first re-reading why they're unfixable above. `BlogPreview`'s
+  floor card renders a real (degraded) error state, not a placeholder —
+  if `src/lib/blog` ever gains a way to inject fixture data through the fs
+  shim, revisit authoring a real preview for it. This run had **no
+  anchor** (`_ds_sync.json` was never uploaded to the remote project), so
+  `.sync-diff.json`'s `upload.deletePaths` is empty by construction, not
+  because nothing needs deleting — whoever performs the upload must
+  independently review the remote project's `list_files` for stale paths
+  before calling `finalize_plan`, per the base SKILL's no-anchor deletes
+  rule.
