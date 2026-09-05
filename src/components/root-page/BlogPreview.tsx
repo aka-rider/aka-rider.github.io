@@ -1,38 +1,66 @@
-import { Category } from '@/lib/blog';
-import { Blog } from '@/lib/blog/Blog';
+import Link from 'next/link';
 
-import BlogCategoryPreview from '@/components/blog/BlogCategoryPreview';
-import UnstyledLink from '@/components/links/UnstyledLink';
-import Section from '@/components/Section';
+import { Blog } from '@/lib/blog/Blog';
+import { selectPreview } from '@/lib/blog/preview';
+import { toPostSummary } from '@/lib/blog/summary';
+
+import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
+import PostRow from '@/components/blog/PostRow';
 
 import { common, Lang } from '@/i18n';
 
-interface BlogProps {
-  title: string;
-  lang: Lang;
-}
+export default function BlogPreview({ lang, title }: { lang: Lang; title: string }) {
+  const archiveHref = `/${lang}/blog/`;
+  const root = new Blog().getRoot(lang);
 
-export default function BlogPreview({ title, lang }: BlogProps) {
-  const blog = new Blog();
-  const rootCategory = blog.getRoot(lang) as Category;
-  const firstCategory = rootCategory?.getCategories()?.[0];
+  const heading = (
+    <h2>
+      <Link href={archiveHref}>{title}</Link>
+    </h2>
+  );
 
-  if (!firstCategory) {
+  if (!root) {
     return (
-      <Section id='blog' title={title}>
-        <div className='text-center py-8 text-slate-500 dark:text-slate-400'>
-          {common[lang].noBlogContent}
-        </div>
-      </Section>
+      <section className='section' id='blog'>
+        {heading}
+        <p className='muted'>{common[lang].noPosts}</p>
+      </section>
     );
   }
 
+  if (root.type === 'LoadFailure') {
+    return (
+      <section className='section' id='blog'>
+        {heading}
+        <BlogLoadFailure node={root} lang={lang} />
+      </section>
+    );
+  }
+
+  const category = root.type === 'Category' ? root.getCategories()[0] : undefined;
+  if (!category) {
+    return (
+      <section className='section' id='blog'>
+        {heading}
+        <p className='muted'>{common[lang].noPosts}</p>
+      </section>
+    );
+  }
+
+  const { lead, rest } = selectPreview(category, 4);
+
   return (
-    <Section
-      id='blog'
-      title={<UnstyledLink href={`/${lang}/blog`}>{title}</UnstyledLink>}
-    >
-      <BlogCategoryPreview lang={lang} category={firstCategory} />
-    </Section>
+    <section className='section' id='blog'>
+      {heading}
+      <div className='list'>
+        {lead && <PostRow lang={lang} post={toPostSummary(lang, lead)} lead />}
+        {rest.map((post) => (
+          <PostRow key={post.slug} lang={lang} post={toPostSummary(lang, post)} />
+        ))}
+      </div>
+      <div className='more'>
+        <Link href={archiveHref}>{common[lang].viewArchive}</Link>
+      </div>
+    </section>
   );
 }

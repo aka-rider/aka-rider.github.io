@@ -52,6 +52,7 @@ const en = {
   mdxSourcePreview: 'Source content, first characters:',
   loadingComments: 'Loading comments...',
   footnotes: 'Footnotes',
+  noPosts: 'No posts yet.',
 } as const;
 
 type CommonStrings = Record<keyof typeof en, string>;
@@ -105,6 +106,7 @@ const uk = {
   mdxSourcePreview: 'Вихідний вміст, перші символи:',
   loadingComments: 'Завантаження коментарів...',
   footnotes: 'Примітки',
+  noPosts: 'Ще немає дописів.',
 } as const satisfies CommonStrings;
 
 export const common = { en, uk } satisfies Record<Lang, CommonStrings>;

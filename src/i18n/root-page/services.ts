@@ -30,18 +30,19 @@ const cta = {
 
 export function translateServices(lang: Lang) {
   return {
-    items: {
-      cto: {
-        title: services.cto.title[lang],
-        proposition: services.cto.proposition[lang],
-      },
-      principal: {
-        title: services.principal.title[lang],
-        proposition: services.principal.proposition[lang],
-      },
+    cto: {
+      title: services.cto.title[lang],
+      proposition: services.cto.proposition[lang],
     },
-    cta: cta[lang],
+    principal: {
+      title: services.principal.title[lang],
+      proposition: services.principal.proposition[lang],
+    },
   };
+}
+
+export function translateServicesCta(lang: Lang) {
+  return cta[lang];
 }
 
 export type ServicesContent = ReturnType<typeof translateServices>;
