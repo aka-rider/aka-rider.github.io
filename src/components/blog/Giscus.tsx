@@ -93,8 +93,8 @@ export default function Giscus({
   if (!mounted) {
     return (
       <div className='giscus-container mt-8 p-4'>
-        <div className='h-32 animate-pulse bg-slate-100 dark:bg-slate-800 rounded-lg' />
-        <div className='mt-2 text-center text-sm text-slate-500 dark:text-slate-400'>
+        <div className='h-32 animate-pulse bg-code-bg rounded-lg' />
+        <div className='mt-2 text-center text-sm text-muted'>
           {common[lang].loadingComments}
         </div>
       </div>

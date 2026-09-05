@@ -1,21 +1,20 @@
 // @ts-check
 
+import withToc from '@stefanprobst/rehype-extract-toc';
+import withTocExport from '@stefanprobst/rehype-extract-toc/mdx';
 import rehypeAutolinkHeadings from 'rehype-autolink-headings';
 import rehypePrettyCode from 'rehype-pretty-code';
 import rehypeSlug from 'rehype-slug';
 import remarkGfm from 'remark-gfm';
 
-/**
- * Shared remark plugins configuration for MDX processing.
- * Used in both Next.js build-time and runtime compilation.
- */
+/** @type {import('unified').PluggableList} */
 export const sharedRemarkPlugins = [remarkGfm];
 
-/**
- * Rehype plugins for code highlighting and accessibility.
- */
+/** @type {import('unified').PluggableList} */
 export const rehypePlugins = [
   rehypeSlug,
+  withToc,
+  withTocExport,
   [
     rehypePrettyCode,
     {
@@ -23,7 +22,7 @@ export const rehypePlugins = [
         dark: 'vitesse-dark',
         light: 'vitesse-light',
       },
-      keepBackground: true,
+      keepBackground: false,
     },
   ],
   rehypeAutolinkHeadings,

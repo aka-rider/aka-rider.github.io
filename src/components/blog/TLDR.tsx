@@ -27,14 +27,12 @@ export default function TLDR({
   }
 
   return (
-    <div className='my-6 rounded-xl border border-zinc-200 bg-zinc-50 p-6 dark:border-zinc-800 dark:bg-zinc-900/50'>
+    <div className='my-6 rounded-xl border border-rule bg-code-bg p-6'>
       <div className='mb-4 flex items-center gap-2 font-bold text-lg'>
         <ImForward3 className='shrink-0' />
         <span>TL;DR{title ? ` — ${title}` : ''}</span>
       </div>
-      <div className='prose-sm sm:prose-base dark:prose-invert [&>*:first-child]:mt-0 [&>*:last-child]:mb-0'>
-        {children}
-      </div>
+      <div className='[&>*:first-child]:mt-0 [&>*:last-child]:mb-0'>{children}</div>
     </div>
   );
 }
