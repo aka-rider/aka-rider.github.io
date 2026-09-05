@@ -19,6 +19,7 @@ import LadderDiagram from '@/components/blog/llm/LadderDiagram';
 import SequenceDiagram from '@/components/blog/llm/SequenceDiagram';
 import TrainingStagesFigure from '@/components/blog/llm/TrainingStagesFigure';
 import TransformerBlockDiagram from '@/components/blog/llm/TransformerBlockDiagram';
+import RssPrompt from '@/components/blog/RssPrompt';
 import Spoiler from '@/components/blog/Spoiler';
 import TLDR from '@/components/blog/TLDR';
 import UnstyledLink from '@/components/links/UnstyledLink';
@@ -163,15 +164,30 @@ function mdxComponents(lang: Lang) {
         <span className='tracking-[0.5em] text-lg'>···</span>
       </div>
     ),
+    section: (props: React.ComponentProps<'section'> & { 'data-footnotes'?: boolean }) => {
+      if (!('data-footnotes' in props)) return <section {...props} />;
+      return (
+        <>
+          <RssPrompt lang={lang} />
+          <section {...props} />
+        </>
+      );
+    },
     ...bindLang(lang),
   };
+}
+
+const footnoteDefinitionPattern = /^\[\^[^\]]+\]:/m;
+
+function hasFootnoteDefinitions(source: string): boolean {
+  return footnoteDefinitionPattern.test(source);
 }
 
 export async function compilePost(
   source: string,
   filePath: string,
   lang: Lang,
-): Promise<{ content: ReactElement; toc: TocItem[] }> {
+): Promise<{ content: ReactElement; toc: TocItem[]; hasFootnotes: boolean }> {
   const isDev = process.env.NODE_ENV === 'development';
   try {
     const compiled = await compile(source, {
@@ -195,6 +211,7 @@ export async function compilePost(
     return {
       content: <MDXContent components={mdxComponents(lang)} />,
       toc,
+      hasFootnotes: hasFootnoteDefinitions(source),
     };
   } catch (error) {
     console.error('MDX compilation error:', error);
@@ -214,6 +231,7 @@ export async function compilePost(
         </div>
       ),
       toc: [],
+      hasFootnotes: false,
     };
   }
 }

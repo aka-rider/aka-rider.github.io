@@ -147,6 +147,14 @@ html.dark {
     margin: 0;
     text-wrap: pretty;
   }
+
+  ul {
+    list-style: disc;
+  }
+
+  ol {
+    list-style: decimal;
+  }
 }
 
 @keyframes blink {
