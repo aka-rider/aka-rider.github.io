@@ -1,10 +1,13 @@
 import { notFound } from 'next/navigation';
 
 import { Blog } from '@/lib/blog/Blog';
+import { toPostSummary } from '@/lib/blog/summary';
 
 import BlogFeed, { FeedCategory } from '@/components/blog/BlogFeed';
+import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
+import Nav from '@/components/layout/Nav';
 
-import { Lang } from '@/i18n';
+import { common, Lang } from '@/i18n';
 
 export default async function BlogPage({
   params,
@@ -12,34 +15,51 @@ export default async function BlogPage({
   params: Promise<{ lang: Lang }>;
 }) {
   const { lang } = await params;
-  const blog = new Blog();
+  const root = new Blog().getRoot(lang);
 
-  const rootCategory = blog.getRoot(lang);
+  if (!root) {
+    return (
+      <>
+        <Nav lang={lang} />
+        <main id='main-content' className='wrap'>
+          <p className='muted'>{common[lang].noPosts}</p>
+        </main>
+      </>
+    );
+  }
 
-  if (!rootCategory || rootCategory.type !== 'Category') {
+  if (root.type === 'LoadFailure') {
+    return (
+      <>
+        <Nav lang={lang} />
+        <main id='main-content' className='wrap'>
+          <BlogLoadFailure node={root} lang={lang} />
+        </main>
+      </>
+    );
+  }
+
+  if (root.type === 'Post') {
     notFound();
   }
 
-  const feedCategories: FeedCategory[] = rootCategory
-    .getCategories()
-    .map((cat) => ({
-      slug: cat.slug,
-      title: cat.title,
-      thumbnails: cat.thumbnails ?? false,
-      posts: cat.getPosts().map((post) => ({
-        ...post,
-        href: Blog.getLink(lang, post),
-        parent: undefined,
-        children: [],
-        childrenBySlug: {},
-      })),
-    }));
+  const categories: FeedCategory[] = root.getCategories().map((category) => ({
+    slug: category.slug,
+    title: category.title,
+    thumbnails: category.thumbnails ?? false,
+    posts: category.getPosts().map((post) => toPostSummary(lang, post)),
+  }));
 
-  return (
-    <>
-      <main>
-        <BlogFeed lang={lang} categories={feedCategories} />
-      </main>
-    </>
-  );
+  if (categories.length === 0) {
+    return (
+      <>
+        <Nav lang={lang} />
+        <main id='main-content' className='wrap'>
+          <p className='muted'>{common[lang].noPosts}</p>
+        </main>
+      </>
+    );
+  }
+
+  return <BlogFeed lang={lang} rootTitle={root.title} categories={categories} />;
 }

@@ -1,14 +1,12 @@
 'use client';
 
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
-import * as React from 'react';
-import { Suspense, useCallback } from 'react';
+import { useEffect, useState } from 'react';
 
-import { Post } from '@/lib/blog/types';
+import { PostSummary } from '@/lib/blog/summary';
 
-import BlogPostPreview from '@/components/blog/BlogPostPreview';
+import PostCard from '@/components/blog/PostCard';
+import PostRow from '@/components/blog/PostRow';
 import TabNavigation from '@/components/blog/TabNavigation';
-import VisualPostPreview from '@/components/blog/VisualPostPreview';
 import Nav from '@/components/layout/Nav';
 
 import { Lang } from '@/i18n';
@@ -17,95 +15,78 @@ export interface FeedCategory {
   slug: string;
   title: string;
   thumbnails: boolean;
-  posts: Array<Post & { href: string }>;
+  posts: PostSummary[];
 }
 
-type BlogFeedProps = {
+export default function BlogFeed({
+  lang,
+  rootTitle,
+  categories,
+}: {
   lang: Lang;
+  rootTitle: string;
   categories: FeedCategory[];
-};
+}) {
+  const firstCategory = categories[0];
+  if (!firstCategory) {
+    throw new Error('BlogFeed requires at least one category');
+  }
 
-function BlogFeedInner({ lang, categories }: BlogFeedProps) {
-  const searchParams = useSearchParams();
-  const router = useRouter();
-  const pathname = usePathname();
-  const categoryParam = searchParams.get('category');
+  const [active, setActive] = useState(firstCategory.slug);
 
-  const activeTab =
-    categoryParam && categories.some((c) => c.slug === categoryParam)
-      ? categoryParam
-      : categories[0]?.slug || '';
+  useEffect(() => {
+    const category = new URLSearchParams(window.location.search).get('category');
+    if (category && categories.some((c) => c.slug === category)) {
+      setActive(category);
+    }
+  }, [categories]);
 
-  const activeCategory =
-    categories.find((c) => c.slug === activeTab) || categories[0];
+  const handleSelect = (id: string) => {
+    setActive(id);
+    window.history.replaceState(null, '', `?category=${id}`);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
 
-  const handleTabChange = useCallback(
-    (id: string) => {
-      router.push(`${pathname}?category=${id}`, { scroll: false });
-    },
-    [router, pathname],
-  );
-
-  if (!activeCategory) return null;
-
-  const navigation = (
-    <TabNavigation
-      lang={lang}
-      tabs={categories.map((c) => ({ id: c.slug, label: c.title }))}
-      activeTab={activeTab}
-      onTabChange={handleTabChange}
-    />
-  );
-
-  const isVisualMode = activeCategory.thumbnails === true;
-  const posts = activeCategory.posts;
+  const rootHref = `/${lang}/blog/`;
 
   return (
     <>
-      <Nav lang={lang}>{navigation}</Nav>
-
-      <div className='min-h-screen pb-20 mt-8'>
-        <div className='layout'>
-          <div
-            key={activeTab}
-            className='animate-in fade-in slide-in-from-bottom-2 duration-300 fill-mode-both'
+      <Nav lang={lang}>
+        <TabNavigation
+          rootHref={rootHref}
+          rootLabel={rootTitle}
+          tabs={categories.map((c) => ({ id: c.slug, label: c.title }))}
+          activeTab={active}
+          onSelect={handleSelect}
+        />
+      </Nav>
+      <main id='main-content' className='wrap'>
+        {categories.map((category) => (
+          <section
+            key={category.slug}
+            id={category.slug}
+            className={category.slug === active ? 'panel on' : 'panel'}
+            hidden={category.slug !== active}
           >
-            {isVisualMode ? (
-              <div className='grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-8'>
-                {posts.map((post) => (
-                  <VisualPostPreview
-                    key={post.slug}
-                    lang={lang}
-                    post={post}
-                    href={post.href}
-                  />
+            <div className='blog-head'>
+              <h1>{category.title}</h1>
+            </div>
+            {category.thumbnails ? (
+              <div className='grid'>
+                {category.posts.map((post) => (
+                  <PostCard key={post.slug} lang={lang} post={post} />
                 ))}
               </div>
             ) : (
-              <div className='flex flex-col divide-y divide-gray-200 dark:divide-gray-800'>
-                {posts.map((post) => (
-                  <BlogPostPreview
-                    key={post.slug}
-                    lang={lang}
-                    post={post}
-                    href={post.href}
-                    thumbnail={false}
-                    className='py-6 first:pt-0 last:pb-0'
-                  />
+              <div className='list'>
+                {category.posts.map((post) => (
+                  <PostRow key={post.slug} lang={lang} post={post} />
                 ))}
               </div>
             )}
-          </div>
-        </div>
-      </div>
+          </section>
+        ))}
+      </main>
     </>
-  );
-}
-
-export default function BlogFeed(props: BlogFeedProps) {
-  return (
-    <Suspense fallback={<Nav lang={props.lang}>{null}</Nav>}>
-      <BlogFeedInner {...props} />
-    </Suspense>
   );
 }

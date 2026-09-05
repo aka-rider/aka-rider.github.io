@@ -19,14 +19,15 @@ export class Blog {
 
   static getLink(lang: Lang, node?: BlogNode): string {
     if (!node) {
-      return `/${lang}/blog`;
+      return `/${lang}/blog/`;
     }
 
     if (node.type === 'Category') {
       if (!node.parent) {
-        return `/${lang}/blog`;
+        // Root "posts" category
+        return `/${lang}/blog/`;
       }
-      return `/${lang}/blog#${node.slug}`;
+      return `/${lang}/blog/?category=${node.slug}`;
     }
 
     const path = [node.slug];

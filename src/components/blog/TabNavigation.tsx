@@ -1,57 +1,39 @@
-import * as React from 'react';
+import Link from 'next/link';
 
-import clsx from '@/lib/clsxm';
-
-import {
-  NAV_CONTAINER_CLASSES,
-  NavigationItem,
-} from '@/components/layout/NavigationPrimitives';
-
-import { common, Lang } from '@/i18n';
-
-interface TabNavigationProps {
-  lang: Lang;
+export interface TabNavigationProps {
+  rootHref: string;
+  rootLabel: string;
   tabs: { id: string; label: string }[];
   activeTab: string;
-  onTabChange: (id: string) => void;
-  onSectionClick?: () => void;
-  className?: string;
+  onSelect: (id: string) => void;
 }
 
 export default function TabNavigation({
-  lang,
+  rootHref,
+  rootLabel,
   tabs,
   activeTab,
-  onTabChange,
-  onSectionClick,
-  className,
+  onSelect,
 }: TabNavigationProps) {
-  const handleTabClick = (id: string, event?: React.MouseEvent) => {
-    onSectionClick?.();
-
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-
-    onTabChange(id);
-
-    if (event) {
-      (event.currentTarget as HTMLElement).blur();
-    }
-  };
-
   return (
-    <nav
-      className={clsx(NAV_CONTAINER_CLASSES, className)}
-      aria-label={common[lang].blogCategories}
-    >
+    <nav className='navlinks' aria-label={rootLabel}>
+      <Link className='root' href={rootHref}>
+        {rootLabel}
+      </Link>
+      <span className='sep'>/</span>
       {tabs.map((tab) => {
-        const isActive = activeTab === tab.id;
+        const isActive = tab.id === activeTab;
         return (
-          <NavigationItem
+          <button
             key={tab.id}
-            isActive={isActive}
-            label={tab.label}
-            onClick={(e) => handleTabClick(tab.id, e)}
-          />
+            type='button'
+            className={isActive ? 'on' : undefined}
+            role='tab'
+            aria-selected={isActive}
+            onClick={() => onSelect(tab.id)}
+          >
+            {tab.label}
+          </button>
         );
       })}
     </nav>

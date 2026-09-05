@@ -1,24 +1,32 @@
 import { Metadata } from 'next';
-import { notFound, redirect } from 'next/navigation';
+import Link from 'next/link';
+import { notFound } from 'next/navigation';
 
 import { Blog } from '@/lib/blog/Blog';
 import { BlogNode } from '@/lib/blog/types';
 
-import BlogCategory from '@/components/blog/BlogCategory';
 import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
 import BlogPost from '@/components/blog/BlogPost';
-import Breadcrumbs from '@/components/blog/Breadcrumbs';
+import Breadcrumbs, { Crumb } from '@/components/blog/Breadcrumbs';
 import Giscus from '@/components/blog/Giscus';
 import PostNavigation from '@/components/blog/PostNavigation';
 import Nav from '@/components/layout/Nav';
 
 import { Lang } from '@/i18n';
 
-import config from '../../../../../config';
+import config from '/config';
 
 function findNode(lang: Lang, slug: string[]): BlogNode | null {
   const blog = new Blog();
   return slug.length === 0 ? blog.getRoot(lang) : blog.getBySlug(lang, slug);
+}
+
+function buildTrail(lang: Lang, node: BlogNode): Crumb[] {
+  const trail: Crumb[] = [];
+  for (let n = node.parent; n; n = n.parent) {
+    trail.unshift({ href: Blog.getLink(lang, n), title: n.title });
+  }
+  return trail;
 }
 
 export default async function BlogPage({
@@ -33,59 +41,55 @@ export default async function BlogPage({
     notFound();
   }
 
-  if (node.type === 'Category') {
-    redirect(node.parent ? `/${lang}/blog#${node.slug}` : `/${lang}/blog`);
-  }
-
-  const breadcrumbs: BlogNode[] = [];
-  for (let current = node.parent; current; current = current.parent) {
-    breadcrumbs.unshift(current);
-  }
-  if (node.type !== 'Post') {
-    breadcrumbs.push(node);
-  }
-
-  return (
-    <>
-      <Nav lang={lang}>
-        <Breadcrumbs
-          lang={lang}
-          breadcrumbs={breadcrumbs}
-          activeIndex={node.type === 'Post' ? -1 : undefined}
-        />
-      </Nav>
-      <main>{renderNodeContent(node, lang)}</main>
-    </>
-  );
-}
-
-function renderNodeContent(node: BlogNode, lang: Lang) {
   switch (node.type) {
-    case 'LoadFailure':
-      return <BlogLoadFailure node={node} lang={lang} />;
-    case 'Category':
-      return <BlogCategory lang={lang} category={node} />;
+    case 'Category': {
+      const target = Blog.getLink(lang, node);
+      return (
+        <>
+          <meta httpEquiv='refresh' content={`0;url=${target}`} />
+          <p>
+            <Link href={target}>{node.title}</Link>
+          </p>
+        </>
+      );
+    }
     case 'Post':
       return (
         <>
-          <BlogPost post={node} lang={lang} />
-          <PostNavigation post={node} lang={lang} />
-          <Giscus
-            repo={config.GISCUS.repo}
-            repoId={config.GISCUS.repoId}
-            category={config.GISCUS.category}
-            categoryId={config.GISCUS.categoryId}
-            mapping='pathname'
-            strict='0'
-            reactionsEnabled='0'
-            emitMetadata='0'
-            inputPosition='bottom'
-            lang={lang}
-          />
+          <Nav lang={lang}>
+            <Breadcrumbs trail={buildTrail(lang, node)} current={node.title} />
+          </Nav>
+          <main id='main-content' className='wrap'>
+            <BlogPost post={node} lang={lang} />
+            <PostNavigation post={node} lang={lang} />
+            <div className='post'>
+              <Giscus
+                repo={config.GISCUS.repo}
+                repoId={config.GISCUS.repoId}
+                category={config.GISCUS.category}
+                categoryId={config.GISCUS.categoryId}
+                mapping='pathname'
+                strict='0'
+                reactionsEnabled='1'
+                emitMetadata='0'
+                inputPosition='bottom'
+                lang={lang}
+              />
+            </div>
+          </main>
         </>
       );
-    default:
-      return node satisfies never;
+    case 'LoadFailure':
+      return (
+        <>
+          <Nav lang={lang}>
+            <Breadcrumbs trail={buildTrail(lang, node)} current={node.title} />
+          </Nav>
+          <main id='main-content' className='wrap'>
+            <BlogLoadFailure node={node} lang={lang} />
+          </main>
+        </>
+      );
   }
 }
 
