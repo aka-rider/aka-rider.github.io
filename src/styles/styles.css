@@ -201,37 +201,6 @@ html.dark {
 }
 
 @layer base {
-  /* Code blocks (rehype-pretty-code); CodeBlock.tsx renders 'not-prose', so
-   * these are the only rules styling it — dual-theme shiki emits only
-   * --shiki-* vars, mapped to color per theme here. */
-  [data-rehype-pretty-code-figure] pre {
-    font-family: var(--mono);
-    font-size: 0.9rem;
-    margin: 2rem 0;
-    padding: 1rem 1.15rem;
-    max-width: 100%;
-    overflow-x: auto;
-    color: var(--shiki-light);
-    background-color: var(--shiki-light-bg);
-    @apply rounded-lg border border-slate-200 dark:border-slate-800;
-  }
-
-  [data-rehype-pretty-code-figure] code[data-theme],
-  [data-rehype-pretty-code-figure] code[data-theme] span {
-    color: var(--shiki-light);
-    background-color: transparent;
-  }
-
-  html.dark [data-rehype-pretty-code-figure] pre {
-    color: var(--shiki-dark);
-    background-color: var(--shiki-dark-bg);
-  }
-
-  html.dark [data-rehype-pretty-code-figure] code[data-theme],
-  html.dark [data-rehype-pretty-code-figure] code[data-theme] span {
-    color: var(--shiki-dark);
-  }
-
   /* Inline code */
   :not(pre) > code {
     font-family: var(--mono);
@@ -541,7 +510,7 @@ html.dark {
 
   .seg {
     display: flex;
-    border: 1px solid var(--rule-2);
+    background: var(--code-bg);
     border-radius: 999px;
     padding: 2px;
   }
@@ -551,12 +520,15 @@ html.dark {
     appearance: none;
     border: 0;
     background: none;
+    display: grid;
+    place-items: center;
     font: inherit;
     font-size: 0.72rem;
     font-weight: 700;
     letter-spacing: 0.06em;
+    line-height: 1;
     color: var(--muted);
-    padding: 0.2rem 0.6rem;
+    padding: 0.2rem 0.6rem 0.2rem calc(0.6rem + 0.06em);
     border-radius: 999px;
     cursor: pointer;
     min-width: 2.6rem;
@@ -1481,4 +1453,22 @@ html.dark {
       display: none;
     }
   }
+}
+
+.prose {
+  --tw-prose-body: var(--text);
+  --tw-prose-headings: var(--text);
+  --tw-prose-lead: var(--text-2);
+  --tw-prose-links: var(--accent-ink);
+  --tw-prose-bold: var(--text);
+  --tw-prose-counters: var(--muted);
+  --tw-prose-bullets: var(--muted);
+  --tw-prose-hr: var(--rule);
+  --tw-prose-quotes: var(--text-2);
+  --tw-prose-quote-borders: var(--accent);
+  --tw-prose-captions: var(--muted);
+  --tw-prose-kbd: var(--text);
+  --tw-prose-code: var(--text);
+  --tw-prose-th-borders: var(--rule-2);
+  --tw-prose-td-borders: var(--rule);
 }

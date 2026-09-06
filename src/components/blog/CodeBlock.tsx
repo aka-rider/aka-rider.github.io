@@ -35,7 +35,7 @@ export default function CodeBlock({
   }, []);
 
   return (
-    <figure ref={figureRef} className='code'>
+    <figure ref={figureRef} className='code not-prose'>
       <figcaption>
         <span className='lang'>{language}</span>
         <button
