@@ -106,3 +106,20 @@ the first category active; `BlogFeed`'s `useEffect` reads
 A non-JS client landing on such a link sees the first category, not `foo`.
 Tabs are now `<Link>` elements, so keyboard/non-JS navigation between
 categories works — only the direct permalink-to-category case is affected.
+
+## Custom domain `iurii.net` is unverified on GitHub Pages
+
+`gh api repos/aka-rider/aka-rider.github.io/pages` reports
+`protected_domain_state: "unverified"` and `https_enforced: false`. Visitors
+still get HTTPS because Cloudflare terminates TLS in front of Pages, but an
+unverified custom domain can be claimed by another GitHub account if the DNS
+record is ever left dangling. Verifying the domain (Settings -> Pages -> add
+the `_github-pages-challenge-aka-rider` TXT record) also lets GitHub issue its
+own certificate and enforce HTTPS at the origin.
+
+## Two lockfiles, one of them unused
+
+`pnpm-lock.yaml` and `pnpm-workspace.yaml` are committed alongside
+`package-lock.json`, while `.github/workflows/deploy.yml` installs with
+`npm ci`. Whichever file is stale silently diverges from what CI actually
+resolves. Pick one package manager and delete the other lockfile.
