@@ -40,7 +40,13 @@ export default function Image({
   ...rest
 }: ImageProps) {
   const fillStyle: React.CSSProperties = fill
-    ? { position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }
+    ? {
+        position: 'absolute',
+        inset: 0,
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+      }
     : {};
 
   return (

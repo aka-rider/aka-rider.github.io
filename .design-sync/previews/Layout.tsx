@@ -13,7 +13,9 @@ export const English = () => (
     </Nav>
     <main id='main-content' className='wrap'>
       <h1>Page content</h1>
-      <p className='muted'>This is the page body rendered inside the site chrome.</p>
+      <p className='muted'>
+        This is the page body rendered inside the site chrome.
+      </p>
     </main>
   </Layout>
 );
@@ -29,7 +31,9 @@ export const Ukrainian = () => (
     </Nav>
     <main id='main-content' className='wrap'>
       <h1>Вміст сторінки</h1>
-      <p className='muted'>Тіло сторінки, що рендериться всередині chrome сайту.</p>
+      <p className='muted'>
+        Тіло сторінки, що рендериться всередині chrome сайту.
+      </p>
     </main>
   </Layout>
 );

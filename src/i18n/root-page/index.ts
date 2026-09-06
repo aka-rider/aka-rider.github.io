@@ -1,5 +1,9 @@
 import { FossContent, translateFoss } from './foss';
-import { ServicesContent, translateServices, translateServicesCta } from './services';
+import {
+  ServicesContent,
+  translateServices,
+  translateServicesCta,
+} from './services';
 import { Lang } from '../index';
 
 interface RootPageContent {

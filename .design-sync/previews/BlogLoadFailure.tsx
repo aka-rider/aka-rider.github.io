@@ -10,7 +10,9 @@ const yamlFailure: LoadFailure = {
   filePath: 'content/blog/unparsable-frontmatter.en.mdx',
   children: [],
   childrenBySlug: {},
-  err: new Error('YAMLException: bad indentation of a mapping entry at line 3, column 1'),
+  err: new Error(
+    'YAMLException: bad indentation of a mapping entry at line 3, column 1',
+  ),
 };
 
 const mdxFailure: LoadFailure = {

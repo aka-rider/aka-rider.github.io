@@ -76,5 +76,7 @@ export default async function BlogPage({
     );
   }
 
-  return <BlogFeed lang={lang} rootTitle={root.title} categories={categories} />;
+  return (
+    <BlogFeed lang={lang} rootTitle={root.title} categories={categories} />
+  );
 }

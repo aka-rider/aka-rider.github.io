@@ -33,7 +33,14 @@ function makeCategory(posts: Post[], featured?: Post): Category {
 
 describe('selectPreview', () => {
   it('returns the featured post as lead and the next newest posts excluding it', () => {
-    const posts = ['newest', 'featured', 'third', 'fourth', 'fifth', 'sixth'].map(makePost);
+    const posts = [
+      'newest',
+      'featured',
+      'third',
+      'fourth',
+      'fifth',
+      'sixth',
+    ].map(makePost);
     const [, featured] = posts;
     const category = makeCategory(posts, featured);
 

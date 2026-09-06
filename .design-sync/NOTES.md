@@ -129,7 +129,7 @@ reappears:
   full re-sync now that both files are gone outright rather than merely
   excluded.
 
-Note: components that only *reference* `@/lib/blog` (data types, or the
+Note: components that only _reference_ `@/lib/blog` (data types, or the
 `Blog` class whose constructor reads the filesystem) were **not**
 excluded — `Blog.ts`/`loader.ts` bundle fine through the fs/path shims and
 degrade to "no posts found" gracefully at render time (an fs shim that
@@ -159,7 +159,7 @@ folded into the bullets below.
   render statically, per campaign instruction to skip it.
 - **`BlogPost`** — `export default async function BlogPost(...)` is a React
   Server Component (async function component); throws `Error: An unknown
-  Component is an async Client Component...` in this converter's
+Component is an async Client Component...` in this converter's
   single-bundle-no-RSC-boundary model. Not fixable from a preview `.tsx`.
 - **`RssPrompt`** — **not actually a floor-card candidate**: a small, purely
   presentational component (`{ lang }` prop, static link, no data
@@ -208,9 +208,9 @@ run, both confirmed reproducible on a solo recapture, not one-off flakes):**
   in the DOM (`.render-check.json`'s `texts` field has "Contents The
   problem Lock modes The checklist" etc.) — `src/styles/styles.css`'s
   `.toc { display: none; }` only flips to `display: block` at `@media
-  (min-width: 1500px)`, well above the fixed 900px capture viewport (same
+(min-width: 1500px)`, well above the fixed 900px capture viewport (same
   root cause as `TableOfContents`' unreachable desktop-sidebar variant,
-  below — but here the *entire* component is that desktop variant, so both
+  below — but here the _entire_ component is that desktop variant, so both
   cells capture as blank instead of falling back to a visible mobile
   alternative). Not fixable from the preview without hacking
   `styles.css` or the capture harness's viewport (both out of scope).
@@ -271,7 +271,7 @@ above is new and should be investigated, not waved through.
   on it). `BlogPostPreview` branches on `post.type`, not a separate prop.
 - **Gotcha — `Card`/`BlogPostPreview` titles render as `h3`/`h4`**: only
   `h1`/`h2` in `src/styles/styles.css` get `font-family:
-  var(--font-header)` (Merriweather); `h3`/`h4` inherit the sans body
+var(--font-header)` (Merriweather); `h3`/`h4` inherit the sans body
   font. Sans-serif card/post titles in screenshots are correct, not a
   font-pipeline failure.
 - **`primary-*` Tailwind utilities were undefined** — historical, resolved
@@ -296,8 +296,8 @@ above is new and should be investigated, not waved through.
   `fonts.css` and the real `src/styles/styles.css`.
 - Direct invocation note (still applies to `cfg.buildCmd` generally): the
   documented `npx --prefix .ds-sync
-  @tailwindcss/cli ...` form does not resolve in this sandbox (`tailwindcss:
-  command not found` — npx's bin-name heuristic doesn't map the scoped
+@tailwindcss/cli ...` form does not resolve in this sandbox (`tailwindcss:
+command not found` — npx's bin-name heuristic doesn't map the scoped
   package `@tailwindcss/cli` to its `tailwindcss` bin here). Two working
   equivalents: `npx --prefix .ds-sync tailwindcss ...` (bin name instead
   of package name), or the direct binary
@@ -317,7 +317,7 @@ above is new and should be investigated, not waved through.
   `[FONT_REMOTE]` line in `package-validate.mjs`'s prior runs was a false
   negative, not a confirmation: with the font custom properties never
   defined, `var(...)` in the compiled CSS resolves to nothing, so
-  validate's `--font-*`-style custom-property scan found no *named*
+  validate's `--font-*`-style custom-property scan found no _named_
   family to flag as missing (empty string post-`var()`-resolution gets
   filtered before the check). Net effect: every preview rendered
   headings/body in the browser's default system font, invisibly.
@@ -364,7 +364,7 @@ above is new and should be investigated, not waved through.
 
 - **`Card`/`BlogPostPreview`/`TLDR` titles render sans-serif, not a font bug**:
   only `h1`/`h2` in `src/styles/styles.css` get `font-family:
-  var(--font-header)` (Merriweather) — `h3`/`h4` inherit the sans body font
+var(--font-header)` (Merriweather) — `h3`/`h4` inherit the sans body font
   (Manrope). Any card/post/TLDR title screenshot showing sans-serif text is
   correct.
 - **Stale `compiled.css` breaks size utilities asymmetrically, not just
@@ -392,7 +392,7 @@ above is new and should be investigated, not waved through.
   variant can ever be photographed here.
 - **`MDXContent`'s eval path expects `jsxDEV`, not `jsx`/`jsxs`**:
   `next-mdx-remote`'s `<MDXRemote>` evals `compiledSource` via `new
-  Function(...)`. Since this bundle's `process.env.NODE_ENV` is unset,
+Function(...)`. Since this bundle's `process.env.NODE_ENV` is unset,
   `next-mdx-remote/dist/jsx-runtime.cjs` resolves to `react/jsx-dev-runtime`,
   which exports only `jsxDEV`/`Fragment`. A hand-built `compiledSource` string
   must target that contract (not `jsx`/`jsxs`) to run through the real eval
@@ -412,7 +412,7 @@ above is new and should be investigated, not waved through.
   flex/gap, so an unstyled preview renders a vertically stacked column
   (true behavior, not a bug). The one real caller
   (`src/components/layout/Footer.tsx`) always passes `className='flex
-  gap-4'` — previews should pass an equivalent className to reflect real
+gap-4'` — previews should pass an equivalent className to reflect real
   usage.
 - **`TypingText`'s `typingSpeed` is a total-duration knob, not a per-char
   one**: interval = `typingSpeed * 1000 / text.length`. The capture harness
@@ -441,8 +441,6 @@ above is new and should be investigated, not waved through.
   `vitesse-light` shiki theme. Its copy-button/language-badge overlay is
   `opacity-0 group-hover:opacity-100` — invisible in any static screenshot
   by design, not a miss.
-
-
 
 - The `entry` decoy path and the `[UNRESOLVED... node-builtin]` shims are
   config/tsconfig-level workarounds for real gaps in the converter's
@@ -480,7 +478,7 @@ above is new and should be investigated, not waved through.
   `./.ds-sync/node_modules/.bin/tailwindcss -i .design-sync/tailwind-entry.css -o .design-sync/.cache/compiled.css`
   — this is now what `config.json`'s `buildCmd` actually holds (previously
   it held the documented-but-non-resolving `npx --prefix .ds-sync
-  @tailwindcss/cli ...` form; see "Direct invocation note" above for why
+@tailwindcss/cli ...` form; see "Direct invocation note" above for why
   that one doesn't resolve here).
 - **`.design-sync/shims/next-font-google.ts` was stale and broke the
   build**: it still exported `Manrope`/`Merriweather` (the pre-redesign
@@ -512,7 +510,7 @@ above is new and should be investigated, not waved through.
   `bad: 0` across all 28 entries, no `[SYNC_STALE]`, no
   `[LEARNINGS_UNMERGED]`. `.design-sync/overrides/{dts,source-kit}.mjs`
   were diffed against the freshly re-staged `.ds-sync/lib/{dts,source-
-  kit}.mjs` — only cosmetic (em-dash) changes upstream, no functional
+kit}.mjs` — only cosmetic (em-dash) changes upstream, no functional
   drift, so the forks still apply as-is; no merge was needed.
 - **Re-sync risks for the next agent**: the `About`/`NotFound`/`TocSidebar`
   `needs-work` grades are terminal, not "in progress" — don't spend a

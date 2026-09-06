@@ -13,8 +13,19 @@ function resolveHref(href: unknown): string {
 }
 
 const Link = React.forwardRef<HTMLAnchorElement, LinkProps>(function Link(
-  { href, children, prefetch, scroll, replace, shallow, locale, legacyBehavior, passHref, ...rest }: any,
-  ref
+  {
+    href,
+    children,
+    prefetch,
+    scroll,
+    replace,
+    shallow,
+    locale,
+    legacyBehavior,
+    passHref,
+    ...rest
+  }: any,
+  ref,
 ) {
   return (
     <a ref={ref} href={resolveHref(href)} {...rest}>

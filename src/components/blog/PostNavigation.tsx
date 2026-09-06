@@ -8,7 +8,13 @@ import UnstyledLink from '@/components/links/UnstyledLink';
 
 import { common, Lang } from '@/i18n';
 
-export default function PostNavigation({ post, lang }: { post: Post; lang: Lang }) {
+export default function PostNavigation({
+  post,
+  lang,
+}: {
+  post: Post;
+  lang: Lang;
+}) {
   const parent = post.parent;
   if (!parent || parent.type !== 'Category') return null;
 
@@ -32,7 +38,9 @@ export default function PostNavigation({ post, lang }: { post: Post; lang: Lang 
           </span>
           <span className='t'>
             {olderPost.title}
-            <span className='meta'>{formatReadingTime(olderPost.readingTime, lang)}</span>
+            <span className='meta'>
+              {formatReadingTime(olderPost.readingTime, lang)}
+            </span>
           </span>
         </UnstyledLink>
       )}
@@ -44,7 +52,9 @@ export default function PostNavigation({ post, lang }: { post: Post; lang: Lang 
           </span>
           <span className='t'>
             {newerPost.title}
-            <span className='meta'>{formatReadingTime(newerPost.readingTime, lang)}</span>
+            <span className='meta'>
+              {formatReadingTime(newerPost.readingTime, lang)}
+            </span>
           </span>
         </UnstyledLink>
       )}

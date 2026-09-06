@@ -8,7 +8,13 @@ import Footer from '@/components/layout/Footer';
 
 import { common, Lang } from '@/i18n';
 
-export default function Layout({ lang, children }: { lang: Lang; children: ReactNode }) {
+export default function Layout({
+  lang,
+  children,
+}: {
+  lang: Lang;
+  children: ReactNode;
+}) {
   return (
     <html lang={lang} className={fontClassName} suppressHydrationWarning>
       <body>

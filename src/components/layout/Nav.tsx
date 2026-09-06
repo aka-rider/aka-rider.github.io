@@ -6,7 +6,13 @@ import ThemeToggle from '@/components/ThemeToggle';
 
 import { common, Lang } from '@/i18n';
 
-export default function Nav({ lang, children }: { lang: Lang; children?: ReactNode }) {
+export default function Nav({
+  lang,
+  children,
+}: {
+  lang: Lang;
+  children?: ReactNode;
+}) {
   return (
     <div className='nav'>
       <div className='wrap'>

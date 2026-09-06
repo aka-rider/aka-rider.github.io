@@ -15,13 +15,22 @@ export default function Footer({ lang }: { lang: Lang }) {
       <div className='wrap'>
         <span>© {year}</span>
         <div className='links'>
-          <UnstyledLink href={config.LINKED_IN} aria-label={common[lang].linkedinProfile}>
+          <UnstyledLink
+            href={config.LINKED_IN}
+            aria-label={common[lang].linkedinProfile}
+          >
             <FaLinkedin />
           </UnstyledLink>
-          <UnstyledLink href={config.GIT_HUB} aria-label={common[lang].githubProfile}>
+          <UnstyledLink
+            href={config.GIT_HUB}
+            aria-label={common[lang].githubProfile}
+          >
             <SiGithub />
           </UnstyledLink>
-          <UnstyledLink href={`/${lang}/feed.xml`} aria-label={common[lang].rssFeed}>
+          <UnstyledLink
+            href={`/${lang}/feed.xml`}
+            aria-label={common[lang].rssFeed}
+          >
             <SiRss />
           </UnstyledLink>
         </div>

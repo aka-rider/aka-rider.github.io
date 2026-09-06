@@ -1,5 +1,7 @@
 function enoent(path: string): NodeJS.ErrnoException {
-  const err = new Error(`ENOENT: no such file or directory, open '${path}'`) as NodeJS.ErrnoException;
+  const err = new Error(
+    `ENOENT: no such file or directory, open '${path}'`,
+  ) as NodeJS.ErrnoException;
   err.code = 'ENOENT';
   return err;
 }

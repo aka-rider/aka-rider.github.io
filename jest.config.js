@@ -73,6 +73,8 @@ module.exports = async () => {
   const nextJestConfig = await createJestConfig(customJestConfig)();
   return {
     ...nextJestConfig,
-    transformIgnorePatterns: [`/node_modules/(?!(?:${ESM_ONLY_MODULE_NAMES.join('|')})/)`],
+    transformIgnorePatterns: [
+      `/node_modules/(?!(?:${ESM_ONLY_MODULE_NAMES.join('|')})/)`,
+    ],
   };
 };

@@ -32,7 +32,11 @@ const HEADINGS = `## Alpha
 
 describe('compilePost', () => {
   it('detects a referenced footnote and renders one RSS prompt before the footnotes section', async () => {
-    const { content, hasFootnotes } = await compilePost(REFERENCED_FOOTNOTE, 'post.mdx', 'en');
+    const { content, hasFootnotes } = await compilePost(
+      REFERENCED_FOOTNOTE,
+      'post.mdx',
+      'en',
+    );
     expect(hasFootnotes).toBe(true);
 
     const { container } = render(content);
@@ -61,7 +65,11 @@ describe('compilePost', () => {
   });
 
   it('does not report footnotes for an unreferenced definition', async () => {
-    const { content, hasFootnotes } = await compilePost(UNREFERENCED_FOOTNOTE, 'post.mdx', 'en');
+    const { content, hasFootnotes } = await compilePost(
+      UNREFERENCED_FOOTNOTE,
+      'post.mdx',
+      'en',
+    );
     expect(hasFootnotes).toBe(false);
 
     const { container } = render(content);

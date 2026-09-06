@@ -90,7 +90,12 @@ export const TypeScript = () => (
     <CodeBlock lang='en' language='typescript'>
       <pre
         data-language='typescript'
-        style={{ backgroundColor: '#ffffff', color: '#393a34', padding: '1rem', borderRadius: '0.5rem' }}
+        style={{
+          backgroundColor: '#ffffff',
+          color: '#393a34',
+          padding: '1rem',
+          borderRadius: '0.5rem',
+        }}
       >
         <code data-language='typescript'>{renderLines(tsLines)}</code>
       </pre>
@@ -103,7 +108,12 @@ export const Python = () => (
     <CodeBlock lang='uk' language='python'>
       <pre
         data-language='python'
-        style={{ backgroundColor: '#ffffff', color: '#393a34', padding: '1rem', borderRadius: '0.5rem' }}
+        style={{
+          backgroundColor: '#ffffff',
+          color: '#393a34',
+          padding: '1rem',
+          borderRadius: '0.5rem',
+        }}
       >
         <code data-language='python'>{renderLines(pyLines)}</code>
       </pre>

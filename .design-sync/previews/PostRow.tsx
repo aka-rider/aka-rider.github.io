@@ -3,7 +3,9 @@ import * as React from 'react';
 import { PostRow } from 'iurii.net';
 import type { PostSummary } from '@/lib/blog/summary';
 
-function makeSummary(overrides: Partial<PostSummary> & Pick<PostSummary, 'slug' | 'title'>): PostSummary {
+function makeSummary(
+  overrides: Partial<PostSummary> & Pick<PostSummary, 'slug' | 'title'>,
+): PostSummary {
   return {
     href: `/en/blog/posts/${overrides.slug}`,
     excerpt: '',

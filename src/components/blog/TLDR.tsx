@@ -32,7 +32,9 @@ export default function TLDR({
         <ImForward3 className='shrink-0' />
         <span>TL;DR{title ? ` — ${title}` : ''}</span>
       </div>
-      <div className='[&>*:first-child]:mt-0 [&>*:last-child]:mb-0'>{children}</div>
+      <div className='[&>*:first-child]:mt-0 [&>*:last-child]:mb-0'>
+        {children}
+      </div>
     </div>
   );
 }

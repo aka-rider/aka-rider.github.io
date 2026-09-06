@@ -30,15 +30,33 @@ import { common, Lang } from '@/i18n';
 
 import { rehypePlugins, sharedRemarkPlugins } from '/mdx-config';
 
-const TemperatureDemo = dynamic(() => import('@/components/blog/llm/TemperatureDemo'));
-const AttentionDemo = dynamic(() => import('@/components/blog/llm/AttentionDemo'));
-const ToolCallDemo = dynamic(() => import('@/components/blog/llm/ToolCallDemo'));
-const TokenizerDemo = dynamic(() => import('@/components/blog/llm/TokenizerDemo'));
-const MatmulFigure = dynamic(() => import('@/components/blog/llm/MatmulFigure'));
-const MoERoutingDemo = dynamic(() => import('@/components/blog/llm/MoERoutingDemo'));
-const TrainingStepDemo = dynamic(() => import('@/components/blog/llm/TrainingStepDemo'));
-const WorldPickerDemo = dynamic(() => import('@/components/blog/llm/WorldPickerDemo'));
-const ChatTranscript = dynamic(() => import('@/components/blog/llm/ChatTranscript'));
+const TemperatureDemo = dynamic(
+  () => import('@/components/blog/llm/TemperatureDemo'),
+);
+const AttentionDemo = dynamic(
+  () => import('@/components/blog/llm/AttentionDemo'),
+);
+const ToolCallDemo = dynamic(
+  () => import('@/components/blog/llm/ToolCallDemo'),
+);
+const TokenizerDemo = dynamic(
+  () => import('@/components/blog/llm/TokenizerDemo'),
+);
+const MatmulFigure = dynamic(
+  () => import('@/components/blog/llm/MatmulFigure'),
+);
+const MoERoutingDemo = dynamic(
+  () => import('@/components/blog/llm/MoERoutingDemo'),
+);
+const TrainingStepDemo = dynamic(
+  () => import('@/components/blog/llm/TrainingStepDemo'),
+);
+const WorldPickerDemo = dynamic(
+  () => import('@/components/blog/llm/WorldPickerDemo'),
+);
+const ChatTranscript = dynamic(
+  () => import('@/components/blog/llm/ChatTranscript'),
+);
 
 const ERROR_SOURCE_PREVIEW_LENGTH = 500;
 
@@ -165,11 +183,16 @@ function mdxComponents(lang: Lang) {
       );
     },
     hr: () => (
-      <div className='my-16 flex justify-center text-muted select-none' role='separator'>
+      <div
+        className='my-16 flex justify-center text-muted select-none'
+        role='separator'
+      >
         <span className='tracking-[0.5em] text-lg'>···</span>
       </div>
     ),
-    section: (props: React.ComponentProps<'section'> & { 'data-footnotes'?: boolean }) => {
+    section: (
+      props: React.ComponentProps<'section'> & { 'data-footnotes'?: boolean },
+    ) => {
       if (!('data-footnotes' in props)) return <section {...props} />;
       return (
         <>
@@ -204,7 +227,11 @@ export async function compilePost(
     const compiled = await compile(source, {
       outputFormat: 'function-body',
       development: isDev,
-      remarkPlugins: [...sharedRemarkPlugins, remarkReplaceLinks(lang), remarkImagePaths(filePath)],
+      remarkPlugins: [
+        ...sharedRemarkPlugins,
+        remarkReplaceLinks(lang),
+        remarkImagePaths(filePath),
+      ],
       rehypePlugins: [
         ...rehypePlugins,
         rehypeDetectFootnotes(() => {

@@ -15,7 +15,10 @@ export default function PostRow({
   lead?: boolean;
 }) {
   const { contentLang } = post;
-  const tag = contentLang && contentLang !== lang ? Languages.data[contentLang].tag : null;
+  const tag =
+    contentLang && contentLang !== lang
+      ? Languages.data[contentLang].tag
+      : null;
 
   return (
     <Link href={post.href} className={lead ? 'lead' : undefined}>
@@ -23,7 +26,9 @@ export default function PostRow({
         {post.title}
         {tag && <span className='tag'>({tag})</span>}
       </h3>
-      <span className='meta'>{formatMeta(post.date, post.readingTime, lang)}</span>
+      <span className='meta'>
+        {formatMeta(post.date, post.readingTime, lang)}
+      </span>
       {lead && <p>{post.excerpt}</p>}
     </Link>
   );

@@ -38,9 +38,7 @@ function stripLinks(text: string): string {
 }
 
 function stripEmphasis(text: string): string {
-  return text
-    .replace(/(\*{1,3}|_{1,3})([^*_]+)\1/g, '$2')
-    .replace(/[*_]/g, '');
+  return text.replace(/(\*{1,3}|_{1,3})([^*_]+)\1/g, '$2').replace(/[*_]/g, '');
 }
 
 function stripJsxTags(text: string): string {

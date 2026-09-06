@@ -2,7 +2,8 @@ import { plainExcerpt } from '@/lib/blog/excerpt';
 
 describe('plainExcerpt', () => {
   it('strips import and export lines', () => {
-    const content = "import Foo from './foo'\nexport const bar = 1\n\nThe real paragraph text.";
+    const content =
+      "import Foo from './foo'\nexport const bar = 1\n\nThe real paragraph text.";
 
     expect(plainExcerpt(content)).toBe('The real paragraph text.');
   });
@@ -14,7 +15,8 @@ describe('plainExcerpt', () => {
   });
 
   it('skips a heading that follows import lines before reaching the body', () => {
-    const content = "import Foo from './foo'\n\n# 1001 reasons to start\n\nThe body paragraph starts here.";
+    const content =
+      "import Foo from './foo'\n\n# 1001 reasons to start\n\nThe body paragraph starts here.";
 
     expect(plainExcerpt(content)).toBe('The body paragraph starts here.');
   });
@@ -44,13 +46,17 @@ describe('plainExcerpt', () => {
   });
 
   it('skips a JSX-only line and starts at the first body paragraph', () => {
-    const content = '<Spoiler>\n\nThe real body paragraph follows the JSX line.';
+    const content =
+      '<Spoiler>\n\nThe real body paragraph follows the JSX line.';
 
-    expect(plainExcerpt(content)).toBe('The real body paragraph follows the JSX line.');
+    expect(plainExcerpt(content)).toBe(
+      'The real body paragraph follows the JSX line.',
+    );
   });
 
   it('takes only the first paragraph', () => {
-    const content = 'First paragraph here.\n\nSecond paragraph should be ignored.';
+    const content =
+      'First paragraph here.\n\nSecond paragraph should be ignored.';
 
     expect(plainExcerpt(content)).toBe('First paragraph here.');
   });

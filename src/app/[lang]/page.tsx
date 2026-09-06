@@ -28,7 +28,11 @@ export default async function HomePage({
       <main id='main-content' className='wrap'>
         <About lang={lang} {...content.about} />
         <BlogPreview lang={lang} title={content.blog.name} />
-        <Services title={content.services.name} items={content.services.items} foot={content.services.foot} />
+        <Services
+          title={content.services.name}
+          items={content.services.items}
+          foot={content.services.foot}
+        />
         <Foss title={content.foss.name} items={content.foss.items} />
       </main>
     </>

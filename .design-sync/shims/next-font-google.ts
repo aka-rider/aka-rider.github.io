@@ -12,10 +12,14 @@ export function JetBrains_Mono(options?: Record<string, unknown>): FontResult {
   return makeFont(options);
 }
 
-export function Atkinson_Hyperlegible_Next(options?: Record<string, unknown>): FontResult {
+export function Atkinson_Hyperlegible_Next(
+  options?: Record<string, unknown>,
+): FontResult {
   return makeFont(options);
 }
 
-export function Wix_Madefor_Text(options?: Record<string, unknown>): FontResult {
+export function Wix_Madefor_Text(
+  options?: Record<string, unknown>,
+): FontResult {
   return makeFont(options);
 }

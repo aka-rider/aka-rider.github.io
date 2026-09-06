@@ -6,7 +6,9 @@ export default function RssPrompt({ lang }: { lang: Lang }) {
   const text = common[lang].rssPrompt;
   const match = text.match(/^(.*?)\[(.+?)\]\((.+?)\)(.*)$/);
   if (!match) {
-    throw new Error(`common.${lang}.rssPrompt must contain a markdown link: ${text}`);
+    throw new Error(
+      `common.${lang}.rssPrompt must contain a markdown link: ${text}`,
+    );
   }
   const [, before, linkText, href, after] = match;
   return (

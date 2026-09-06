@@ -10,8 +10,18 @@ import TocSidebar from '@/components/blog/TocSidebar';
 
 import { common, Lang } from '@/i18n';
 
-export default async function BlogPost({ post, lang }: { post: Post; lang: Lang }) {
-  const { content, toc, hasFootnotes } = await compilePost(post.content, post.filePath, lang);
+export default async function BlogPost({
+  post,
+  lang,
+}: {
+  post: Post;
+  lang: Lang;
+}) {
+  const { content, toc, hasFootnotes } = await compilePost(
+    post.content,
+    post.filePath,
+    lang,
+  );
 
   return (
     <>
@@ -30,14 +40,24 @@ export default async function BlogPost({ post, lang }: { post: Post; lang: Lang 
         </p>
         {!post.hideHero && (
           <div className='hero-img'>
-            <Image src={post.image} alt={post.title} width={1350} height={1080} priority />
+            <Image
+              src={post.image}
+              alt={post.title}
+              width={1350}
+              height={1080}
+              priority
+            />
           </div>
         )}
-        {toc.length > 0 && <TableOfContents items={toc} label={common[lang].tableOfContents} />}
+        {toc.length > 0 && (
+          <TableOfContents items={toc} label={common[lang].tableOfContents} />
+        )}
         <div className='prose'>{content}</div>
         {!hasFootnotes && <RssPrompt lang={lang} />}
       </article>
-      {toc.length > 0 && <TocSidebar items={toc} label={common[lang].tableOfContents} />}
+      {toc.length > 0 && (
+        <TocSidebar items={toc} label={common[lang].tableOfContents} />
+      )}
     </>
   );
 }

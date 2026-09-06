@@ -17,7 +17,12 @@ function coverSvg(label: string): string {
   );
 }
 
-function makeSummary(slug: string, title: string, excerpt: string, readingTime: number): PostSummary {
+function makeSummary(
+  slug: string,
+  title: string,
+  excerpt: string,
+  readingTime: number,
+): PostSummary {
   return {
     slug,
     href: `/en/blog/posts/${slug}`,
@@ -52,17 +57,48 @@ const essaysPosts: PostSummary[] = [
 ];
 
 const photoPosts: PostSummary[] = [
-  { ...makeSummary('distributed-tracing-from-scratch', 'Distributed Tracing From Scratch', '', 9), date: undefined },
-  { ...makeSummary('rust-ffi-for-python-hot-paths', 'Rust FFI for Python Hot Paths', '', 6), date: undefined },
-  { ...makeSummary('on-call-runbooks-that-work', 'On-Call Runbooks That Actually Get Used', '', 4), date: undefined },
+  {
+    ...makeSummary(
+      'distributed-tracing-from-scratch',
+      'Distributed Tracing From Scratch',
+      '',
+      9,
+    ),
+    date: undefined,
+  },
+  {
+    ...makeSummary(
+      'rust-ffi-for-python-hot-paths',
+      'Rust FFI for Python Hot Paths',
+      '',
+      6,
+    ),
+    date: undefined,
+  },
+  {
+    ...makeSummary(
+      'on-call-runbooks-that-work',
+      'On-Call Runbooks That Actually Get Used',
+      '',
+      4,
+    ),
+    date: undefined,
+  },
 ];
 
 const categories: FeedCategory[] = [
   { slug: 'essays', title: 'Essays', thumbnails: false, posts: essaysPosts },
-  { slug: 'field-notes', title: 'Field Notes', thumbnails: true, posts: photoPosts },
+  {
+    slug: 'field-notes',
+    title: 'Field Notes',
+    thumbnails: true,
+    posts: photoPosts,
+  },
 ];
 
-export const ListModeActive = () => <BlogFeed lang='en' rootTitle='Blog' categories={categories} />;
+export const ListModeActive = () => (
+  <BlogFeed lang='en' rootTitle='Blog' categories={categories} />
+);
 
 export const VisualModeActive = () => (
   <BlogFeed

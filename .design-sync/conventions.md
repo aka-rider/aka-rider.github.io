@@ -20,7 +20,7 @@ import { PostCard } from 'iurii.net';
 
 <ThemeProvider attribute='class' defaultTheme='light' enableSystem={false}>
   <PostCard lang='en' post={post} />
-</ThemeProvider>
+</ThemeProvider>;
 ```
 
 Every component takes an explicit `lang: 'en' | 'uk'` prop (or reads
@@ -96,7 +96,7 @@ call site provides.
 ## 4. A worked example
 
 `PostRow` (a single row in a post list — the `ListEntry` story, one of this
-component's three graded variants). Note it takes the *summarized* blog shape
+component's three graded variants). Note it takes the _summarized_ blog shape
 (`PostSummary` from `@/lib/blog/summary`), not the raw `Post` node:
 
 ```jsx
@@ -120,7 +120,7 @@ import { PostRow } from 'iurii.net';
       }}
     />
   </div>
-</ThemeProvider>
+</ThemeProvider>;
 ```
 
 Notice the row itself carries no visible background or border — `.list`

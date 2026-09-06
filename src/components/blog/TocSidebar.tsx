@@ -4,7 +4,13 @@ import { useEffect, useState } from 'react';
 
 import { TocItem } from '@/lib/blog/compile';
 
-export default function TocSidebar({ items, label }: { items: TocItem[]; label: string }) {
+export default function TocSidebar({
+  items,
+  label,
+}: {
+  items: TocItem[];
+  label: string;
+}) {
   const [show, setShow] = useState(false);
 
   useEffect(() => {
@@ -27,7 +33,11 @@ export default function TocSidebar({ items, label }: { items: TocItem[]; label: 
     <aside className={show ? 'toc show' : 'toc'}>
       <p className='h'>{label}</p>
       {items.map((item) => (
-        <a key={item.id} href={`#${item.id}`} className={item.depth === 3 ? 'sub' : undefined}>
+        <a
+          key={item.id}
+          href={`#${item.id}`}
+          className={item.depth === 3 ? 'sub' : undefined}
+        >
           {item.text}
         </a>
       ))}

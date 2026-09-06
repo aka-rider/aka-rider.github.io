@@ -18,6 +18,5 @@ export default function ThemeToggle({ lang }: { lang: Lang }) {
       <FiMoon className='moon' />
       <FiSun className='sun' />
     </button>
-
   );
 }

@@ -6,9 +6,9 @@ export const Collapsed = () => (
   <div className='max-w-2xl'>
     <Spoiler title='Why not just use a bigger EC2 instance?'>
       <p>
-        Vertical scaling buys time, but the queue depth we were seeing came from lock
-        contention, not raw CPU. Throwing more cores at the box would have delayed the
-        problem by a couple of weeks at best.
+        Vertical scaling buys time, but the queue depth we were seeing came from
+        lock contention, not raw CPU. Throwing more cores at the box would have
+        delayed the problem by a couple of weeks at best.
       </p>
     </Spoiler>
   </div>
@@ -17,7 +17,10 @@ export const Collapsed = () => (
 export const WithCodeInside = () => (
   <div className='max-w-2xl'>
     <Spoiler title='Show the retry wrapper we ended up shipping'>
-      <p>Nothing fancy — exponential backoff with jitter, capped at five attempts:</p>
+      <p>
+        Nothing fancy — exponential backoff with jitter, capped at five
+        attempts:
+      </p>
       <pre>
         <code>{`async function withRetry<T>(fn: () => Promise<T>, attempts = 5): Promise<T> {
   for (let i = 0; i < attempts; i++) {

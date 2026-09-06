@@ -35,7 +35,9 @@ export default function BlogFeed({
   const [active, setActive] = useState(firstCategory.slug);
 
   useEffect(() => {
-    const category = new URLSearchParams(window.location.search).get('category');
+    const category = new URLSearchParams(window.location.search).get(
+      'category',
+    );
     if (category && categories.some((c) => c.slug === category)) {
       setActive(category);
     }

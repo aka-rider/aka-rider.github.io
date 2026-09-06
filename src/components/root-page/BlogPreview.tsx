@@ -9,7 +9,13 @@ import PostRow from '@/components/blog/PostRow';
 
 import { common, Lang } from '@/i18n';
 
-export default function BlogPreview({ lang, title }: { lang: Lang; title: string }) {
+export default function BlogPreview({
+  lang,
+  title,
+}: {
+  lang: Lang;
+  title: string;
+}) {
   const archiveHref = `/${lang}/blog/`;
   const root = new Blog().getRoot(lang);
 
@@ -37,7 +43,8 @@ export default function BlogPreview({ lang, title }: { lang: Lang; title: string
     );
   }
 
-  const category = root.type === 'Category' ? root.getCategories()[0] : undefined;
+  const category =
+    root.type === 'Category' ? root.getCategories()[0] : undefined;
   if (!category) {
     return (
       <section className='section' id='blog'>
@@ -55,7 +62,11 @@ export default function BlogPreview({ lang, title }: { lang: Lang; title: string
       <div className='list'>
         {lead && <PostRow lang={lang} post={toPostSummary(lang, lead)} lead />}
         {rest.map((post) => (
-          <PostRow key={post.slug} lang={lang} post={toPostSummary(lang, post)} />
+          <PostRow
+            key={post.slug}
+            lang={lang}
+            post={toPostSummary(lang, post)}
+          />
         ))}
       </div>
       <div className='more'>

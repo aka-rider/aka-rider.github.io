@@ -16,9 +16,7 @@
       "enableSystem": false
     }
   },
-  "extraEntries": [
-    "./.design-sync/shims/theme-provider.ts"
-  ],
+  "extraEntries": ["./.design-sync/shims/theme-provider.ts"],
   "componentSrcMap": {
     "TLDR": "src/components/blog/TLDR.tsx"
   },

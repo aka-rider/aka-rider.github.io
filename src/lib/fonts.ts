@@ -1,4 +1,8 @@
-import { Atkinson_Hyperlegible_Next, JetBrains_Mono, Wix_Madefor_Text } from 'next/font/google';
+import {
+  Atkinson_Hyperlegible_Next,
+  JetBrains_Mono,
+  Wix_Madefor_Text,
+} from 'next/font/google';
 
 export const fontEn = Atkinson_Hyperlegible_Next({
   subsets: ['latin', 'latin-ext'],
@@ -22,4 +26,6 @@ export const fontMono = JetBrains_Mono({
   preload: false,
 });
 
-export const fontClassName = [fontEn, fontUk, fontMono].map((f) => f.variable).join(' ');
+export const fontClassName = [fontEn, fontUk, fontMono]
+  .map((f) => f.variable)
+  .join(' ');

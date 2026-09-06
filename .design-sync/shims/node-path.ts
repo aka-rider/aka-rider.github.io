@@ -22,7 +22,8 @@ export function dirname(path: string): string {
 
 export function basename(path: string, ext?: string): string {
   const base = path.slice(path.lastIndexOf('/') + 1);
-  if (ext && base.endsWith(ext) && base !== ext) return base.slice(0, -ext.length);
+  if (ext && base.endsWith(ext) && base !== ext)
+    return base.slice(0, -ext.length);
   return base;
 }
 
@@ -51,5 +52,14 @@ export function isAbsolute(path: string): boolean {
 
 export const sep = '/';
 
-const pathModule = { join, dirname, basename, extname, resolve, parse, isAbsolute, sep };
+const pathModule = {
+  join,
+  dirname,
+  basename,
+  extname,
+  resolve,
+  parse,
+  isAbsolute,
+  sep,
+};
 export default pathModule;
