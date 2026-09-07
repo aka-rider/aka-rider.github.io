@@ -335,7 +335,6 @@ html.dark {
     z-index: 50;
     background: color-mix(in oklab, var(--bg) 82%, transparent);
     backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
   }
 
   .nav .wrap {
