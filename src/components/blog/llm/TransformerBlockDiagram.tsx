@@ -49,6 +49,12 @@ const CYAN_BOX =
 const SLATE_STROKE = 'stroke-slate-300 dark:stroke-slate-600';
 const NODE_FILL = 'fill-white dark:fill-slate-900';
 
+const LN_WIDTH = 32;
+const LN_HEIGHT = 20;
+const LN_X = STREAM_X + 22;
+
+const LN_LABEL = 'LN';
+
 function StationBox({ y, lines }: { y: number; lines: readonly string[] }) {
   const height = lines.length * LINE_HEIGHT + 18;
   const branchY = y + height / 2;
@@ -57,6 +63,33 @@ function StationBox({ y, lines }: { y: number; lines: readonly string[] }) {
     <g>
       <line
         x1={STREAM_X}
+        y1={branchY}
+        x2={LN_X}
+        y2={branchY}
+        strokeWidth={1.5}
+        className={CYAN_STROKE}
+      />
+      <rect
+        x={LN_X}
+        y={branchY - LN_HEIGHT / 2}
+        width={LN_WIDTH}
+        height={LN_HEIGHT}
+        rx={LN_HEIGHT / 2}
+        strokeWidth={1.5}
+        className={CYAN_BOX}
+      />
+      <text
+        x={LN_X + LN_WIDTH / 2}
+        y={branchY + 3}
+        textAnchor='middle'
+        fontSize={9}
+        fontWeight={700}
+        className={CYAN_TEXT}
+      >
+        {LN_LABEL}
+      </text>
+      <line
+        x1={LN_X + LN_WIDTH}
         y1={branchY}
         x2={BOX_X}
         y2={branchY}
@@ -148,7 +181,7 @@ export default function TransformerBlockDiagram({ lang }: { lang: Lang }) {
               />
             </g>
           ))}
-          <text x={STREAM_X} y={20} textAnchor='middle' className={AMBER_TEXT}>
+          <text x={8} y={20} textAnchor='start' className={AMBER_TEXT}>
             {dict.entry}
           </text>
 
@@ -215,20 +248,22 @@ export default function TransformerBlockDiagram({ lang }: { lang: Lang }) {
           />
           <text
             x={372}
-            y={255}
+            y={247}
             textAnchor='middle'
-            transform='rotate(90 372 255)'
+            transform='rotate(90 372 247)'
             fill='currentColor'
           >
             {dict.layers}
           </text>
 
-          <text x={STREAM_X} y={550} textAnchor='middle' className={AMBER_TEXT}>
+          <text x={8} y={550} textAnchor='start' className={AMBER_TEXT}>
             {dict.exit}
           </text>
         </g>
       </svg>
-      <FigCaption>{dict.caption}</FigCaption>
+      <FigCaption>
+        {dict.caption} {dict.frontierNote}
+      </FigCaption>
     </figure>
   );
 }

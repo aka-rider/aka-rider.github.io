@@ -4,6 +4,8 @@ import {
   NEXT_TOKEN_CANDIDATES,
 } from '@/components/blog/llm/example';
 import FigCaption from '@/components/blog/llm/FigCaption';
+import { visibleSpaces } from '@/components/blog/llm/format';
+import { softmax } from '@/components/blog/llm/math';
 import { autoregressiveStrings } from '@/components/blog/llm/strings/autoregressive';
 
 import type { Lang } from '@/i18n';
@@ -18,27 +20,38 @@ const VIOLET_STROKE = 'stroke-violet-700 dark:stroke-violet-400';
 const VIOLET_FILL = 'fill-violet-700 dark:fill-violet-400';
 const VIOLET_BG = 'fill-violet-50 dark:fill-violet-950/60';
 
+const TOKEN_ROW_START_X = 50;
+const TOKEN_ROW_GAP = 4;
+
 const TOKEN_ROW = (() => {
-  let x = 50;
+  let x = TOKEN_ROW_START_X;
   return EXAMPLE_TOKENS.map((token) => {
-    const label = token.trim();
+    const label = visibleSpaces(token);
     const w = label.length * 7 + 14;
     const box = { label, x, w };
-    x += w + 4;
+    x += w + TOKEN_ROW_GAP;
     return box;
   });
 })();
 
-const SLOT_X = 270;
+const SLOT_GAP = 8;
 const SLOT_W = 52;
+const LAST_TOKEN_BOX = TOKEN_ROW[TOKEN_ROW.length - 1]!;
+const SLOT_X = LAST_TOKEN_BOX.x + LAST_TOKEN_BOX.w + SLOT_GAP;
+
+const VIEWBOX_MARGIN = 20;
+const VIEWBOX_WIDTH = Math.max(360, SLOT_X + SLOT_W + VIEWBOX_MARGIN);
+const VIEWBOX_HEIGHT = 466;
 
 const BAR_COUNT = 5;
 const BAR_PROBS = (() => {
-  const exps = NEXT_TOKEN_CANDIDATES.map((c) => Math.exp(c.logit));
-  const sum = exps.reduce((a, b) => a + b, 0);
+  const probs = softmax(
+    NEXT_TOKEN_CANDIDATES.map((c) => c.logit),
+    1,
+  );
   return NEXT_TOKEN_CANDIDATES.slice(0, BAR_COUNT).map((c, i) => ({
     token: c.token,
-    p: exps[i]! / sum,
+    p: probs[i]!,
   }));
 })();
 
@@ -65,7 +78,7 @@ const ANSWER_LAYOUT = (() => {
     return pos;
   };
   for (const token of EXAMPLE_ANSWER_TOKENS) {
-    const label = token.trim();
+    const label = visibleSpaces(token);
     const w = label.length * 6 + 12;
     boxes.push({ label, w, ...place(w) });
   }
@@ -105,7 +118,7 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
   return (
     <figure className='my-8'>
       <svg
-        viewBox='0 0 360 466'
+        viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
         role='img'
         aria-label={dict.aria}
         className='llm-anim w-full h-auto max-w-[400px] mx-auto block'
@@ -214,7 +227,7 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
                     fontSize={10}
                     className={AMBER_FILL}
                   >
-                    {bar.token}
+                    {visibleSpaces(bar.token)}
                   </text>
                   <rect
                     x={124}
@@ -272,7 +285,7 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
               fontSize={9.5}
               className={AMBER_FILL}
             >
-              {sampled.token}
+              {visibleSpaces(sampled.token)}
             </text>
             <text
               x={352}

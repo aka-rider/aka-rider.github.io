@@ -6,28 +6,29 @@ import {
   PRIMARY_BUTTON_CLASSES,
   RESET_BUTTON_CLASSES,
 } from '@/components/blog/llm/buttons';
-import { Chip, ChipStream } from '@/components/blog/llm/Chip';
+import { ChipStream, TokenChip } from '@/components/blog/llm/Chip';
 import { EXAMPLE_TOKENS } from '@/components/blog/llm/example';
+import { visibleSpaces } from '@/components/blog/llm/format';
 import { softmax } from '@/components/blog/llm/math';
 import { ProbabilityBar } from '@/components/blog/llm/ProbabilityBar';
 import { trainingStepStrings } from '@/components/blog/llm/strings/trainingStep';
 
 import type { Lang } from '@/i18n';
 
-const CANDIDATES = [' blue', ' green', ' falling', ' red', ' big'] as const;
+const CANDIDATES = [' Paris', ' London', ' France', ' Rome', ' the'] as const;
 const INITIAL_LOGITS = [1.2, 2.1, 1.8, 0.9, 0.4] as const;
 const TARGET_INDEX = 0;
 const LEARNING_RATE = 1.5;
 const SCALE_NOTE_AFTER_STEPS = 6;
 
-const CONTEXT_TOKENS = EXAMPLE_TOKENS.slice(0, 4);
+const CONTEXT_TOKENS = EXAMPLE_TOKENS;
 
 const TRAINING_TEMPERATURE = 1;
 
 const LABEL_CLASSES =
   'block font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
 
-const BAR_COLUMNS = '5.5rem 1fr 3.4rem 4.5rem';
+const BAR_COLUMNS_CLASS = 'sm:grid-cols-[5.5rem_minmax(0,1fr)_3.4rem_4.5rem]';
 
 export default function TrainingStepDemo({ lang }: { lang: Lang }) {
   const strings = trainingStepStrings[lang];
@@ -57,17 +58,15 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
       <span className={LABEL_CLASSES}>{strings.sampleLabel}</span>
       <ChipStream ariaLabel={strings.sampleLabel}>
         {CONTEXT_TOKENS.map((t, idx) => (
-          <Chip key={idx} variant='tok'>
-            {t}
-          </Chip>
+          <TokenChip key={idx} token={t} />
         ))}
-        <Chip variant='tok' special>
-          {CANDIDATES[TARGET_INDEX]}
-        </Chip>
+        <span className='inline-flex flex-col items-center'>
+          <TokenChip token={CANDIDATES[TARGET_INDEX]} special />
+          <span className='font-mono text-[0.65rem] whitespace-nowrap text-slate-500 dark:text-slate-400'>
+            ↑ {strings.targetNote}
+          </span>
+        </span>
       </ChipStream>
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 text-right'>
-        ↑ {strings.targetNote}
-      </div>
 
       <div className='my-4'>
         <span className={LABEL_CLASSES}>{strings.predictionLabel}</span>
@@ -77,8 +76,12 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
             return (
               <ProbabilityBar
                 key={token}
-                columns={BAR_COLUMNS}
-                label={<span className='font-mono text-sm'>{token}</span>}
+                columnsClassName={BAR_COLUMNS_CLASS}
+                label={
+                  <span className='font-mono text-sm'>
+                    {visibleSpaces(token)}
+                  </span>
+                }
                 percent={pct}
                 valueText={`${pct.toFixed(1)}%`}
                 trailing={

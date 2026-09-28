@@ -9,29 +9,30 @@ export const toolCallStrings = {
     happenedLabel: 'What just happened',
     pressStep: 'Press Step to begin.',
     honesty:
-      'Honesty label: the model’s lines in this walkthrough are scripted. The parsing and the calculator are real and run live in your browser right now.',
+      'Honesty label: the model’s lines in this walkthrough are scripted. The parsing runs live in your browser right now; the tool itself is a stub that always returns the same fixed hours, not a real opening-hours lookup.',
     badges: { model: 'MODEL', harness: 'HARNESS', tool: 'TOOL' },
     transcript: {
-      userQuestion: 'What is 37 × 89?',
+      userQuestion: 'Is the Eiffel Tower open right now?',
       thinking:
-        'Arithmetic. I have a calculator tool; use it instead of guessing.',
-      answer: '37 × 89 = 3,293.',
+        "I don't know today's hours from memory. I have an opening_hours tool; use it instead of guessing.",
+      answer: "Yes — it's open now, until 23:45.",
     },
     steps: [
       'The harness serializes your question into the token stream and hands it to the model.',
       'Ordinary tokens. This looks like reasoning because it reads like reasoning — it is still next-token prediction.',
       'These are ORDINARY TOKENS. The model “asked” for nothing — it wrote text of a particular shape.',
-      'The parser recognizes the shape, halts sampling, and extracts the expression. This regex ran live just now:',
-      'The page really evaluates 37*89 with the safe arithmetic evaluator on this page — no eval, no Function. This ran on your machine just now.',
-      'The harness appends the real result to the context, as ordinary tokens.',
-      'The correct number is now sitting in its input, so it can “know” it. The model never saw a number it could trust until the harness handed it one.',
+      'The parser recognizes the shape, halts sampling, and extracts the argument. This regex ran live just now:',
+      'This tool is a stub: it ignores the argument and always returns the same fixed hours. A real harness would call a real opening-hours API here.',
+      "The harness appends the stub's result to the context, as ordinary tokens.",
+      'The answer is now sitting in its input, so it can “know” it. The model never saw a fact it could trust until the harness handed it one.',
     ],
     guess: {
-      question: 'You ask 37 × 89. What does the model do next?',
+      question:
+        'You ask if the Eiffel Tower is open right now. What does the model do next?',
       options: [
         'answers from memory',
         'writes a tool call',
-        'asks permission to compute',
+        'asks permission to check',
       ],
       correctIndex: 1,
       payoff:
@@ -48,29 +49,30 @@ export const toolCallStrings = {
     happenedLabel: 'Що щойно сталося',
     pressStep: 'Натисніть «Крок», щоб почати.',
     honesty:
-      'Чесне зізнання: репліки моделі в цьому проході — заскриптовані. А от парсинг і калькулятор справжні й виконуються у вашому браузері просто зараз.',
+      'Чесне зізнання: репліки моделі в цьому проході — заскриптовані. Парсинг виконується у вашому браузері просто зараз; сам інструмент — заглушка, яка завжди повертає ті самі фіксовані години, а не справжній пошук режиму роботи.',
     badges: { model: 'МОДЕЛЬ', harness: 'ОБВ’ЯЗКА', tool: 'ІНСТРУМЕНТ' },
     transcript: {
-      userQuestion: 'What is 37 × 89?',
+      userQuestion: 'Ейфелева вежа зараз відкрита?',
       thinking:
-        'Arithmetic. I have a calculator tool; use it instead of guessing.',
-      answer: '37 × 89 = 3,293.',
+        'Я не знаю сьогоднішній графік з пам’яті. У мене є інструмент opening_hours; використаю його замість здогадки.',
+      answer: 'Так — зараз відкрита, до 23:45.',
     },
     steps: [
       'Обв’язка серіалізує ваше запитання в стрічку токенів і передає моделі.',
       'Звичайні токени. Це виглядає як міркування, бо читається як міркування — але це досі передбачення наступного токена.',
       'Це ЗВИЧАЙНІ ТОКЕНИ. Модель нічого не «просила» — вона написала текст певної форми.',
-      'Парсер упізнає форму, зупиняє семплінг і витягує вираз. Оцей regex щойно виконався наживо:',
-      'Сторінка справді обчислює 37*89 власним безпечним арифметичним обчислювачем — без eval і без Function. Це щойно виконалося на вашій машині.',
-      'Обв’язка додає справжній результат у контекст — звичайними токенами.',
-      'Правильне число тепер лежить у вході моделі, тож вона може його «знати». Модель не бачила числа, якому могла б довіряти, доки обв’язка його не дала.',
+      'Парсер упізнає форму, зупиняє семплінг і витягує аргумент. Оцей regex щойно виконався наживо:',
+      'Цей інструмент — заглушка: він ігнорує аргумент і завжди повертає ті самі фіксовані години. Справжня обв’язка викликала б тут справжній API розкладу роботи.',
+      'Обв’язка додає результат заглушки у контекст — звичайними токенами.',
+      'Відповідь тепер лежить у вході моделі, тож вона може її «знати». Модель не бачила факту, якому могла б довіряти, доки обв’язка його не дала.',
     ],
     guess: {
-      question: 'Ви питаєте 37 × 89. Що модель робить далі?',
+      question:
+        'Ви питаєте, чи зараз відкрита Ейфелева вежа. Що модель робить далі?',
       options: [
         'відповідає з пам’яті',
         'пише виклик інструмента',
-        'просить дозволу порахувати',
+        'просить дозволу перевірити',
       ],
       correctIndex: 1,
       payoff:

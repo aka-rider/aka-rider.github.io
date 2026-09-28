@@ -18,6 +18,7 @@ import AutoregressiveLoop from '@/components/blog/llm/AutoregressiveLoop';
 import { Chip, ChipStream } from '@/components/blog/llm/Chip';
 import EmbeddingFigure from '@/components/blog/llm/EmbeddingFigure';
 import LadderDiagram from '@/components/blog/llm/LadderDiagram';
+import MLPFigure from '@/components/blog/llm/MLPFigure';
 import SequenceDiagram from '@/components/blog/llm/SequenceDiagram';
 import TrainingStagesFigure from '@/components/blog/llm/TrainingStagesFigure';
 import TransformerBlockDiagram from '@/components/blog/llm/TransformerBlockDiagram';
@@ -117,6 +118,7 @@ const llmComponents = {
   EmbeddingFigure,
   TrainingStagesFigure,
   TransformerBlockDiagram,
+  MLPFigure,
 };
 
 function bindLang(lang: Lang) {

@@ -2,292 +2,245 @@
 
 import { useState } from 'react';
 
-import { Chip, ChipStream } from '@/components/blog/llm/Chip';
-import { EXAMPLE_QUERY } from '@/components/blog/llm/example';
-import { fill, SPACE_MARK } from '@/components/blog/llm/format';
+import {
+  Chip,
+  CHIP_INTERACTIVE_CLASSES,
+  CHIP_SELECTED_CLASSES,
+  chipClasses,
+  type ChipVariant,
+} from '@/components/blog/llm/Chip';
+import { fill, visibleSpaces } from '@/components/blog/llm/format';
 import GuessGate from '@/components/blog/llm/GuessGate';
 import { tokenizerStrings } from '@/components/blog/llm/strings/tokenizer';
+import {
+  BARE_TOWER_PRESET,
+  MAIN_PRESET,
+  SPACE_TOWER_PRESET,
+  type TokenizerPreset,
+  type TokenPiece,
+  UKRAINIAN_PRESET,
+  VOCAB_SIZE,
+} from '@/components/blog/llm/tokenizerPresets';
 
 import type { Lang } from '@/i18n';
 
-const RARE_WORD = 'unbelievably';
+type PresetKey = 'main' | 'bare' | 'ukrainian';
 
-const PRESET_TEXTS = [EXAMPLE_QUERY, RARE_WORD, 'Чому небо синє?'] as const;
+const PRESET_KEYS: readonly PresetKey[] = ['main', 'bare', 'ukrainian'];
 
-const MERGES: ReadonlyArray<readonly [string, string]> = [
-  ['t', 'h'],
-  ['h', 'e'],
-  ['i', 'n'],
-  ['e', 'r'],
-  ['a', 'n'],
-  ['r', 'e'],
-  ['o', 'n'],
-  ['a', 't'],
-  ['e', 'n'],
-  ['u', 'n'],
-  ['i', 's'],
-  ['a', 'b'],
-  ['l', 'y'],
-  ['b', 'e'],
-  ['l', 'i'],
-  ['e', 'v'],
-  ['s', 'k'],
-  ['b', 'l'],
-  ['u', 'e'],
-  ['W', 'h'],
-  ['Wh', 'y'],
-  ['th', 'e'],
-  ['sk', 'y'],
-  ['bl', 'ue'],
-  [SPACE_MARK, 'is'],
-  [SPACE_MARK, 'the'],
-  [SPACE_MARK, 'sky'],
-  [SPACE_MARK, 'blue'],
-  [SPACE_MARK, 'a'],
-  [SPACE_MARK, 'an'],
-  [SPACE_MARK, 'in'],
-  [SPACE_MARK, 'on'],
-];
-
-const VOCAB_IDS: Readonly<Record<string, number>> = {
-  Why: 3923,
-  [`${SPACE_MARK}is`]: 374,
-  [`${SPACE_MARK}the`]: 279,
-  [`${SPACE_MARK}sky`]: 13180,
-  [`${SPACE_MARK}blue`]: 6437,
-  '?': 30,
-  th: 339,
-  he: 383,
-  in: 258,
-  er: 261,
-  an: 276,
-  re: 265,
-  on: 263,
-  at: 266,
-  en: 268,
-  un: 359,
-  is: 285,
-  ab: 370,
-  ly: 398,
-  be: 1395,
-  li: 747,
-  ev: 5230,
-  sk: 4991,
-  bl: 2436,
-  ue: 361,
-  Wh: 1671,
-  the: 1820,
-  sky: 26577,
-  blue: 12866,
-  [`${SPACE_MARK}a`]: 264,
-  [`${SPACE_MARK}an`]: 459,
-  [`${SPACE_MARK}in`]: 304,
-  [`${SPACE_MARK}on`]: 389,
+const PRESETS: Record<PresetKey, TokenizerPreset> = {
+  main: MAIN_PRESET,
+  bare: BARE_TOWER_PRESET,
+  ukrainian: UKRAINIAN_PRESET,
 };
 
-function tokenId(piece: string): number {
-  return VOCAB_IDS[piece] ?? piece.codePointAt(0) ?? 0;
+function pieceLabel(piece: TokenPiece): string {
+  return piece.text === null ? piece.hex : visibleSpaces(piece.text);
 }
 
-type MergeRound = { pair: readonly [string, string]; pieces: string[] };
+function pieceVariant(piece: TokenPiece): ChipVariant {
+  return piece.text === null ? 'plain' : 'tok';
+}
 
-function runBpe(text: string): { initial: string[]; rounds: MergeRound[] } {
-  const initial = Array.from(text.replaceAll(' ', SPACE_MARK));
-  let pieces = initial;
-  const rounds: MergeRound[] = [];
-  for (;;) {
-    let bestRank = MERGES.length;
-    for (let i = 0; i < pieces.length - 1; i++) {
-      const rank = MERGES.findIndex(
-        ([a, b]) => a === pieces[i] && b === pieces[i + 1],
+function mergedIndices(
+  rounds: readonly (readonly TokenPiece[])[],
+  roundIndex: number,
+): ReadonlySet<number> {
+  if (roundIndex === 0) return new Set();
+  const previous = rounds[roundIndex - 1]!;
+  const current = rounds[roundIndex]!;
+  const merged = new Set<number>();
+  let p = 0;
+  for (let c = 0; c < current.length; c++) {
+    const currentPiece = current[c]!;
+    const prevPiece = previous[p];
+    if (prevPiece === undefined) {
+      throw new Error(
+        `mergedIndices: round ${roundIndex} ran past round ${roundIndex - 1}`,
       );
-      if (rank !== -1 && rank < bestRank) bestRank = rank;
     }
-    if (bestRank === MERGES.length) break;
-    const [a, b] = MERGES[bestRank]!;
-    const next: string[] = [];
-    for (let i = 0; i < pieces.length; i++) {
-      if (pieces[i] === a && pieces[i + 1] === b) {
-        next.push(a + b);
-        i++;
-      } else {
-        next.push(pieces[i]!);
-      }
+    if (prevPiece.hex === currentPiece.hex) {
+      p += 1;
+      continue;
     }
-    pieces = next;
-    rounds.push({ pair: [a, b], pieces });
+    const nextPrevPiece = previous[p + 1];
+    if (
+      nextPrevPiece === undefined ||
+      currentPiece.hex !== `${prevPiece.hex} ${nextPrevPiece.hex}`
+    ) {
+      throw new Error(
+        `mergedIndices: piece ${c} in round ${roundIndex} does not align with round ${roundIndex - 1}`,
+      );
+    }
+    merged.add(c);
+    p += 2;
   }
-  return { initial, rounds };
+  return merged;
 }
 
-const MAX_SHOWN_ROUNDS = 6;
-
-function selectRoundRows(rounds: MergeRound[]): {
-  head: MergeRound[];
-  hidden: number;
-  tail: MergeRound[];
-} {
-  if (rounds.length <= MAX_SHOWN_ROUNDS)
-    return { head: rounds, hidden: 0, tail: [] };
-  return {
-    head: rounds.slice(0, 3),
-    hidden: rounds.length - MAX_SHOWN_ROUNDS,
-    tail: rounds.slice(rounds.length - 2),
-  };
+function vocabLabel(lang: Lang): string {
+  const grouped = VOCAB_SIZE.toLocaleString('en-US');
+  return lang === 'uk' ? grouped.replaceAll(',', ' ') : grouped;
 }
 
-const PRESET_BUTTON_BASE_CLASSES =
-  'font-mono text-xs px-2 py-0.5 rounded border whitespace-pre bg-amber-50 dark:bg-amber-950/60 border-amber-700/60 dark:border-amber-400/60 text-amber-700 dark:text-amber-400 cursor-pointer focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2';
+const PRESET_BUTTON_CLASSES = chipClasses('tok', CHIP_INTERACTIVE_CLASSES);
+
+const STEP_BUTTON_CLASSES = chipClasses(
+  'plain',
+  CHIP_INTERACTIVE_CLASSES,
+  'disabled:cursor-default disabled:opacity-40',
+);
 
 const ROW_LABEL_CLASSES =
   'font-mono text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap';
 
-const PIECE_CLASSES =
-  'font-mono text-xs px-1 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 whitespace-pre';
-
-const MERGED_PIECE_CLASSES =
-  'font-mono text-xs px-1 py-0.5 rounded bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-400 whitespace-pre';
-
-function PieceRow({
-  label,
-  pieces,
-  highlight,
-}: {
-  label: string;
-  pieces: readonly string[];
-  highlight?: string;
-}) {
-  return (
-    <div className='py-1.5'>
-      <span className={ROW_LABEL_CLASSES}>{label}</span>
-      <div className='flex flex-wrap gap-1 mt-1'>
-        {pieces.map((piece, idx) => (
-          <span
-            key={`${idx}-${piece}`}
-            className={
-              piece === highlight ? MERGED_PIECE_CLASSES : PIECE_CLASSES
-            }
-          >
-            {piece}
-          </span>
-        ))}
-      </div>
-    </div>
-  );
-}
+const MUTED_TEXT_CLASSES =
+  'font-mono text-xs text-slate-500 dark:text-slate-400';
 
 export default function TokenizerDemo({ lang }: { lang: Lang }) {
   const strings = tokenizerStrings[lang];
-  const [text, setText] = useState<string>(EXAMPLE_QUERY);
+  const [presetKey, setPresetKey] = useState<PresetKey>('main');
+  const [roundIndex, setRoundIndex] = useState(0);
 
-  const { initial, rounds } = runBpe(text);
-  const finalPieces =
-    rounds.length > 0 ? rounds[rounds.length - 1]!.pieces : initial;
-  const { head, hidden, tail } = selectRoundRows(rounds);
+  const preset = PRESETS[presetKey];
+  const roundsCount = preset.rounds.length;
+  const currentRound = preset.rounds[roundIndex]!;
+  const merged = mergedIndices(preset.rounds, roundIndex);
+
+  const selectPreset = (key: PresetKey) => {
+    setPresetKey(key);
+    setRoundIndex(0);
+  };
+
+  const roundLabel =
+    roundIndex === 0
+      ? strings.startRoundLabel
+      : fill(strings.mergeStepTemplate, {
+          round: String(roundIndex),
+          total: String(roundsCount - 1),
+        });
 
   return (
     <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
-      <GuessGate
-        lang={lang}
-        guess={strings.guess}
-        onReveal={() => setText(RARE_WORD)}
-      >
+      <GuessGate lang={lang} guess={strings.guess}>
         <div
           role='group'
           aria-label={strings.presetsAria}
           className='flex flex-wrap items-center gap-1.5 mb-3'
         >
-          {PRESET_TEXTS.map((presetText, i) => (
+          {PRESET_KEYS.map((key) => (
             <button
-              key={presetText}
+              key={key}
               type='button'
-              aria-pressed={presetText === text}
-              onClick={() => setText(presetText)}
-              className={`${PRESET_BUTTON_BASE_CLASSES} ${
-                presetText === text ? 'border-2 font-semibold' : ''
+              aria-pressed={key === presetKey}
+              onClick={() => selectPreset(key)}
+              className={`${PRESET_BUTTON_CLASSES} ${
+                key === presetKey ? CHIP_SELECTED_CLASSES : ''
               }`}
             >
-              {strings.presetLabels[i]}
+              {strings.presetLabels[key]}
             </button>
           ))}
         </div>
-        <label
-          htmlFor='tokenizer-demo-input'
-          className='block font-mono text-xs text-slate-500 dark:text-slate-400 mb-1'
-        >
-          {strings.inputLabel}{' '}
-          <span className='text-slate-400 dark:text-slate-500'>
-            ({strings.inputHint})
-          </span>
-        </label>
-        <input
-          id='tokenizer-demo-input'
-          type='text'
-          value={text}
-          maxLength={60}
-          aria-label={strings.inputAria}
-          onChange={(event) => setText(event.target.value)}
-          className='w-full font-mono text-sm rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 text-slate-900 dark:text-slate-100 px-3 py-1.5 focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2'
-        />
 
-        <div className='my-3'>
-          <PieceRow label={strings.startRowLabel} pieces={initial} />
-          {head.map((round, idx) => (
-            <PieceRow
-              key={`head-${idx}`}
-              label={`${strings.mergeWord} '${round.pair[0]}'+'${round.pair[1]}'`}
-              pieces={round.pieces}
-              highlight={round.pair[0] + round.pair[1]}
-            />
-          ))}
-          {hidden > 0 ? (
-            <div className='py-1.5 font-mono text-xs text-slate-500 dark:text-slate-400'>
-              {fill(strings.hiddenRoundsTemplate, { n: String(hidden) })}
-            </div>
-          ) : null}
-          {tail.map((round, idx) => (
-            <PieceRow
-              key={`tail-${idx}`}
-              label={`${strings.mergeWord} '${round.pair[0]}'+'${round.pair[1]}'`}
-              pieces={round.pieces}
-              highlight={round.pair[0] + round.pair[1]}
-            />
-          ))}
+        <div className='font-mono text-sm text-slate-700 dark:text-slate-300 mb-3'>
+          {visibleSpaces(preset.text)}
         </div>
 
-        <span className='block font-mono text-xs text-slate-500 dark:text-slate-400'>
+        <div className='my-3'>
+          <div className='flex items-center gap-2 mb-1.5'>
+            <button
+              type='button'
+              disabled={roundIndex === 0}
+              onClick={() => setRoundIndex((i) => i - 1)}
+              className={STEP_BUTTON_CLASSES}
+            >
+              {strings.prevRound}
+            </button>
+            <span className={ROW_LABEL_CLASSES}>{roundLabel}</span>
+            <button
+              type='button'
+              disabled={roundIndex === roundsCount - 1}
+              onClick={() => setRoundIndex((i) => i + 1)}
+              className={STEP_BUTTON_CLASSES}
+            >
+              {strings.nextRound}
+            </button>
+          </div>
+          <div
+            role='group'
+            aria-label={strings.roundsAria}
+            aria-live='polite'
+            className='flex flex-wrap gap-1'
+          >
+            {currentRound.map((piece, i) => (
+              <Chip
+                key={`${i}-${piece.id}`}
+                variant={pieceVariant(piece)}
+                special={merged.has(i)}
+              >
+                {pieceLabel(piece)}
+              </Chip>
+            ))}
+          </div>
+          {roundIndex > 0 ? (
+            <div className={`${MUTED_TEXT_CLASSES} mt-1.5`}>
+              {strings.mergeExplanation}
+            </div>
+          ) : null}
+        </div>
+
+        <span className={`block ${ROW_LABEL_CLASSES}`}>
           {strings.finalRowLabel}
         </span>
-        <ChipStream ariaLabel={strings.tokenStreamAria} live>
-          {finalPieces.map((piece, idx) => (
+        <div
+          role='group'
+          aria-label={strings.finalAria}
+          aria-live='polite'
+          className='flex flex-wrap gap-1.5 my-2'
+        >
+          {preset.pieces.map((piece, i) => (
             <span
-              key={`${idx}-${piece}`}
-              className='inline-block text-center align-top'
+              key={`${i}-${piece.id}`}
+              className='inline-flex flex-col items-center gap-0.5'
             >
-              <Chip variant='tok'>{piece}</Chip>
-              <span className='block font-mono text-[0.65rem] text-slate-500 dark:text-slate-400'>
-                {tokenId(piece)}
+              <Chip variant={pieceVariant(piece)}>{pieceLabel(piece)}</Chip>
+              <span className='font-mono text-[0.65rem] text-slate-500 dark:text-slate-400'>
+                {piece.id}
               </span>
             </span>
           ))}
-        </ChipStream>
-
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 mt-2'>
-          {strings.legend}
         </div>
+
+        {presetKey === 'bare' ? (
+          <div className='font-mono text-xs text-slate-600 dark:text-slate-300 my-3'>
+            {fill(strings.bareTowerLesson, {
+              bare1: pieceLabel(BARE_TOWER_PRESET.pieces[0]!),
+              bareId1: String(BARE_TOWER_PRESET.pieces[0]!.id),
+              bare2: pieceLabel(BARE_TOWER_PRESET.pieces[1]!),
+              bareId2: String(BARE_TOWER_PRESET.pieces[1]!.id),
+              space: pieceLabel(SPACE_TOWER_PRESET.pieces[0]!),
+              spaceId: String(SPACE_TOWER_PRESET.pieces[0]!.id),
+            })}
+          </div>
+        ) : null}
+
+        <div className={MUTED_TEXT_CLASSES}>{strings.legend}</div>
 
         <div
           aria-live='polite'
           className='font-mono text-sm text-slate-700 dark:text-slate-300 my-3'
         >
           {fill(strings.countTemplate, {
-            chars: String(Array.from(text).length),
-            tokens: String(finalPieces.length),
+            chars: String(Array.from(preset.text).length),
+            pieces: String(preset.pieces.length),
           })}
         </div>
 
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4'>
-          {strings.honesty}
+        <div
+          className={`${MUTED_TEXT_CLASSES} border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4`}
+        >
+          {fill(strings.vocabTemplate, { vocab: vocabLabel(lang) })}
         </div>
       </GuessGate>
     </div>

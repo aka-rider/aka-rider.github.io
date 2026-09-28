@@ -4,6 +4,7 @@ Items found during the whole-repository review that were out of scope to fix.
 
 ## Content
 
+- **`llm-explains-llm` Ukrainian prose is out of date.** The English post and all shared widgets moved from the "Why is the sky blue?" example to `The Eiffel Tower is in` → ` Paris`, and Act 1 was restructured on the Transformer Explainer (sections renumbered, with a new MLP section). `index.uk.mdx` still has the old prose and old section numbers; it builds, because component props are unchanged, but its text no longer matches its figures. Translate it from the new `index.en.mdx`.
 - **Missing translations.** `Vibe-Coding-2026-Uncensored` exists only as `index.uk.mdx`, and `en` is the fallback language, so English readers get Ukrainian content. `a-beginners-guide-to-fpv-drones` lost its `index.uk.mdx` on this branch. `How-to-transfer-10-EUR-reliably`, `A-Better-Programmer` Part 1 and Part 2, `OOP-considered-harmful`, and `Dr--Testflow` are English only.
 - **Hotlinked hero images.** `A-Better-Programmer` Part 1 and Part 2 (Medium CDN), `OOP-considered-harmful` (Medium CDN, three images), and `Vibe-Coding-2026-Uncensored` uk (Wikimedia) load images from external hosts. They cannot be verified at build time and can rot or be blocked, while every other post self-hosts its assets. Download them into the post directories and reference them relatively.
 - **Typographic quotes inside shell fences.** `Makefiles-for-Python-and-beyond` uses curly quotes in code that readers copy: line 197 (`find . -type f -name ‘*.pyc’ -delete`) and the traceback at lines 106-111 (`File “./app.py”`, `No module named ‘requests’`). Pasted into a real shell they fail. The equivalent Makefile at line 284 already uses straight quotes.
@@ -19,6 +20,7 @@ Items found during the whole-repository review that were out of scope to fix.
 
 ## Code
 
+- **`npm run build` warns `MODULE_TYPELESS_PACKAGE_JSON` for `tailwind.config.ts`.** Node reparses the config as an ES module on every build because `package.json` declares no `"type"`. Adding `"type": "module"` would silence it but changes how every `.js` config in the root (`next-sitemap.config.js`, `jest.config.js`, `.prettierrc.js`) is loaded; converting `tailwind.config.ts` to CommonJS syntax or renaming it `.mts` are the narrower options.
 - **Load-failure diagnostics stay English.** The blog loader stores raw `Error` objects in `LoadFailure.err`, and `BlogLoadFailure` stringifies them into a `<pre>`. Messages such as `No localized posts found in <dir>` appear untranslated in the Ukrainian UI. Decide whether these are user-facing text or developer-only diagnostics, and mark them accordingly.
 - **`Breadcrumbs` uses a `-1` sentinel.** The `activeIndex` prop encodes "none active" as `-1`, which needs prose to explain. Replace the sentinel with an explicit discriminated prop so the API explains itself.
 - **`MoERoutingDemo` couples two arrays by convention.** `ROUTER_SCORES` row length matches `moeStrings.expertHints` length only by agreement; a shorter hints array would render the string `undefined` inside an expert name. Tie them by construction or validate at module load.

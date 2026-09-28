@@ -1,5 +1,7 @@
 import type { ReactNode } from 'react';
 
+import { visibleSpaces } from '@/components/blog/llm/format';
+
 export type ChipVariant = 'tok' | 'model' | 'harness' | 'plain';
 
 const CHIP_CORE_CLASSES =
@@ -52,6 +54,24 @@ export function Chip({
   return <span className={classes}>{children}</span>;
 }
 
+export function TokenChip({
+  token,
+  variant = 'tok',
+  special = false,
+  dim = false,
+}: {
+  token: string;
+  variant?: ChipVariant;
+  special?: boolean;
+  dim?: boolean;
+}) {
+  return (
+    <Chip variant={variant} special={special} dim={dim}>
+      {visibleSpaces(token)}
+    </Chip>
+  );
+}
+
 export function ChipStream({
   ariaLabel,
   live = false,
@@ -63,15 +83,10 @@ export function ChipStream({
 }) {
   return (
     <div
-      tabIndex={0}
       role='group'
       aria-label={ariaLabel}
       aria-live={live ? 'polite' : undefined}
-      className={
-        'overflow-x-auto whitespace-nowrap scrollbar-hide rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-2 py-2.5 my-3 ' +
-        '[mask-image:linear-gradient(to_right,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_16px,rgba(0,0,0,1)_calc(100%-16px),rgba(0,0,0,0)_100%)] ' +
-        'md:[mask-image:none]'
-      }
+      className='flex flex-wrap rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-900 px-2 py-2.5 my-3'
     >
       {children}
     </div>

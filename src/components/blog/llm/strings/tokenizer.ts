@@ -1,52 +1,64 @@
 export const tokenizerStrings = {
   en: {
-    presetsAria: 'example texts to tokenize',
-    presetLabels: ['our question', 'a rare word', 'another alphabet'],
-    inputLabel: 'Type any text:',
-    inputHint: 'edit it — the merges rerun as you type',
-    inputAria: 'Text to tokenize',
-    startRowLabel: 'characters',
-    mergeWord: 'merge',
-    hiddenRoundsTemplate: '… {n} more merge rounds …',
-    finalRowLabel: 'tokens',
-    tokenStreamAria: 'Resulting tokens with their vocabulary ids',
+    presetsAria: 'phrase presets',
+    presetLabels: {
+      main: 'the phrase',
+      bare: 'bare "Tower"',
+      ukrainian: 'the Ukrainian phrase',
+    },
+    startRoundLabel: 'raw bytes',
+    mergeStepTemplate: 'round {round} of {total}',
+    mergeExplanation: 'every word merges its best-ranked pair this round',
+    prevRound: '‹ back',
+    nextRound: 'next ›',
+    roundsAria: 'merge-round stepper',
+    finalRowLabel: 'final pieces',
+    finalAria: 'final pieces with their vocabulary ids',
     legend:
-      '␣ = a space glued to the piece after it — that is how real tokenizers carry whitespace',
-    countTemplate: '{chars} characters → {tokens} tokens',
-    honesty:
-      'The BPE merge loop is real and runs in your browser as you type. The vocabulary is a toy of ~32 hand-picked merges; a production tokenizer learns ~100,000 merges from data.',
+      '␣ marks a piece that starts with a space — that is how GPT-2 carries whitespace inside its vocabulary.',
+    countTemplate: '{chars} characters → {pieces} pieces',
+    bareTowerLesson:
+      'On its own, "Tower" splits into two pieces: {bare1} ({bareId1}) and {bare2} ({bareId2}). Add the leading space back and "{space}" is a single piece: {spaceId}. The vocabulary treats them as entirely different entries.',
+    vocabTemplate:
+      'The vocabulary is a fixed table of {vocab} entries. Splitting text into pieces is harness code that runs before the model — it is not part of the model itself.',
     guess: {
       question:
-        "Before it runs — how many pieces will 'unbelievably' shatter into?",
-      options: ['1', '3', '6', '12'],
-      correctIndex: 2,
+        'Before it runs — how many pieces will "The Eiffel Tower is in" split into?',
+      options: ['5', '7', '9', '22'],
+      correctIndex: 1,
       payoff:
-        "actually 6 — rare words don't get their own vocabulary entry, so BPE stitches them from smaller learned pieces.",
+        '7 — common words like "The", "is", and "in" keep their own piece, while the rare name "Eiffel" shatters into " E"+"iff"+"el".',
     },
   },
   uk: {
-    presetsAria: 'приклади текстів для токенізації',
-    presetLabels: ['наше запитання', 'рідкісне слово', 'інший алфавіт'],
-    inputLabel: 'Введіть будь-який текст:',
-    inputHint: 'редагуйте — злиття перезапускаються, поки ви набираєте',
-    inputAria: 'Текст для токенізації',
-    startRowLabel: 'символи',
-    mergeWord: 'злиття',
-    hiddenRoundsTemplate: '… ще {n} раундів злиття …',
-    finalRowLabel: 'токени',
-    tokenStreamAria: 'Отримані токени з їхніми id зі словника',
+    presetsAria: 'приклади фраз',
+    presetLabels: {
+      main: 'фраза',
+      bare: 'самотнє "Tower"',
+      ukrainian: 'українська фраза',
+    },
+    startRoundLabel: 'сирі байти',
+    mergeStepTemplate: 'раунд {round} з {total}',
+    mergeExplanation: 'цього раунду кожне слово зливає свою найкращу пару',
+    prevRound: '‹ назад',
+    nextRound: 'далі ›',
+    roundsAria: 'покроковий показ злиттів',
+    finalRowLabel: 'кінцеві шматки',
+    finalAria: 'кінцеві шматки з їхніми id зі словника',
     legend:
-      '␣ = пробіл, приклеєний до шматка після нього — саме так справжні токенізатори переносять пробіли',
-    countTemplate: '{chars} символів → {tokens} токенів',
-    honesty:
-      'Цикл злиттів BPE справжній і виконується у вашому браузері, поки ви набираєте. Словник — іграшковий, ~32 підібрані вручну злиття; продакшн-токенізатор вивчає з даних ~100 000 злиттів.',
+      '␣ позначає шматок, що починається з пробілу — саме так GPT-2 переносить пробіли всередині свого словника.',
+    countTemplate: '{chars} символів → {pieces} шматків',
+    bareTowerLesson:
+      'Саме по собі "Tower" розпадається на два шматки: {bare1} ({bareId1}) і {bare2} ({bareId2}). Поверніть пробіл на початок — і "{space}" стає одним шматком: {spaceId}. Словник вважає їх зовсім різними записами.',
+    vocabTemplate:
+      'Словник — це незмінна таблиця з {vocab} записів. Розбиття тексту на шматки — це код обв’язки, що виконується перед моделлю, а не сама модель.',
     guess: {
       question:
-        "перш ніж запуститься — на скільки шматків розлетиться 'unbelievably'?",
-      options: ['1', '3', '6', '12'],
-      correctIndex: 2,
+        'Перш ніж запуститься — на скільки шматків розпадеться "The Eiffel Tower is in"?',
+      options: ['5', '7', '9', '22'],
+      correctIndex: 1,
       payoff:
-        'насправді 6 — рідкісні слова не мають власного запису в словнику, тож BPE зшиває їх із менших вивчених шматків.',
+        '7 — звичні слова на кшталт "The", "is" та "in" лишаються цілими шматками, а рідкісне ім’я "Eiffel" розсипається на " E"+"iff"+"el".',
     },
   },
 } as const;
