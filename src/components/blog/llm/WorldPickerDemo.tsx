@@ -2,41 +2,41 @@
 
 import { useState } from 'react';
 
-import { Chip } from '@/components/blog/llm/Chip';
+import { TokenChip } from '@/components/blog/llm/Chip';
 import GuessGate from '@/components/blog/llm/GuessGate';
 import { ProbabilityBar } from '@/components/blog/llm/ProbabilityBar';
 import { worldPickerStrings } from '@/components/blog/llm/strings/worldPicker';
 
 import type { Lang } from '@/i18n';
 
-type FramingId = 'review' | 'casual' | 'legal';
+type FramingId = 'travel' | 'vegas' | 'minecraft';
 
-const FRAMING_IDS: readonly FramingId[] = ['review', 'casual', 'legal'];
+const FRAMING_IDS: readonly FramingId[] = ['travel', 'vegas', 'minecraft'];
 
-const DISTRIBUTIONS: Record<
+export const WORLD_PICKER_DISTRIBUTIONS: Record<
   FramingId,
   ReadonlyArray<readonly [string, number]>
 > = {
-  review: [
-    ['fails', 34],
-    ['duplicates', 22],
-    ['looks', 16],
-    ['should', 15],
-    ['is', 13],
+  travel: [
+    [' Paris', 52],
+    [' France', 18],
+    [' the', 14],
+    [' a', 10],
+    [' central', 6],
   ],
-  casual: [
-    ['kinda', 30],
-    ['sucks', 22],
-    ['is', 18],
-    ['works', 16],
-    ['looks', 14],
+  vegas: [
+    [' Las', 46],
+    [' the', 20],
+    [' a', 16],
+    [' Nevada', 10],
+    [' downtown', 8],
   ],
-  legal: [
-    ['shall', 42],
-    ['herein', 20],
-    ['is', 16],
-    ['constitutes', 12],
-    ['remains', 10],
+  minecraft: [
+    [' my', 44],
+    [' the', 22],
+    [' a', 18],
+    [' your', 10],
+    [' spawn', 6],
   ],
 };
 
@@ -46,12 +46,12 @@ const FRAMING_BUTTON_CLASSES =
 const LABEL_CLASSES =
   'block font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
 
-const BAR_COLUMNS = '7.5rem 1fr 3rem';
+const BAR_COLUMNS_CLASS = 'sm:grid-cols-[7.5rem_minmax(0,1fr)_3rem]';
 
 export default function WorldPickerDemo({ lang }: { lang: Lang }) {
   const strings = worldPickerStrings[lang];
-  const [framing, setFraming] = useState<FramingId>('review');
-  const rows = DISTRIBUTIONS[framing];
+  const [framing, setFraming] = useState<FramingId>('travel');
+  const rows = WORLD_PICKER_DISTRIBUTIONS[framing];
 
   return (
     <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
@@ -100,10 +100,10 @@ export default function WorldPickerDemo({ lang }: { lang: Lang }) {
           {rows.map(([token, pct]) => (
             <ProbabilityBar
               key={token}
-              columns={BAR_COLUMNS}
+              columnsClassName={BAR_COLUMNS_CLASS}
               label={
                 <span className='min-w-0 overflow-hidden'>
-                  <Chip variant='tok'>{token}</Chip>
+                  <TokenChip token={token} />
                 </span>
               }
               percent={pct}

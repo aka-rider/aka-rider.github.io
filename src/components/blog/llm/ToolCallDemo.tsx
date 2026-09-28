@@ -33,74 +33,29 @@ type Step = {
   kind?: 'parse' | 'run';
 };
 
-const EMITTED = '<tool_call>calc("37*89")</tool_call>';
-const CALL_PATTERN = /calc\("([0-9+\-*/().]+)"\)/;
+const EMITTED = '<tool_call>opening_hours("Eiffel Tower")</tool_call>';
+const CALL_PATTERN = /opening_hours\("([^"]+)"\)/;
 
-function evaluateExpression(input: string): number {
-  const expr = input.replace(/\s+/g, '');
-  if (!/^[0-9.+\-*/()]+$/.test(expr)) throw new Error('invalid characters');
-  let pos = 0;
-  const peek = (): string | undefined => expr[pos];
-  const parseNumber = (): number => {
-    const start = pos;
-    while (pos < expr.length && /[0-9.]/.test(expr[pos] ?? '')) pos++;
-    if (pos === start) throw new Error('expected number');
-    const slice = expr.slice(start, pos);
-    if (!/^(\d+\.?\d*|\.\d+)$/.test(slice)) throw new Error('malformed number');
-    return parseFloat(slice);
-  };
-  const parseFactor = (): number => {
-    if (peek() === '(') {
-      pos++;
-      const v = parseExpr();
-      if (peek() !== ')') throw new Error('expected )');
-      pos++;
-      return v;
-    }
-    if (peek() === '-') {
-      pos++;
-      return -parseFactor();
-    }
-    return parseNumber();
-  };
-  const parseTerm = (): number => {
-    let v = parseFactor();
-    while (peek() === '*' || peek() === '/') {
-      const op = peek();
-      pos++;
-      v = op === '*' ? v * parseFactor() : v / parseFactor();
-    }
-    return v;
-  };
-  const parseExpr = (): number => {
-    let v = parseTerm();
-    while (peek() === '+' || peek() === '-') {
-      const op = peek();
-      pos++;
-      v = op === '+' ? v + parseTerm() : v - parseTerm();
-    }
-    return v;
-  };
-  const result = parseExpr();
-  if (pos !== expr.length) throw new Error('unexpected trailing input');
-  if (!isFinite(result)) throw new Error('not a finite result');
-  return result;
+function openingHoursStub(_place: string): { open: string; status: string } {
+  return { open: '09:30–23:45', status: 'open' };
 }
 
 function parseEmittedCall(emitted: string): string {
-  const expr = CALL_PATTERN.exec(emitted)?.[1];
-  if (expr === undefined)
-    throw new Error(`ToolCallDemo: no calc call found in ${emitted}`);
-  return expr;
+  const arg = CALL_PATTERN.exec(emitted)?.[1];
+  if (arg === undefined)
+    throw new Error(`ToolCallDemo: no opening_hours call found in ${emitted}`);
+  return arg;
 }
 
-const PARSED_EXPRESSION = parseEmittedCall(EMITTED);
+const PARSED_ARGUMENT = parseEmittedCall(EMITTED);
 
-const PARSE_TEXT = `${CALL_PATTERN.toString()}\n  .exec('${EMITTED}')[1]\n=> "${PARSED_EXPRESSION}"`;
+const PARSE_TEXT = `${CALL_PATTERN.toString()}\n  .exec('${EMITTED}')[1]\n=> "${PARSED_ARGUMENT}"`;
 
-const EVALUATED_RESULT = evaluateExpression(PARSED_EXPRESSION);
+const TOOL_RESULT = openingHoursStub(PARSED_ARGUMENT);
 
-const EVALUATE_TEXT = `evaluateExpression("${PARSED_EXPRESSION}") = ${EVALUATED_RESULT}`;
+const TOOL_RESULT_TEXT = JSON.stringify(TOOL_RESULT);
+
+const RUN_TEXT = `openingHoursStub("${PARSED_ARGUMENT}") = ${TOOL_RESULT_TEXT}`;
 
 type PerStep<T> = readonly [T, T, T, T, T, T, T];
 
@@ -125,7 +80,7 @@ const STEPS: PerStep<Step> = [
   { actor: 'tool', kind: 'run' },
   {
     actor: 'harness',
-    message: { role: 'tool', content: () => String(EVALUATED_RESULT) },
+    message: { role: 'tool', content: () => TOOL_RESULT_TEXT },
   },
   {
     actor: 'model',
@@ -172,7 +127,7 @@ function StepAnnotation({
         <div className={CODE_BLOCK_CLASSES}>{PARSE_TEXT}</div>
       ) : null}
       {step.kind === 'run' ? (
-        <div className={CODE_BLOCK_CLASSES}>{EVALUATE_TEXT}</div>
+        <div className={CODE_BLOCK_CLASSES}>{RUN_TEXT}</div>
       ) : null}
     </div>
   );

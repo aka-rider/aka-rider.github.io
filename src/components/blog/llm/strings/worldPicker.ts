@@ -1,13 +1,21 @@
+import { EXAMPLE_QUERY } from '@/components/blog/llm/example';
+
 export const worldPickerStrings = {
   en: {
     framingGroupAria: 'Pick a framing for the same continuation point',
     framings: {
-      review: { label: 'markdown code review', text: '## Code review\n' },
-      casual: { label: 'casual chat', text: 'yo\n' },
-      legal: { label: 'legal contract', text: 'SECTION 12. LIABILITY.\n' },
+      travel: { label: 'travel guide', text: '## Getting around Paris\n' },
+      vegas: {
+        label: 'Las Vegas hotel guide',
+        text: 'PARIS LAS VEGAS RESORT — Guest Guide\n',
+      },
+      minecraft: {
+        label: 'Minecraft build log',
+        text: '[build log] session 47\n',
+      },
     },
     continuationLabel: 'fixed continuation point',
-    continuation: 'The code ',
+    continuation: EXAMPLE_QUERY,
     barsLabel: 'p(next token)',
     barsAria: 'Probability bars over five candidate next tokens',
     readout:
@@ -16,22 +24,31 @@ export const worldPickerStrings = {
       'Honesty label: these distributions are illustrative, not measured. The effect itself is real — reproduce it with any base model.',
     guess: {
       question:
-        "Under the 'markdown code review' framing, what's the model's top pick after 'The code '?",
-      options: ['fails', 'is', 'works', 'shall'],
+        "Under the 'Las Vegas hotel guide' framing, what's the model's top pick after 'The Eiffel Tower is in'?",
+      options: [' Las', ' Nevada', ' downtown', ' Paris'],
       correctIndex: 0,
       payoff:
-        "actually 'fails' — code reviews are where code goes to be criticized, and the framing alone moved the whole distribution.",
+        "actually ' Las' — the hotel guide is describing the Paris Las Vegas resort's own tower replica, and the framing alone moved the whole distribution.",
     },
   },
   uk: {
     framingGroupAria: 'Оберіть обрамлення для тієї самої точки продовження',
     framings: {
-      review: { label: 'markdown-кодрев’ю', text: '## Code review\n' },
-      casual: { label: 'невимушений чат', text: 'yo\n' },
-      legal: { label: 'юридичний договір', text: 'SECTION 12. LIABILITY.\n' },
+      travel: {
+        label: 'путівник для мандрівників',
+        text: '## Як дістатися Парижа\n',
+      },
+      vegas: {
+        label: 'путівник готелю в Лас-Вегасі',
+        text: 'PARIS LAS VEGAS RESORT — путівник гостя\n',
+      },
+      minecraft: {
+        label: 'журнал будівництва в Minecraft',
+        text: '[build log] сесія 47\n',
+      },
     },
     continuationLabel: 'фіксована точка продовження',
-    continuation: 'The code ',
+    continuation: EXAMPLE_QUERY,
     barsLabel: 'p(наступний токен)',
     barsAria: 'Стовпчики ймовірностей для п’яти кандидатів на наступний токен',
     readout:
@@ -40,11 +57,11 @@ export const worldPickerStrings = {
       'Чесне зізнання: ці розподіли ілюстративні, не виміряні. Сам ефект справжній — відтворіть його з будь-якою базовою моделлю.',
     guess: {
       question:
-        "під обрамленням 'markdown-кодрев’ю' — який топ-вибір моделі після 'The code '?",
-      options: ['fails', 'is', 'works', 'shall'],
+        "під обрамленням 'путівник готелю в Лас-Вегасі' — який топ-вибір моделі після 'The Eiffel Tower is in'?",
+      options: [' Las', ' Nevada', ' downtown', ' Paris'],
       correctIndex: 0,
       payoff:
-        "насправді 'fails' — кодрев’ю — це місце, де код критикують, і саме лише обрамлення зрушило весь розподіл.",
+        "насправді ' Las' — путівник описує власну репліку вежі готелю Paris Las Vegas, і саме лише обрамлення зрушило весь розподіл.",
     },
   },
 } as const;

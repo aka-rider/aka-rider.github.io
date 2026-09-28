@@ -2,156 +2,1147 @@
 
 import { useState } from 'react';
 
+import { ATTENTION_HEADS } from '@/components/blog/llm/AttentionDemo';
 import { EXAMPLE_TOKENS } from '@/components/blog/llm/example';
+import { visibleSpaces } from '@/components/blog/llm/format';
+import { gelu, softmax } from '@/components/blog/llm/math';
 import { matmulStrings } from '@/components/blog/llm/strings/matmul';
+import {
+  AMBER_FILL,
+  CYAN_FILL,
+  EXAMPLE_TOKEN_ROWS,
+  finalEmbedding,
+  NEG_FILL,
+  opacityFor,
+  SKY_FILL,
+  StripCells,
+  TEAL_FILL,
+  tokenRow,
+} from '@/components/blog/llm/vectors';
 
 import type { Lang } from '@/i18n';
 
 type Variant = 'plain' | 'attention';
 
-type Matrix = readonly (readonly number[])[];
+const GROUP_LEN = 6;
+const GROUPS = 3;
+const OUTPUT_LEN = GROUPS * GROUP_LEN;
+const INPUT_LEN = 8;
+const MATRIX_ROWS = INPUT_LEN;
+const ROWS = EXAMPLE_TOKEN_ROWS.length;
 
-const X_ROW: Matrix = [[2.0, 0.0, 1.0, -1.0]];
-
-const W_MATRIX: Matrix = [
-  [0.5, 0.9, -0.3],
-  [1.0, -0.2, 0.4],
-  [-0.5, 0.1, 0.8],
-  [0.0, 0.0, 0.6],
-];
-
-const Q_MATRIX: Matrix = [
-  [0.8, 0.2, 0.0],
-  [0.2, 0.4, 0.2],
-  [0.0, 0.2, 0.4],
-  [0.6, 0.8, 0.2],
-  [0.4, 1.2, 0.6],
-  [0.8, 0.6, 0.4],
-];
-
-const K_MATRIX: Matrix = [
-  [1.0, 0.0, 0.5],
-  [0.0, 0.5, 0.0],
-  [0.0, 0.0, 0.5],
-  [0.5, 1.5, 0.0],
-  [0.5, 1.0, 0.5],
-  [1.0, 0.0, 0.0],
-];
-
-function transpose(m: Matrix): number[][] {
-  const first = m[0] ?? [];
-  return first.map((_, j) => m.map((row) => row[j] ?? 0));
+function groupOf(col: number): number {
+  return Math.floor(col / GROUP_LEN);
 }
 
-function matmul(a: Matrix, b: Matrix): number[][] {
-  return a.map((row) =>
-    (b[0] ?? []).map((_, j) =>
-      row.reduce((sum, v, k) => sum + v * (b[k]?.[j] ?? 0), 0),
-    ),
+function groupedOffset(
+  col: number,
+  cell: number,
+  gap: number,
+  groupGap: number,
+): number {
+  const group = groupOf(col);
+  const withinGroup = col % GROUP_LEN;
+  return (
+    group * (GROUP_LEN * (cell + gap) + groupGap) + withinGroup * (cell + gap)
   );
 }
 
-function fmt(v: number): string {
-  const rounded = Math.abs(v) < 0.05 ? 0 : v;
-  return rounded < 0 ? `−${Math.abs(rounded).toFixed(1)}` : rounded.toFixed(1);
+function groupBlockWidth(cell: number, gap: number): number {
+  return GROUP_LEN * (cell + gap) - gap;
 }
 
-function factor(v: number): string {
-  return v < 0 ? `(${fmt(v)})` : fmt(v);
+function weightAt(row: number, col: number): number {
+  return Math.sin((row * 3 + col * 7) * 0.35);
 }
 
-const SUBSCRIPTS = ['₁', '₂', '₃', '₄', '₅', '₆'] as const;
+function biasAt(col: number): number {
+  return Math.cos(col * 0.5) * 0.4;
+}
 
-const GRID_STROKE = 'stroke-slate-300 dark:stroke-slate-600';
-const PLAIN_FILL = 'fill-white dark:fill-slate-900';
-const AMBER_FILL = 'fill-amber-50 dark:fill-amber-950/60';
-const AMBER_TEXT = 'fill-amber-700 dark:fill-amber-400';
-const AMBER_STROKE = 'stroke-amber-700 dark:stroke-amber-400';
-const CYAN_FILL = 'fill-cyan-50 dark:fill-cyan-950/60';
-const CYAN_TEXT = 'fill-cyan-700 dark:fill-cyan-400';
-const CYAN_STROKE = 'stroke-cyan-700 dark:stroke-cyan-400';
-const MASK_FILL = 'fill-slate-100 dark:fill-slate-800';
-const MASK_TEXT = 'fill-slate-400 dark:fill-slate-500';
+const WEIGHTS: number[][] = Array.from({ length: MATRIX_ROWS }, (_, r) =>
+  Array.from({ length: OUTPUT_LEN }, (_, c) => weightAt(r, c)),
+);
+
+const BIAS: number[] = Array.from({ length: OUTPUT_LEN }, (_, c) => biasAt(c));
+
+const INPUT_ROWS: number[][] = EXAMPLE_TOKEN_ROWS.map((row) =>
+  finalEmbedding(row.id, row.index),
+);
+
+function dot(row: readonly number[], col: number): number {
+  return row.reduce((sum, value, k) => sum + value * WEIGHTS[k]![col]!, 0);
+}
+
+const OUTPUT_ROWS: number[][] = INPUT_ROWS.map((row) =>
+  Array.from(
+    { length: OUTPUT_LEN },
+    (_, c) => dot(row, c) / MATRIX_ROWS + BIAS[c]!,
+  ),
+);
+
+const REP_ROW = tokenRow(' Tower').index;
+const GELU_ROW: number[] = OUTPUT_ROWS[REP_ROW]!.map(gelu);
+
+const GROUP_POS_CLASSES = [CYAN_FILL, TEAL_FILL, SKY_FILL] as const;
+
+const GROUP_STROKE_CLASSES = [
+  'stroke-cyan-700 dark:stroke-cyan-400',
+  'stroke-teal-700 dark:stroke-teal-400',
+  'stroke-sky-700 dark:stroke-sky-400',
+] as const;
+
+const INPUT_CLASS = 'fill-slate-700 dark:fill-slate-300';
+const SVG_MUTED = 'fill-slate-500 dark:fill-slate-400';
+const GRID_STROKE_CLASS = 'stroke-slate-300 dark:stroke-slate-600';
 const MUTED_TEXT_CLASSES =
   'font-mono text-xs text-slate-500 dark:text-slate-400';
-
 const CELL_BUTTON_CLASSES =
   'cursor-pointer focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2';
 
-type Layout = {
-  cell: number;
-  fontSize: number;
-  aX: number;
-  aY: number;
-  bX: number;
-  bY: number;
-  viewBox: string;
-  maxWidthClass: string;
-};
+function groupedClass(col: number, value: number): string {
+  if (value < 0) return NEG_FILL;
+  return GROUP_POS_CLASSES[groupOf(col)]!;
+}
 
-const LAYOUTS: Record<Variant, Layout> = {
-  plain: {
-    cell: 34,
-    fontSize: 10,
-    aX: 8,
-    aY: 188,
-    bX: 156,
-    bY: 40,
-    viewBox: '0 0 268 306',
-    maxWidthClass: 'max-w-[320px]',
-  },
-  attention: {
-    cell: 26,
-    fontSize: 8,
-    aX: 48,
-    aY: 128,
-    bX: 138,
-    bY: 26,
-    viewBox: '0 0 302 308',
-    maxWidthClass: 'max-w-[360px]',
-  },
-};
-
-function MatrixCell({
+function TokenLabel({
   x,
   y,
-  size,
-  text,
-  rectClass,
-  textClass,
-  strokeWidth = 1,
-  fontSize,
+  token,
+  id,
+  fontSize = 9,
+  idFontSize = 6.5,
 }: {
   x: number;
   y: number;
-  size: number;
-  text: string;
-  rectClass: string;
-  textClass?: string;
-  strokeWidth?: number;
-  fontSize: number;
+  token: string;
+  id: number;
+  fontSize?: number;
+  idFontSize?: number;
 }) {
   return (
-    <g>
-      <rect
-        x={x}
-        y={y}
-        width={size}
-        height={size}
-        strokeWidth={strokeWidth}
-        className={rectClass}
-      />
-      <text
-        x={x + size / 2}
-        y={y + size / 2 + fontSize * 0.36}
-        textAnchor='middle'
-        fontSize={fontSize}
-        fill={textClass ? undefined : 'currentColor'}
-        className={textClass}
-      >
-        {text}
-      </text>
+    <text x={x} y={y + 3} textAnchor='end' fontSize={fontSize}>
+      <tspan className={AMBER_FILL}>{visibleSpaces(token)}</tspan>
+      <tspan dx={3} fontSize={idFontSize} className={SVG_MUTED}>
+        #{id}
+      </tspan>
+    </text>
+  );
+}
+
+function ColumnHeader({
+  x,
+  y,
+  label,
+  fontSize = 7,
+}: {
+  x: number;
+  y: number;
+  label: string;
+  fontSize?: number;
+}) {
+  return (
+    <text
+      x={x}
+      y={y}
+      textAnchor='middle'
+      fontSize={fontSize}
+      className={SVG_MUTED}
+    >
+      {label}
+    </text>
+  );
+}
+
+function GroupLabels({
+  x,
+  y,
+  cell,
+  gap,
+  groupGap,
+  labels,
+  fontSize = 7,
+}: {
+  x: number;
+  y: number;
+  cell: number;
+  gap: number;
+  groupGap: number;
+  labels: readonly string[];
+  fontSize?: number;
+}) {
+  const blockWidth = groupBlockWidth(cell, gap);
+  return (
+    <>
+      {GROUP_POS_CLASSES.map((cls, group) => (
+        <text
+          key={group}
+          x={x + group * (blockWidth + groupGap) + blockWidth / 2}
+          y={y}
+          textAnchor='middle'
+          fontSize={fontSize}
+          fontWeight={700}
+          className={cls}
+        >
+          {labels[group]!}
+        </text>
+      ))}
+    </>
+  );
+}
+
+function BiasColumn({
+  x,
+  y,
+  cellWidth,
+  cellHeight,
+  gap,
+}: {
+  x: number;
+  y: number;
+  cellWidth: number;
+  cellHeight: number;
+  gap: number;
+}) {
+  return (
+    <g aria-hidden='true'>
+      {BIAS.map((value, c) => (
+        <rect
+          key={c}
+          x={x}
+          y={y + c * (cellHeight + gap)}
+          width={cellWidth}
+          height={cellHeight}
+          fillOpacity={opacityFor(value)}
+          className={groupedClass(c, value)}
+        />
+      ))}
     </g>
+  );
+}
+
+function InputRows({
+  tokenLabelRight,
+  x,
+  listTop,
+  rowH,
+  cell,
+  gap,
+  fontSize,
+  idFontSize,
+}: {
+  tokenLabelRight: number;
+  x: number;
+  listTop: number;
+  rowH: number;
+  cell: number;
+  gap: number;
+  fontSize?: number;
+  idFontSize?: number;
+}) {
+  return (
+    <>
+      {EXAMPLE_TOKEN_ROWS.map((row) => {
+        const y = listTop + row.index * rowH + rowH / 2;
+        return (
+          <g key={row.index}>
+            <TokenLabel
+              x={tokenLabelRight}
+              y={y}
+              token={row.token}
+              id={row.id}
+              fontSize={fontSize}
+              idFontSize={idFontSize}
+            />
+            <StripCells
+              values={INPUT_ROWS[row.index]!}
+              x={x}
+              y={y}
+              cellWidth={cell}
+              cellHeight={rowH - 4}
+              gap={gap}
+              colorFor={() => INPUT_CLASS}
+            />
+          </g>
+        );
+      })}
+    </>
+  );
+}
+
+function WidePlainMatmul({
+  lang,
+  hoverCol,
+  setHoverCol,
+}: {
+  lang: Lang;
+  hoverCol: number;
+  setHoverCol: (col: number) => void;
+}) {
+  const strings = matmulStrings[lang].plain;
+  const hoverGroup = groupOf(hoverCol);
+  const hoverStroke = GROUP_STROKE_CLASSES[hoverGroup]!;
+
+  const CELL = 6;
+  const GAP = 1;
+  const GROUP_GAP = 6;
+  const OUTPUT_WIDTH =
+    groupedOffset(OUTPUT_LEN - 1, CELL, GAP, GROUP_GAP) + CELL;
+  const INPUT_WIDTH = INPUT_LEN * (CELL + GAP) - GAP;
+
+  const ROW_H = 16;
+  const LIST_TOP = 34;
+  const LIST_HEIGHT = ROWS * ROW_H;
+
+  const TOKEN_LABEL_RIGHT = 64;
+  const INPUT_X = TOKEN_LABEL_RIGHT + 8;
+  const INPUT_END = INPUT_X + INPUT_WIDTH;
+
+  const TIMES_X = INPUT_END + 12;
+  const MATRIX_X = TIMES_X + 10;
+  const MATRIX_HEIGHT = MATRIX_ROWS * (CELL + GAP) - GAP;
+  const MATRIX_Y = LIST_TOP + (LIST_HEIGHT - MATRIX_HEIGHT) / 2;
+
+  const PLUS_X = MATRIX_X + OUTPUT_WIDTH + 10;
+  const BIAS_X = PLUS_X + 8;
+  const BIAS_GAP = 0.6;
+  const BIAS_CELL_H = (LIST_HEIGHT - (OUTPUT_LEN - 1) * BIAS_GAP) / OUTPUT_LEN;
+
+  const EQUALS_X = BIAS_X + CELL + 10;
+  const OUTPUT_X = EQUALS_X + 8;
+  const OUTPUT_END = OUTPUT_X + OUTPUT_WIDTH;
+
+  const GELU_Y = LIST_TOP + LIST_HEIGHT + 34;
+
+  const VIEW_WIDTH = OUTPUT_END + 12;
+  const VIEW_HEIGHT = GELU_Y + 14;
+
+  return (
+    <svg
+      viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+      role='group'
+      aria-label={strings.aria}
+      className='hidden sm:block w-full h-auto max-w-[600px] mx-auto'
+    >
+      <defs>
+        <marker
+          id='llmMatmulArrow'
+          viewBox='0 0 8 8'
+          refX='7'
+          refY='4'
+          markerWidth='6'
+          markerHeight='6'
+          orient='auto-start-reverse'
+        >
+          <path
+            d='M0 0L8 4L0 8Z'
+            className='fill-slate-500 dark:fill-slate-400'
+          />
+        </marker>
+      </defs>
+      <g fontFamily='var(--font-mono)'>
+        <ColumnHeader
+          x={INPUT_X + INPUT_WIDTH / 2}
+          y={10}
+          label={strings.inputLabel}
+        />
+        <ColumnHeader
+          x={MATRIX_X + OUTPUT_WIDTH / 2}
+          y={10}
+          label={strings.weightLabel}
+        />
+        <ColumnHeader x={BIAS_X + CELL / 2} y={10} label={strings.biasLabel} />
+        <ColumnHeader
+          x={OUTPUT_X + OUTPUT_WIDTH / 2}
+          y={10}
+          label={strings.outputLabel}
+        />
+
+        <GroupLabels
+          x={MATRIX_X}
+          y={MATRIX_Y - 5}
+          cell={CELL}
+          gap={GAP}
+          groupGap={GROUP_GAP}
+          labels={strings.groupLabels}
+        />
+        <GroupLabels
+          x={OUTPUT_X}
+          y={LIST_TOP - 5}
+          cell={CELL}
+          gap={GAP}
+          groupGap={GROUP_GAP}
+          labels={strings.groupLabels}
+        />
+
+        <InputRows
+          tokenLabelRight={TOKEN_LABEL_RIGHT}
+          x={INPUT_X}
+          listTop={LIST_TOP}
+          rowH={ROW_H}
+          cell={CELL}
+          gap={GAP}
+        />
+
+        {EXAMPLE_TOKEN_ROWS.map((row) => {
+          const y = LIST_TOP + row.index * ROW_H + ROW_H / 2;
+          const outputValues = OUTPUT_ROWS[row.index]!;
+          if (row.index !== REP_ROW) {
+            return (
+              <StripCells
+                key={row.index}
+                values={outputValues}
+                x={OUTPUT_X}
+                y={y}
+                cellWidth={CELL}
+                cellHeight={ROW_H - 4}
+                gap={GAP}
+                offsetFor={(col) => groupedOffset(col, CELL, GAP, GROUP_GAP)}
+                colorFor={groupedClass}
+              />
+            );
+          }
+          return (
+            <g key={row.index}>
+              {outputValues.map((value, col) => {
+                const selected = col === hoverCol;
+                const group = groupOf(col);
+                return (
+                  <g
+                    key={col}
+                    role='button'
+                    tabIndex={0}
+                    aria-pressed={selected}
+                    aria-label={`${strings.groupLabels[group]!} ${(col % GROUP_LEN) + 1} — ${visibleSpaces(row.token)}`}
+                    onMouseEnter={() => setHoverCol(col)}
+                    onFocus={() => setHoverCol(col)}
+                    onClick={() => setHoverCol(col)}
+                    onKeyDown={(event) => {
+                      if (event.key !== 'Enter' && event.key !== ' ') return;
+                      event.preventDefault();
+                      setHoverCol(col);
+                    }}
+                    className={CELL_BUTTON_CLASSES}
+                  >
+                    <rect
+                      x={OUTPUT_X + groupedOffset(col, CELL, GAP, GROUP_GAP)}
+                      y={y - (ROW_H - 4) / 2}
+                      width={CELL}
+                      height={ROW_H - 4}
+                      fillOpacity={opacityFor(value)}
+                      strokeWidth={selected ? 1.5 : 0}
+                      className={`${groupedClass(col, value)} ${selected ? hoverStroke : ''}`}
+                    />
+                  </g>
+                );
+              })}
+            </g>
+          );
+        })}
+
+        {WEIGHTS.map((row, r) =>
+          row.map((value, c) => (
+            <rect
+              key={`w-${r}-${c}`}
+              x={MATRIX_X + groupedOffset(c, CELL, GAP, GROUP_GAP)}
+              y={MATRIX_Y + r * (CELL + GAP)}
+              width={CELL}
+              height={CELL}
+              fillOpacity={opacityFor(value)}
+              className={groupedClass(c, value)}
+            />
+          )),
+        )}
+
+        <BiasColumn
+          x={BIAS_X}
+          y={LIST_TOP}
+          cellWidth={CELL}
+          cellHeight={BIAS_CELL_H}
+          gap={BIAS_GAP}
+        />
+
+        <rect
+          x={MATRIX_X + groupedOffset(hoverCol, CELL, GAP, GROUP_GAP) - 1.5}
+          y={MATRIX_Y - 1.5}
+          width={CELL + 3}
+          height={MATRIX_HEIGHT + 3}
+          fill='none'
+          strokeWidth={1.5}
+          className={hoverStroke}
+        />
+        <rect
+          x={OUTPUT_X + groupedOffset(hoverCol, CELL, GAP, GROUP_GAP) - 1.5}
+          y={LIST_TOP - 1.5}
+          width={CELL + 3}
+          height={LIST_HEIGHT + 3}
+          fill='none'
+          strokeWidth={1.5}
+          className={hoverStroke}
+        />
+
+        <text
+          x={TIMES_X}
+          y={MATRIX_Y + MATRIX_HEIGHT / 2 + 3}
+          textAnchor='middle'
+          fontSize={11}
+          className={SVG_MUTED}
+        >
+          ×
+        </text>
+        <text
+          x={PLUS_X}
+          y={MATRIX_Y + MATRIX_HEIGHT / 2 + 3}
+          textAnchor='middle'
+          fontSize={11}
+          className={SVG_MUTED}
+        >
+          +
+        </text>
+        <text
+          x={EQUALS_X}
+          y={MATRIX_Y + MATRIX_HEIGHT / 2 + 3}
+          textAnchor='middle'
+          fontSize={11}
+          className={SVG_MUTED}
+        >
+          =
+        </text>
+
+        <line
+          x1={OUTPUT_X + OUTPUT_WIDTH / 2}
+          y1={LIST_TOP + LIST_HEIGHT + 2}
+          x2={OUTPUT_X + OUTPUT_WIDTH / 2}
+          y2={GELU_Y - 12}
+          strokeWidth={1.2}
+          markerEnd='url(#llmMatmulArrow)'
+          className='stroke-slate-500 dark:stroke-slate-400'
+        />
+        <text
+          x={OUTPUT_X + OUTPUT_WIDTH / 2}
+          y={GELU_Y - 16}
+          textAnchor='middle'
+          fontSize={7}
+          className={SVG_MUTED}
+        >
+          {strings.gelu.label}
+        </text>
+        <StripCells
+          values={GELU_ROW}
+          x={OUTPUT_X}
+          y={GELU_Y}
+          cellWidth={CELL}
+          cellHeight={CELL}
+          gap={GAP}
+          offsetFor={(col) => groupedOffset(col, CELL, GAP, GROUP_GAP)}
+          colorFor={groupedClass}
+        />
+      </g>
+    </svg>
+  );
+}
+
+function NarrowPlainMatmul({
+  lang,
+  hoverCol,
+  setHoverCol,
+}: {
+  lang: Lang;
+  hoverCol: number;
+  setHoverCol: (col: number) => void;
+}) {
+  const strings = matmulStrings[lang].plain;
+  const hoverGroup = groupOf(hoverCol);
+  const hoverStroke = GROUP_STROKE_CLASSES[hoverGroup]!;
+
+  const CELL = 8;
+  const GAP = 1;
+  const GROUP_GAP = 8;
+  const OUTPUT_WIDTH =
+    groupedOffset(OUTPUT_LEN - 1, CELL, GAP, GROUP_GAP) + CELL;
+  const INPUT_WIDTH = INPUT_LEN * (CELL + GAP) - GAP;
+  const MATRIX_HEIGHT = MATRIX_ROWS * (CELL + GAP) - GAP;
+
+  const ROW_H = 22;
+  const LIST_HEIGHT = ROWS * ROW_H;
+
+  const TOKEN_LABEL_RIGHT = 70;
+  const CENTER_X = TOKEN_LABEL_RIGHT + 8 + OUTPUT_WIDTH / 2;
+  const VIEW_WIDTH = CENTER_X + OUTPUT_WIDTH / 2 + 16;
+
+  const INPUT_TOP = 30;
+  const INPUT_BOTTOM = INPUT_TOP + LIST_HEIGHT;
+  const TIMES_Y = INPUT_BOTTOM + 16;
+  const MATRIX_TOP = TIMES_Y + 16;
+  const MATRIX_BOTTOM = MATRIX_TOP + MATRIX_HEIGHT;
+  const PLUS_Y = MATRIX_BOTTOM + 16;
+  const BIAS_TOP = PLUS_Y + 16;
+  const BIAS_HEIGHT = 90;
+  const BIAS_GAP = 0.6;
+  const BIAS_CELL_H = (BIAS_HEIGHT - (OUTPUT_LEN - 1) * BIAS_GAP) / OUTPUT_LEN;
+  const BIAS_BOTTOM = BIAS_TOP + BIAS_HEIGHT;
+  const EQUALS_Y = BIAS_BOTTOM + 16;
+  const OUTPUT_TOP = EQUALS_Y + 16;
+  const OUTPUT_BOTTOM = OUTPUT_TOP + LIST_HEIGHT;
+  const GELU_ARROW_Y = OUTPUT_BOTTOM + 16;
+  const GELU_Y = GELU_ARROW_Y + 20;
+
+  const VIEW_HEIGHT = GELU_Y + 16;
+
+  const MATRIX_X = CENTER_X - OUTPUT_WIDTH / 2;
+  const BIAS_X = CENTER_X - CELL / 2;
+  const INPUT_X = TOKEN_LABEL_RIGHT + 8;
+  const OUTPUT_X = TOKEN_LABEL_RIGHT + 8;
+
+  return (
+    <svg
+      viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+      role='group'
+      aria-label={strings.aria}
+      className='sm:hidden w-full h-auto max-w-[320px] mx-auto'
+    >
+      <g fontFamily='var(--font-mono)'>
+        <ColumnHeader
+          x={INPUT_X + INPUT_WIDTH / 2}
+          y={12}
+          label={strings.inputLabel}
+          fontSize={8}
+        />
+        <InputRows
+          tokenLabelRight={TOKEN_LABEL_RIGHT}
+          x={INPUT_X}
+          listTop={INPUT_TOP}
+          rowH={ROW_H}
+          cell={CELL}
+          gap={GAP}
+          fontSize={10}
+          idFontSize={7}
+        />
+
+        <text
+          x={CENTER_X}
+          y={TIMES_Y + 4}
+          textAnchor='middle'
+          fontSize={13}
+          className={SVG_MUTED}
+        >
+          ×
+        </text>
+
+        <ColumnHeader
+          x={CENTER_X}
+          y={MATRIX_TOP - 8}
+          label={strings.weightLabel}
+          fontSize={8}
+        />
+        <GroupLabels
+          x={MATRIX_X}
+          y={MATRIX_TOP - 18}
+          cell={CELL}
+          gap={GAP}
+          groupGap={GROUP_GAP}
+          labels={strings.groupLabels}
+          fontSize={9}
+        />
+        {WEIGHTS.map((row, r) =>
+          row.map((value, c) => (
+            <rect
+              key={`nw-${r}-${c}`}
+              x={MATRIX_X + groupedOffset(c, CELL, GAP, GROUP_GAP)}
+              y={MATRIX_TOP + r * (CELL + GAP)}
+              width={CELL}
+              height={CELL}
+              fillOpacity={opacityFor(value)}
+              className={groupedClass(c, value)}
+            />
+          )),
+        )}
+        <rect
+          x={MATRIX_X + groupedOffset(hoverCol, CELL, GAP, GROUP_GAP) - 1.5}
+          y={MATRIX_TOP - 1.5}
+          width={CELL + 3}
+          height={MATRIX_HEIGHT + 3}
+          fill='none'
+          strokeWidth={1.5}
+          className={hoverStroke}
+        />
+
+        <text
+          x={CENTER_X}
+          y={PLUS_Y + 4}
+          textAnchor='middle'
+          fontSize={13}
+          className={SVG_MUTED}
+        >
+          +
+        </text>
+
+        <ColumnHeader
+          x={CENTER_X}
+          y={BIAS_TOP - 8}
+          label={strings.biasLabel}
+          fontSize={8}
+        />
+        <BiasColumn
+          x={BIAS_X}
+          y={BIAS_TOP}
+          cellWidth={CELL}
+          cellHeight={BIAS_CELL_H}
+          gap={BIAS_GAP}
+        />
+
+        <text
+          x={CENTER_X}
+          y={EQUALS_Y + 4}
+          textAnchor='middle'
+          fontSize={13}
+          className={SVG_MUTED}
+        >
+          =
+        </text>
+
+        <ColumnHeader
+          x={OUTPUT_X + OUTPUT_WIDTH / 2}
+          y={OUTPUT_TOP - 8}
+          label={strings.outputLabel}
+          fontSize={8}
+        />
+        <GroupLabels
+          x={OUTPUT_X}
+          y={OUTPUT_TOP - 18}
+          cell={CELL}
+          gap={GAP}
+          groupGap={GROUP_GAP}
+          labels={strings.groupLabels}
+          fontSize={9}
+        />
+        {EXAMPLE_TOKEN_ROWS.map((row) => {
+          const y = OUTPUT_TOP + row.index * ROW_H + ROW_H / 2;
+          const outputValues = OUTPUT_ROWS[row.index]!;
+          return (
+            <g key={row.index}>
+              <TokenLabel
+                x={TOKEN_LABEL_RIGHT}
+                y={y}
+                token={row.token}
+                id={row.id}
+                fontSize={10}
+                idFontSize={7}
+              />
+              {row.index === REP_ROW ? (
+                outputValues.map((value, col) => {
+                  const selected = col === hoverCol;
+                  return (
+                    <rect
+                      key={col}
+                      role='button'
+                      tabIndex={0}
+                      aria-pressed={selected}
+                      onClick={() => setHoverCol(col)}
+                      x={OUTPUT_X + groupedOffset(col, CELL, GAP, GROUP_GAP)}
+                      y={y - (ROW_H - 4) / 2}
+                      width={CELL}
+                      height={ROW_H - 4}
+                      fillOpacity={opacityFor(value)}
+                      strokeWidth={selected ? 1.5 : 0}
+                      className={`${groupedClass(col, value)} ${selected ? hoverStroke : ''} ${CELL_BUTTON_CLASSES}`}
+                    />
+                  );
+                })
+              ) : (
+                <StripCells
+                  values={outputValues}
+                  x={OUTPUT_X}
+                  y={y}
+                  cellWidth={CELL}
+                  cellHeight={ROW_H - 4}
+                  gap={GAP}
+                  offsetFor={(col) => groupedOffset(col, CELL, GAP, GROUP_GAP)}
+                  colorFor={groupedClass}
+                />
+              )}
+            </g>
+          );
+        })}
+        <rect
+          x={OUTPUT_X + groupedOffset(hoverCol, CELL, GAP, GROUP_GAP) - 1.5}
+          y={OUTPUT_TOP - 1.5}
+          width={CELL + 3}
+          height={LIST_HEIGHT + 3}
+          fill='none'
+          strokeWidth={1.5}
+          className={hoverStroke}
+        />
+
+        <text
+          x={CENTER_X}
+          y={GELU_ARROW_Y + 4}
+          textAnchor='middle'
+          fontSize={10}
+          className={SVG_MUTED}
+        >
+          ↓ {strings.gelu.label}
+        </text>
+        <StripCells
+          values={GELU_ROW}
+          x={OUTPUT_X}
+          y={GELU_Y}
+          cellWidth={CELL}
+          cellHeight={CELL}
+          gap={GAP}
+          offsetFor={(col) => groupedOffset(col, CELL, GAP, GROUP_GAP)}
+          colorFor={groupedClass}
+        />
+      </g>
+    </svg>
+  );
+}
+
+function PlainMatmul({ lang }: { lang: Lang }) {
+  const strings = matmulStrings[lang].plain;
+  const [hoverCol, setHoverCol] = useState(2);
+
+  return (
+    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+      <div className={`${MUTED_TEXT_CLASSES} mb-3`}>{strings.hint}</div>
+
+      <WidePlainMatmul
+        lang={lang}
+        hoverCol={hoverCol}
+        setHoverCol={setHoverCol}
+      />
+      <NarrowPlainMatmul
+        lang={lang}
+        hoverCol={hoverCol}
+        setHoverCol={setHoverCol}
+      />
+
+      <div className={`${MUTED_TEXT_CLASSES} mt-2`}>{strings.gelu.note}</div>
+
+      <div className={`${MUTED_TEXT_CLASSES} mt-3 space-y-0.5`}>
+        {strings.legend.map((line) => (
+          <div key={line}>{line}</div>
+        ))}
+      </div>
+
+      <div
+        className={`${MUTED_TEXT_CLASSES} border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4`}
+      >
+        {strings.honesty}
+      </div>
+    </div>
+  );
+}
+
+const LOCATE_WEIGHTS = ATTENTION_HEADS.locate;
+const ATTENTION_SCALE = Math.sqrt(64);
+
+function maskedRawScore(row: number, col: number): number {
+  const syntheticWeight = 0.3 + 0.25 * Math.cos(row * 2.3 + col * 3.7);
+  return ATTENTION_SCALE * Math.log(syntheticWeight);
+}
+
+function rawScoreAt(row: number, col: number): number {
+  if (col > row) return maskedRawScore(row, col);
+  const weight = LOCATE_WEIGHTS[row]?.[col];
+  if (weight === undefined) {
+    throw new Error(`MatmulFigure: no locate weight at [${row}][${col}]`);
+  }
+  return ATTENTION_SCALE * Math.log(weight);
+}
+
+const RAW_SCORES: number[][] = Array.from({ length: ROWS }, (_, r) =>
+  Array.from({ length: ROWS }, (_, c) => rawScoreAt(r, c)),
+);
+
+const ALL_RAW_SCORES = RAW_SCORES.flat();
+const RAW_MIN = Math.min(...ALL_RAW_SCORES);
+const RAW_MAX = Math.max(...ALL_RAW_SCORES);
+
+function normalizedScore(row: number, col: number): number {
+  const value = RAW_SCORES[row]![col]!;
+  return (value - RAW_MIN) / (RAW_MAX - RAW_MIN || 1);
+}
+
+function isCausallyMasked(row: number, col: number): boolean {
+  return col > row;
+}
+
+const SOFTMAX_ROWS: number[][] = RAW_SCORES.map((row, r) => {
+  const scaled = row.map((value) => value / ATTENTION_SCALE);
+  const weights = softmax(scaled.slice(0, r + 1), 1);
+  return scaled.map((_, c) => (c <= r ? weights[c]! : 0));
+});
+
+function AttentionGrid({
+  x,
+  y,
+  cell,
+  masked,
+  opacityForCell,
+}: {
+  x: number;
+  y: number;
+  cell: number;
+  masked: (row: number, col: number) => boolean;
+  opacityForCell: (row: number, col: number) => number;
+}) {
+  return (
+    <g aria-hidden='true'>
+      {Array.from({ length: ROWS }, (_, r) =>
+        Array.from({ length: ROWS }, (_, c) => (
+          <rect
+            key={`${r}-${c}`}
+            x={x + c * (cell + 1)}
+            y={y + r * (cell + 1)}
+            width={cell}
+            height={cell}
+            strokeWidth={0.5}
+            fillOpacity={masked(r, c) ? 0 : opacityForCell(r, c)}
+            className={`${GRID_STROKE_CLASS} ${CYAN_FILL}`}
+          />
+        )),
+      )}
+    </g>
+  );
+}
+
+function GridTokenLabels({
+  x,
+  y,
+  cell,
+  fontSize = 8,
+}: {
+  x: number;
+  y: number;
+  cell: number;
+  fontSize?: number;
+}) {
+  return (
+    <>
+      {EXAMPLE_TOKENS.map((token, r) => (
+        <text
+          key={`row-${r}`}
+          x={x - 4}
+          y={y + r * (cell + 1) + cell / 2 + 3}
+          textAnchor='end'
+          fontSize={fontSize}
+          className={AMBER_FILL}
+        >
+          {visibleSpaces(token)}
+        </text>
+      ))}
+      {EXAMPLE_TOKENS.map((token, c) => {
+        const cx = x + c * (cell + 1) + cell / 2;
+        const cy = y - 6;
+        return (
+          <text
+            key={`col-${c}`}
+            x={cx}
+            y={cy}
+            textAnchor='start'
+            fontSize={fontSize}
+            transform={`rotate(-45 ${cx} ${cy})`}
+            className={AMBER_FILL}
+          >
+            {visibleSpaces(token)}
+          </text>
+        );
+      })}
+    </>
+  );
+}
+
+function WideAttentionMatmul({ lang }: { lang: Lang }) {
+  const strings = matmulStrings[lang].attention;
+  const CELL_A = 13;
+  const GRID_SIZE = ROWS * (CELL_A + 1) - 1;
+  const GRID_GAP = 22;
+  const LABEL_COL = 40;
+  const GRID_TOP = 44;
+  const GRID1_X = LABEL_COL;
+  const GRID2_X = GRID1_X + GRID_SIZE + GRID_GAP;
+  const GRID3_X = GRID2_X + GRID_SIZE + GRID_GAP;
+  const VIEW_WIDTH = GRID3_X + GRID_SIZE + 12;
+  const VIEW_HEIGHT = GRID_TOP + GRID_SIZE + 34;
+
+  return (
+    <svg
+      viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+      role='img'
+      aria-label={strings.aria}
+      className='hidden sm:block w-full h-auto max-w-[440px] mx-auto'
+    >
+      <g fontFamily='var(--font-mono)'>
+        <GridTokenLabels x={GRID1_X} y={GRID_TOP} cell={CELL_A} />
+        <AttentionGrid
+          x={GRID1_X}
+          y={GRID_TOP}
+          cell={CELL_A}
+          masked={() => false}
+          opacityForCell={normalizedScore}
+        />
+        <AttentionGrid
+          x={GRID2_X}
+          y={GRID_TOP}
+          cell={CELL_A}
+          masked={isCausallyMasked}
+          opacityForCell={normalizedScore}
+        />
+        <AttentionGrid
+          x={GRID3_X}
+          y={GRID_TOP}
+          cell={CELL_A}
+          masked={isCausallyMasked}
+          opacityForCell={(r, c) => SOFTMAX_ROWS[r]![c]!}
+        />
+
+        <text
+          x={GRID1_X + GRID_SIZE / 2}
+          y={GRID_TOP + GRID_SIZE + 14}
+          textAnchor='middle'
+          fontSize={8}
+          className={SVG_MUTED}
+        >
+          {strings.dotLabel}
+        </text>
+        <text
+          x={GRID2_X + GRID_SIZE / 2}
+          y={GRID_TOP + GRID_SIZE + 14}
+          textAnchor='middle'
+          fontSize={8}
+          className={SVG_MUTED}
+        >
+          {strings.scaleLabel}
+        </text>
+        <text
+          x={GRID2_X + GRID_SIZE / 2}
+          y={GRID_TOP + GRID_SIZE + 24}
+          textAnchor='middle'
+          fontSize={7}
+          className={SVG_MUTED}
+        >
+          {strings.scale}
+        </text>
+        <text
+          x={GRID3_X + GRID_SIZE / 2}
+          y={GRID_TOP + GRID_SIZE + 14}
+          textAnchor='middle'
+          fontSize={8}
+          className={SVG_MUTED}
+        >
+          {strings.softmaxLabel}
+        </text>
+      </g>
+    </svg>
+  );
+}
+
+function NarrowAttentionMatmul({ lang }: { lang: Lang }) {
+  const strings = matmulStrings[lang].attention;
+  const CELL_A = 15;
+  const GRID_SIZE = ROWS * (CELL_A + 1) - 1;
+  const LABEL_COL = 40;
+  const GRID_TOP = 50;
+  const BLOCK_H = GRID_TOP + GRID_SIZE + 30;
+  const VIEW_WIDTH = LABEL_COL + GRID_SIZE + 12;
+  const VIEW_HEIGHT = BLOCK_H * 3;
+
+  const sections = [
+    {
+      label: strings.dotLabel,
+      masked: () => false,
+      opacity: normalizedScore,
+      sub: undefined,
+    },
+    {
+      label: strings.scaleLabel,
+      masked: isCausallyMasked,
+      opacity: normalizedScore,
+      sub: strings.scale,
+    },
+    {
+      label: strings.softmaxLabel,
+      masked: isCausallyMasked,
+      opacity: (r: number, c: number) => SOFTMAX_ROWS[r]![c]!,
+      sub: undefined,
+    },
+  ];
+
+  return (
+    <svg
+      viewBox={`0 0 ${VIEW_WIDTH} ${VIEW_HEIGHT}`}
+      role='img'
+      aria-label={strings.aria}
+      className='sm:hidden w-full h-auto max-w-[280px] mx-auto'
+    >
+      <g fontFamily='var(--font-mono)'>
+        {sections.map((section, i) => {
+          const top = i * BLOCK_H + GRID_TOP;
+          return (
+            <g key={section.label}>
+              <GridTokenLabels
+                x={LABEL_COL}
+                y={top}
+                cell={CELL_A}
+                fontSize={9}
+              />
+              <AttentionGrid
+                x={LABEL_COL}
+                y={top}
+                cell={CELL_A}
+                masked={section.masked}
+                opacityForCell={section.opacity}
+              />
+              <text
+                x={LABEL_COL + GRID_SIZE / 2}
+                y={top + GRID_SIZE + 16}
+                textAnchor='middle'
+                fontSize={9}
+                className={SVG_MUTED}
+              >
+                {section.label}
+              </text>
+              {section.sub ? (
+                <text
+                  x={LABEL_COL + GRID_SIZE / 2}
+                  y={top + GRID_SIZE + 27}
+                  textAnchor='middle'
+                  fontSize={8}
+                  className={SVG_MUTED}
+                >
+                  {section.sub}
+                </text>
+              ) : null}
+            </g>
+          );
+        })}
+      </g>
+    </svg>
+  );
+}
+
+function AttentionMatmul({ lang }: { lang: Lang }) {
+  const strings = matmulStrings[lang].attention;
+
+  return (
+    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+      <WideAttentionMatmul lang={lang} />
+      <NarrowAttentionMatmul lang={lang} />
+
+      <div className={`${MUTED_TEXT_CLASSES} mt-3 space-y-0.5`}>
+        {strings.legend.map((line) => (
+          <div key={line}>{line}</div>
+        ))}
+        <div>{strings.maskLegend}</div>
+      </div>
+
+      <div
+        className={`${MUTED_TEXT_CLASSES} border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4`}
+      >
+        {strings.honesty}
+      </div>
+    </div>
   );
 }
 
@@ -162,286 +1153,9 @@ export default function MatmulFigure({
   lang: Lang;
   variant?: Variant;
 }) {
-  const strings = matmulStrings[lang][variant];
-  const { scoreWord } = matmulStrings[lang].attention;
-  const layout = LAYOUTS[variant];
-  const { cell, fontSize, aX, aY, bX, bY } = layout;
-
-  const isAttention = variant === 'attention';
-  const a = isAttention ? Q_MATRIX : X_ROW;
-  const b = isAttention ? transpose(K_MATRIX) : W_MATRIX;
-  const c = matmul(a, b);
-  const inner = a[0]?.length ?? 0;
-  const cRows = c.length;
-
-  const [sel, setSel] = useState(
-    isAttention ? { row: 4, col: 3 } : { row: 0, col: 1 },
-  );
-
-  function isMasked(row: number, col: number): boolean {
-    return isAttention && col > row;
-  }
-
-  function selectCell(row: number, col: number) {
-    if (!isMasked(row, col)) setSel({ row, col });
-  }
-
-  const terms = Array.from(
-    { length: inner },
-    (_, k) => `${fmt(a[sel.row]?.[k] ?? 0)}×${factor(b[k]?.[sel.col] ?? 0)}`,
-  ).join(' + ');
-  const selValue = c[sel.row]?.[sel.col] ?? 0;
-  const result = fmt(selValue);
-  const reluSuffix = !isAttention && selValue < 0 ? ' → ReLU → 0.0' : '';
-  const expansion = isAttention
-    ? `${scoreWord}('${EXAMPLE_TOKENS[sel.row]}', '${EXAMPLE_TOKENS[sel.col]}') = ${terms} = ${result}`
-    : `y${SUBSCRIPTS[sel.col]} = ${terms} = ${result}${reluSuffix}`;
-
-  const reluY = aY + cell + 28;
-  const arrowX = bX + 1.5 * cell;
-
-  const amberLineY = aY + sel.row * cell + cell / 2;
-  const cyanLineX = bX + sel.col * cell + cell / 2;
-
-  return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
-      <div className={`${MUTED_TEXT_CLASSES} mb-3`}>{strings.hint}</div>
-
-      <svg
-        viewBox={layout.viewBox}
-        role='group'
-        aria-label={strings.aria}
-        className={`w-full h-auto ${layout.maxWidthClass} mx-auto block`}
-      >
-        <g fontFamily='var(--font-mono)'>
-          <text
-            x={aX}
-            y={aY - 8}
-            fontSize={fontSize + 1}
-            className={AMBER_TEXT}
-          >
-            {strings.aLabel}
-          </text>
-          <text
-            x={isAttention ? bX - 8 : bX}
-            y={isAttention ? bY + (3 * cell) / 2 : bY - 8}
-            textAnchor={isAttention ? 'end' : 'start'}
-            fontSize={fontSize + 1}
-            className={CYAN_TEXT}
-          >
-            {strings.bLabel}
-          </text>
-          <text
-            x={bX}
-            y={aY + cRows * cell + 14}
-            fontSize={fontSize + 1}
-            className={CYAN_TEXT}
-          >
-            {strings.cLabel}
-          </text>
-
-          {isAttention
-            ? EXAMPLE_TOKENS.map((token, i) => (
-                <g key={`axis-${token}`} fontSize={fontSize}>
-                  <text
-                    x={aX - 4}
-                    y={aY + i * cell + cell / 2 + 3}
-                    textAnchor='end'
-                    className={AMBER_TEXT}
-                  >
-                    {token.trim()}
-                  </text>
-                  <text
-                    x={bX + i * cell + cell / 2}
-                    y={bY - 5}
-                    textAnchor='start'
-                    transform={`rotate(-45 ${bX + i * cell + cell / 2} ${bY - 5})`}
-                    className={AMBER_TEXT}
-                  >
-                    {token.trim()}
-                  </text>
-                </g>
-              ))
-            : null}
-
-          <line
-            x1={aX + inner * cell}
-            y1={amberLineY}
-            x2={bX + sel.col * cell}
-            y2={amberLineY}
-            strokeWidth={1.5}
-            opacity={0.7}
-            className={AMBER_STROKE}
-          />
-          <line
-            x1={cyanLineX}
-            y1={bY + inner * cell}
-            x2={cyanLineX}
-            y2={aY + sel.row * cell}
-            strokeWidth={1.5}
-            opacity={0.7}
-            className={CYAN_STROKE}
-          />
-
-          {a.map((row, r) =>
-            row.map((value, k) => (
-              <MatrixCell
-                key={`a-${r}-${k}`}
-                x={aX + k * cell}
-                y={aY + r * cell}
-                size={cell}
-                text={fmt(value)}
-                fontSize={fontSize}
-                rectClass={`${GRID_STROKE} ${r === sel.row ? AMBER_FILL : PLAIN_FILL}`}
-                textClass={r === sel.row ? AMBER_TEXT : undefined}
-              />
-            )),
-          )}
-
-          {b.map((row, k) =>
-            row.map((value, j) => (
-              <MatrixCell
-                key={`b-${k}-${j}`}
-                x={bX + j * cell}
-                y={bY + k * cell}
-                size={cell}
-                text={fmt(value)}
-                fontSize={fontSize}
-                rectClass={`${GRID_STROKE} ${j === sel.col ? CYAN_FILL : PLAIN_FILL}`}
-                textClass={j === sel.col ? CYAN_TEXT : undefined}
-              />
-            )),
-          )}
-
-          {c.map((row, r) =>
-            row.map((value, j) => {
-              if (isMasked(r, j)) {
-                return (
-                  <MatrixCell
-                    key={`c-${r}-${j}`}
-                    x={bX + j * cell}
-                    y={aY + r * cell}
-                    size={cell}
-                    text='−∞'
-                    fontSize={fontSize}
-                    rectClass={`${GRID_STROKE} ${MASK_FILL}`}
-                    textClass={MASK_TEXT}
-                  />
-                );
-              }
-              const selected = r === sel.row && j === sel.col;
-              return (
-                <g
-                  key={`c-${r}-${j}`}
-                  role='button'
-                  tabIndex={0}
-                  aria-pressed={selected}
-                  aria-label={
-                    isAttention
-                      ? `${scoreWord} ${EXAMPLE_TOKENS[r]} × ${EXAMPLE_TOKENS[j]} = ${fmt(value)}`
-                      : `y${SUBSCRIPTS[j]} = ${fmt(value)}`
-                  }
-                  onClick={() => selectCell(r, j)}
-                  onFocus={() => selectCell(r, j)}
-                  onKeyDown={(event) => {
-                    if (event.key !== 'Enter' && event.key !== ' ') return;
-                    event.preventDefault();
-                    selectCell(r, j);
-                  }}
-                  className={CELL_BUTTON_CLASSES}
-                >
-                  <MatrixCell
-                    x={bX + j * cell}
-                    y={aY + r * cell}
-                    size={cell}
-                    text={fmt(value)}
-                    fontSize={fontSize}
-                    strokeWidth={selected ? 2 : 1}
-                    rectClass={
-                      selected
-                        ? `${CYAN_STROKE} ${CYAN_FILL}`
-                        : `${GRID_STROKE} ${PLAIN_FILL}`
-                    }
-                    textClass={selected ? CYAN_TEXT : undefined}
-                  />
-                </g>
-              );
-            }),
-          )}
-
-          {'reluLabel' in strings ? (
-            <g>
-              <line
-                x1={arrowX}
-                y1={aY + cell + 4}
-                x2={arrowX}
-                y2={reluY - 7}
-                strokeWidth={1.5}
-                className={CYAN_STROKE}
-              />
-              <polygon
-                points={`${arrowX},${reluY - 2} ${arrowX - 3.5},${reluY - 8.5} ${arrowX + 3.5},${reluY - 8.5}`}
-                className='fill-cyan-700 dark:fill-cyan-400'
-              />
-              {(c[0] ?? []).map((value, j) => {
-                const clamped = value < 0;
-                return (
-                  <MatrixCell
-                    key={`relu-${j}`}
-                    x={bX + j * cell}
-                    y={reluY}
-                    size={cell}
-                    text={fmt(Math.max(0, value))}
-                    fontSize={fontSize}
-                    rectClass={`${GRID_STROKE} ${clamped ? MASK_FILL : PLAIN_FILL}`}
-                    textClass={clamped ? MASK_TEXT : undefined}
-                  />
-                );
-              })}
-              <text
-                x={bX}
-                y={reluY + cell + 14}
-                fontSize={fontSize + 1}
-                className={CYAN_TEXT}
-              >
-                {strings.reluLabel}
-              </text>
-            </g>
-          ) : null}
-        </g>
-      </svg>
-
-      {'reluNote' in strings ? (
-        <div className={`${MUTED_TEXT_CLASSES} mt-2`}>{strings.reluNote}</div>
-      ) : null}
-
-      <div
-        aria-live='polite'
-        className={
-          'font-mono text-xs sm:text-sm mt-4 overflow-x-auto whitespace-nowrap scrollbar-hide text-slate-900 dark:text-slate-100 [color-scheme:light] dark:[color-scheme:dark] ' +
-          '[mask-image:linear-gradient(to_right,rgba(0,0,0,0)_0%,rgba(0,0,0,1)_16px,rgba(0,0,0,1)_calc(100%-16px),rgba(0,0,0,0)_100%)] ' +
-          'md:[mask-image:none]'
-        }
-      >
-        {expansion}
-      </div>
-      <div className={`${MUTED_TEXT_CLASSES} mt-1`}>
-        {strings.interpretation}
-      </div>
-
-      <div className={`${MUTED_TEXT_CLASSES} mt-3 space-y-0.5`}>
-        {strings.legend.map((line) => (
-          <div key={line}>{line}</div>
-        ))}
-        {'maskLegend' in strings ? <div>{strings.maskLegend}</div> : null}
-        {'flowNote' in strings ? <div>{strings.flowNote}</div> : null}
-      </div>
-
-      <div
-        className={`${MUTED_TEXT_CLASSES} border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4`}
-      >
-        {strings.honesty}
-      </div>
-    </div>
+  return variant === 'attention' ? (
+    <AttentionMatmul lang={lang} />
+  ) : (
+    <PlainMatmul lang={lang} />
   );
 }

@@ -10,10 +10,10 @@ export const sequenceStrings = {
       question: 'question',
       contextTokens: 'context tokens',
       emitted1: 'distribution → sampled tokens:',
-      emitted2: 'call calc(37×89)',
+      emitted2: 'call opening_hours("Eiffel Tower")',
       parse: 'parse',
       execute: 'execute',
-      result: 'result 3293',
+      result: 'result: open, 09:30–23:45',
       resultTokens1: 'result tokens',
       resultTokens2: 'appended',
       continuation1: 'continuation:',
@@ -21,7 +21,7 @@ export const sequenceStrings = {
     },
     caption:
       'Everything violet is ordinary code you could write this afternoon.',
-    aria: 'Sequence diagram: the user asks a question, the harness feeds context tokens to the model, the model emits a calc tool call as tokens, the harness parses and executes it, the result 3293 returns as tokens, and the model continues with the answer.',
+    aria: 'Sequence diagram: the user asks a question, the harness feeds context tokens to the model, the model emits an opening_hours tool call as tokens, the harness parses and executes it, the result — open, 09:30–23:45 — returns as tokens, and the model continues with the answer.',
   },
   uk: {
     actors: {
@@ -34,10 +34,10 @@ export const sequenceStrings = {
       question: 'запитання',
       contextTokens: 'токени контексту',
       emitted1: 'розподіл → витягнуті токени:',
-      emitted2: 'виклик calc(37×89)',
+      emitted2: 'виклик opening_hours("Eiffel Tower")',
       parse: 'розбір',
       execute: 'виконати',
-      result: 'результат 3293',
+      result: 'результат: відкрито, 09:30–23:45',
       resultTokens1: 'токени результату',
       resultTokens2: 'додано',
       continuation1: 'продовження:',
@@ -45,6 +45,6 @@ export const sequenceStrings = {
     },
     caption:
       'Усе фіолетове — звичайний код, який ви могли б написати сьогодні по обіді.',
-    aria: 'Діаграма послідовності: користувач ставить запитання, обв’язка подає токени контексту в модель, модель видає виклик інструмента calc токенами, обв’язка розбирає і виконує його, результат 3293 повертається токенами, і модель продовжує відповіддю.',
+    aria: 'Діаграма послідовності: користувач ставить запитання, обв’язка подає токени контексту в модель, модель видає виклик інструмента opening_hours токенами, обв’язка розбирає і виконує його, результат — відкрито, 09:30–23:45 — повертається токенами, і модель продовжує відповіддю.',
   },
 } as const;

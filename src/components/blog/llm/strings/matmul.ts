@@ -1,86 +1,78 @@
 export const matmulStrings = {
   en: {
     plain: {
-      aria: 'Matrix multiplication: the row vector x times the weight matrix W gives the output vector y; the highlighted row of x and column of W produce the highlighted cell of y; below, ReLU clamps the negative cell of y to zero',
-      hint: 'tap any cell of y to see where its value comes from',
-      aLabel: 'x (1×4)',
-      bLabel: 'W (4×3)',
-      cLabel: 'y (1×3)',
-      reluLabel: 'ReLU(y) (1×3)',
-      reluNote:
-        'the nonlinearity: negative = pattern contradicted → clamped to 0 — filtered out',
+      aria: 'Q/K/V projection as a matrix multiplication: seven token embeddings (7×768) times a weight matrix (768×2304) plus a bias give seven query/key/value vectors (7×2304), grouped into three coloured bands, Q, K and V; below, GELU shows what a nonlinearity would do to one of those rows',
+      hint: 'hover or focus an output cell to see its column — one learned detector, applied to every token the same way',
+      inputLabel: 'embeddings (7, 768)',
+      weightLabel: 'Q·K·V weights (768, 2304)',
+      biasLabel: 'bias (2304)',
+      outputLabel: 'Q·K·V (7, 2304)',
+      groupLabels: ['Q', 'K', 'V'],
+      gelu: {
+        label: 'GELU(Q·K·V) — ␣Tower row',
+        note: 'the nonlinearity: small or negative inputs are squashed toward zero, large positive inputs pass through almost unchanged',
+      },
       legend: [
-        'x — one token’s vector (1×d)',
-        'W — weights (d×n): each column is one learned detector',
-        'y — how strongly each detector fired',
+        'each column of the weight matrix is one detector, shared by every token',
+        'colour intensity only — no numbers: darker means the detector fired more strongly',
+        'Q/K/V itself has no nonlinearity; GELU is shown here because it is the one this model actually uses, in the MLP',
       ],
-      interpretation:
-        'positive = the pattern is present; negative = evidence against it',
       honesty:
-        'toy sizes: d = 4 and n = 3 instead of thousands — but the arithmetic is real and computed on this page.',
+        'toy view: 8 of 768 input dims and 6 of 768 dims per Q/K/V group shown — but every cell is a real dot product computed on this page.',
     },
     attention: {
-      aria: 'Attention scores as a matrix multiplication: queries Q times transposed keys Kᵀ give a 6 by 6 score matrix; the strictly upper triangle is masked out because a token may not look at future tokens',
-      hint: 'tap any unmasked score cell to see its dot product',
-      aLabel: 'Q (6×3)',
-      bLabel: 'Kᵀ (3×6)',
-      cLabel: 'scores = Q·Kᵀ (6×6)',
-      scoreWord: 'score',
+      aria: 'Attention scores for our seven tokens as three 7×7 grids: dot product, then scaled and causally masked, then softmax; colour intensity only, masked cells left empty',
+      dotLabel: 'dot product',
+      scaleLabel: 'scale · mask',
+      softmaxLabel: 'softmax',
+      scale: '÷√64',
       legend: [
-        'Q — each row: what this token is looking for',
-        'Kᵀ — each column: what that token offers',
-        'score — how relevant one token is to another',
+        'row = the token asking the question, column = the token being looked at',
+        'a token may only look at itself and earlier tokens — the causal mask leaves later columns empty',
+        'softmax turns each row into weights that sum to 1',
       ],
       maskLegend:
-        'causal mask: a token may only look at tokens before it — the future is blanked out before softmax',
-      flowNote:
-        'scores → softmax → weights → weighted sum of value vectors: that sum is what moves between positions',
-      interpretation:
-        'high score = the row token finds the column token relevant; softmax then turns each row into attention weights',
+        'causal mask: the future is blanked out before softmax, every row',
       honesty:
-        'toy sizes: 6 tokens with d = 3 instead of thousands — but every score is a real dot product computed on this page.',
+        'illustrative scores, not the model’s real attention — but the scaling, masking and softmax are the real operations, computed on this page.',
     },
   },
   uk: {
     plain: {
-      aria: 'Матричне множення: вектор-рядок x, помножений на матрицю ваг W, дає вихідний вектор y; підсвічені рядок x і стовпець W дають підсвічену комірку y; нижче ReLU затискає від’ємну комірку y в нуль',
-      hint: 'торкніться будь-якої комірки y, щоб побачити, звідки береться її значення',
-      aLabel: 'x (1×4)',
-      bLabel: 'W (4×3)',
-      cLabel: 'y (1×3)',
-      reluLabel: 'ReLU(y) (1×3)',
-      reluNote:
-        'нелінійність: від’ємне = патерн спростовано → затиснуто в 0 — відфільтровано',
+      aria: 'Проєкція Q/K/V як матричне множення: сім вкладень токенів (7×768), помножені на матрицю ваг (768×2304) плюс зсув, дають сім векторів запит/ключ/значення (7×2304), згруповані в три кольорові смуги, Q, K і V; нижче GELU показує, що нелінійність зробила б з одним із цих рядків',
+      hint: 'наведіть курсор або сфокусуйтеся на вихідній комірці, щоб побачити її стовпець — один вивчений детектор, застосований однаково до кожного токена',
+      inputLabel: 'вкладення (7, 768)',
+      weightLabel: 'ваги Q·K·V (768, 2304)',
+      biasLabel: 'зсув (2304)',
+      outputLabel: 'Q·K·V (7, 2304)',
+      groupLabels: ['Q', 'K', 'V'],
+      gelu: {
+        label: 'GELU(Q·K·V) — рядок ␣Tower',
+        note: 'нелінійність: малі або від’ємні значення затискаються до нуля, великі додатні проходять майже без змін',
+      },
       legend: [
-        'x — вектор одного токена (1×d)',
-        'W — ваги (d×n): кожен стовпець — один вивчений детектор',
-        'y — наскільки сильно спрацював кожен детектор',
+        'кожен стовпець матриці ваг — один детектор, спільний для всіх токенів',
+        'лише кольорова інтенсивність — без чисел: темніше означає, що детектор спрацював сильніше',
+        'сама проєкція Q/K/V не має нелінійності; GELU показано тут, бо саме її ця модель насправді використовує — в MLP',
       ],
-      interpretation:
-        'додатне = патерн присутній; від’ємне = свідчення проти нього',
       honesty:
-        'іграшкові розміри: d = 4 і n = 3 замість тисяч — але арифметика справжня й обчислюється на цій сторінці.',
+        'іграшковий вигляд: показано 8 із 768 вхідних вимірів і 6 із 768 вимірів на кожну групу Q/K/V — але кожна комірка є справжнім скалярним добутком, обчисленим на цій сторінці.',
     },
     attention: {
-      aria: 'Оцінки уваги як матричне множення: запити Q, помножені на транспоновані ключі Kᵀ, дають матрицю оцінок 6 на 6; строго верхній трикутник замасковано, бо токен не може дивитися на майбутні токени',
-      hint: 'торкніться будь-якої незамаскованої комірки оцінки, щоб побачити її скалярний добуток',
-      aLabel: 'Q (6×3)',
-      bLabel: 'Kᵀ (3×6)',
-      cLabel: 'оцінки = Q·Kᵀ (6×6)',
-      scoreWord: 'оцінка',
+      aria: 'Оцінки уваги для наших семи токенів як три сітки 7×7: скалярний добуток, потім масштабування з каузальною маскою, потім softmax; лише кольорова інтенсивність, замасковані комірки залишені порожніми',
+      dotLabel: 'скалярний добуток',
+      scaleLabel: 'масштаб · маска',
+      softmaxLabel: 'softmax',
+      scale: '÷√64',
       legend: [
-        'Q — кожен рядок: що цей токен шукає',
-        'Kᵀ — кожен стовпець: що той токен пропонує',
-        'оцінка — наскільки один токен доречний для іншого',
+        'рядок — токен, що ставить запитання, стовпець — токен, на який дивляться',
+        'токен може дивитися лише на себе і попередні токени — каузальна маска залишає пізніші стовпці порожніми',
+        'softmax перетворює кожен рядок на ваги, що в сумі дають 1',
       ],
       maskLegend:
-        'каузальна маска: токен може дивитися лише на токени перед собою — майбутнє затирається перед softmax',
-      flowNote:
-        'оцінки → softmax → ваги → зважена сума векторів значень: саме ця сума рухається між позиціями',
-      interpretation:
-        'висока оцінка = токен-рядок вважає токен-стовпець доречним; softmax потім перетворює кожен рядок на ваги уваги',
+        'каузальна маска: майбутнє затирається перед softmax, у кожному рядку',
       honesty:
-        'іграшкові розміри: 6 токенів із d = 3 замість тисяч — але кожна оцінка є справжнім скалярним добутком, обчисленим на цій сторінці.',
+        'ілюстративні оцінки, не справжня увага моделі — але масштабування, маскування і softmax є справжніми операціями, обчисленими на цій сторінці.',
     },
   },
 } as const;

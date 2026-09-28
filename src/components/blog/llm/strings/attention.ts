@@ -1,35 +1,81 @@
 export const attentionStrings = {
   en: {
-    instruction:
-      'Hover or tap it, tired, street, or was. Earlier tokens light up in proportion to hardcoded illustrative attention weights.',
-    readoutPlaceholder: 'Hover a dashed token to see its attention weights.',
-    attendsMost: 'attends most to (top 3):',
+    headsLabel: 'Attention head:',
+    headsGroupAria: 'choose an illustrative attention head',
+    tokensLabel: 'Hover or focus a query token:',
+    gridAria:
+      'seven by seven grid of attention weights; rows are the querying token, columns are the tokens it can attend to; cells above the diagonal are hollow because a token cannot look ahead',
+    readoutPlaceholder:
+      'Hover or focus a token above to see its attention weights.',
+    attendsMost: 'attends most to (top 3 earlier tokens):',
     weightWord: 'weight',
-    uniformNote:
-      'attends almost uniformly to everything before it (0.125 each) — a filler word has nothing specific to look up.',
+    selfOnlyNote:
+      'is the first token, so it can only attend to itself (weight 1.0).',
+    scaleNote:
+      'GPT-2 small has 12 heads of 64 dimensions each, in every one of its 12 layers; we show 3 illustrative ones here.',
+    heads: {
+      nameBuilder: {
+        label: 'name builder',
+        description:
+          "'el' looks back at '␣E' and 'iff' and reassembles the three pieces into the name 'Eiffel'.",
+      },
+      locate: {
+        label: 'what are we locating',
+        description:
+          "'␣in' looks back at '␣Tower' — carrying forward, to the last position, the location the MLP already recalled there.",
+      },
+      previousToken: {
+        label: 'previous token',
+        description:
+          'each token attends mostly to the one right before it — simple positional bookkeeping.',
+      },
+    },
     guess: {
-      question: "Which single word settles what 'it' refers to?",
-      options: ['animal', 'street', 'tired', 'because'],
+      question:
+        "In the 'what are we locating' head, which earlier token does '␣in' attend to most?",
+      options: ['The', 'el', '␣Tower', '␣is'],
       correctIndex: 2,
       payoff:
-        "'tired' — streets don't get tired; hover 'it' below and watch attention concentrate on 'animal' because of that one word.",
+        "'␣Tower' — this head carries the ‘Paris’ direction the MLP wrote there all the way to the last position, where the output layer reads it off.",
     },
   },
   uk: {
-    instruction:
-      'Наведіть курсор або торкніться it, tired, street чи was. Попередні токени підсвічуються пропорційно до захардкоджених ілюстративних ваг уваги.',
+    headsLabel: 'Голова уваги:',
+    headsGroupAria: 'виберіть ілюстративну голову уваги',
+    tokensLabel: 'Наведіть курсор або сфокусуйте токен-запит:',
+    gridAria:
+      'сітка ваг уваги 7 на 7; рядки — токен-запит, стовпці — токени, на які він може зважати; комірки вище діагоналі порожні, бо токен не може дивитися вперед',
     readoutPlaceholder:
-      'Наведіть на пунктирний токен, щоб побачити його ваги уваги.',
-    attendsMost: 'найбільше зважає на (топ-3):',
+      'Наведіть курсор або сфокусуйте токен вище, щоб побачити його ваги уваги.',
+    attendsMost: 'найбільше зважає на (топ-3 попередніх токени):',
     weightWord: 'вага',
-    uniformNote:
-      'зважає майже рівномірно на все попереднє (по 0.125) — службове слово не має чого конкретного шукати.',
+    selfOnlyNote: 'перший токен, тож може зважати лише на себе (вага 1.0).',
+    scaleNote:
+      'GPT-2 small має 12 голів по 64 виміри в кожному зі своїх 12 шарів; тут показано 3 ілюстративні.',
+    heads: {
+      nameBuilder: {
+        label: 'будівник імені',
+        description:
+          '«el» озирається на «␣E» і «iff» та збирає три частини назад у ім’я «Eiffel».',
+      },
+      locate: {
+        label: 'що ми шукаємо',
+        description:
+          '«␣in» озирається на «␣Tower» — переносячи на останню позицію те місце, яке MLP вже пригадав там.',
+      },
+      previousToken: {
+        label: 'попередній токен',
+        description:
+          'кожен токен зважає переважно на той, що прямо перед ним — проста позиційна бухгалтерія.',
+      },
+    },
     guess: {
-      question: 'Яке одне слово вирішує, на що вказує «it»?',
-      options: ['animal', 'street', 'tired', 'because'],
+      question:
+        'У голові «що ми шукаємо» на який попередній токен найбільше зважає «␣in»?',
+      options: ['The', 'el', '␣Tower', '␣is'],
       correctIndex: 2,
       payoff:
-        '«tired» — вулиці не втомлюються; наведіть на «it» нижче й подивіться, як увага концентрується на «animal» через це одне слово.',
+        '«␣Tower» — ця голова переносить напрямок «Paris», записаний там MLP, аж до останньої позиції, звідки його зчитує вихідний шар.',
     },
   },
 } as const;

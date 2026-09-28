@@ -1,38 +1,26 @@
-export const EXAMPLE_QUERY = 'Why is the sky blue?';
+export const EXAMPLE_QUERY = 'The Eiffel Tower is in';
 
 export const EXAMPLE_TOKENS = [
-  'Why',
+  'The',
+  ' E',
+  'iff',
+  'el',
+  ' Tower',
   ' is',
-  ' the',
-  ' sky',
-  ' blue',
-  '?',
+  ' in',
 ] as const;
 
-export const EXAMPLE_TOKEN_IDS = [3923, 374, 279, 13180, 6437, 30] as const;
+export const EXAMPLE_TOKEN_IDS = [464, 412, 733, 417, 8765, 318, 287] as const;
 
 export const NEXT_TOKEN_CANDIDATES = [
-  { token: 'Because', logit: 5.8 },
-  { token: 'The', logit: 5.1 },
-  { token: 'Sunlight', logit: 4.6 },
-  { token: 'It', logit: 3.9 },
-  { token: 'Short', logit: 3.2 },
-  { token: 'Blue', logit: 2.4 },
-  { token: 'Sky', logit: 1.7 },
-  { token: 'Photons', logit: 1.1 },
+  { token: ' Paris', logit: 8.1 },
+  { token: ' France', logit: 5.6 },
+  { token: ' the', logit: 5.2 },
+  { token: ' Las', logit: 4.3 },
+  { token: ' central', logit: 3.7 },
+  { token: ' a', logit: 3.4 },
+  { token: ' Europe', logit: 2.6 },
+  { token: ' London', logit: 1.9 },
 ] as const;
 
-export const EXAMPLE_ANSWER_TOKENS = [
-  'Because',
-  ' sunlight',
-  ' scatters',
-  ' off',
-  ' air',
-  ' molecules',
-  ',',
-  ' and',
-  ' blue',
-  ' scatters',
-  ' most',
-  '.',
-] as const;
+export const EXAMPLE_ANSWER_TOKENS = [' Paris', ',', ' France', '.'] as const;

@@ -6,42 +6,116 @@ import {
   PRIMARY_BUTTON_CLASSES,
   RESET_BUTTON_CLASSES,
 } from '@/components/blog/llm/buttons';
-import { Chip, ChipStream } from '@/components/blog/llm/Chip';
+import { ChipStream, TokenChip } from '@/components/blog/llm/Chip';
 import {
   EXAMPLE_TOKENS,
   NEXT_TOKEN_CANDIDATES,
 } from '@/components/blog/llm/example';
+import { visibleSpaces } from '@/components/blog/llm/format';
 import { softmax } from '@/components/blog/llm/math';
 import { ProbabilityBar } from '@/components/blog/llm/ProbabilityBar';
 import { temperatureStrings } from '@/components/blog/llm/strings/temperature';
 
 import type { Lang } from '@/i18n';
 
-const CANDIDATES: ReadonlyArray<readonly [string, number]> =
-  NEXT_TOKEN_CANDIDATES.map((c) => [c.token, c.logit] as const);
-
 const PROMPT: readonly string[] = EXAMPLE_TOKENS;
 
-const BAR_COLUMNS = '8rem 1fr 3.4rem';
+const SLIDER_CLASSES =
+  'flex-1 min-w-0 accent-violet-700 dark:accent-violet-400 focus-visible:outline-2 focus-visible:outline-violet-700 dark:focus-visible:outline-violet-400 focus-visible:outline-offset-2';
+
+const OUTER_COLUMNS_CLASS = 'sm:grid-cols-[15rem_minmax(0,1fr)_3.4rem]';
+const LABEL_COLUMNS_CLASS =
+  'grid-cols-[4.6rem_2.1rem_2.6rem] sm:grid-cols-[4.6rem_2.1rem_4.5rem_2.6rem]';
+
+export type CutReason = 'top-k' | 'top-p' | null;
+
+export type CandidateDistributionRow = {
+  token: string;
+  logit: number;
+  scaledLogit: number;
+  cutReason: CutReason;
+  probability: number;
+};
+
+function scaleLogits(logits: readonly number[], temperature: number): number[] {
+  return logits.map((logit) => logit / temperature);
+}
+
+function topKKeep(logits: readonly number[], k: number): boolean[] {
+  const ranked = logits
+    .map((logit, index) => ({ logit, index }))
+    .sort((a, b) => b.logit - a.logit);
+  const kept = new Set(ranked.slice(0, Math.max(1, k)).map((r) => r.index));
+  return logits.map((_, index) => kept.has(index));
+}
+
+function topPKeep(probs: readonly number[], p: number): boolean[] {
+  const ranked = probs
+    .map((prob, index) => ({ prob, index }))
+    .sort((a, b) => b.prob - a.prob);
+  const kept = new Set<number>();
+  let cumulative = 0;
+  for (const { prob, index } of ranked) {
+    kept.add(index);
+    cumulative += prob;
+    if (cumulative >= p) break;
+  }
+  return probs.map((_, index) => kept.has(index));
+}
+
+function maskLogits(
+  logits: readonly number[],
+  keep: readonly boolean[],
+): number[] {
+  return logits.map((logit, index) => (keep[index] ? logit : -Infinity));
+}
+
+export function candidateDistribution(
+  candidates: readonly { token: string; logit: number }[],
+  {
+    temperature,
+    topK,
+    topP,
+  }: { temperature: number; topK: number; topP: number },
+): CandidateDistributionRow[] {
+  const logits = candidates.map((c) => c.logit);
+  const scaled = scaleLogits(logits, temperature);
+  const fullProbs = softmax(scaled, 1);
+  const keepK = topKKeep(logits, topK);
+  const keepP = topPKeep(fullProbs, topP);
+  const keep = keepK.map((k, idx) => k && keepP[idx]!);
+  const finalProbs = softmax(maskLogits(scaled, keep), 1);
+
+  return candidates.map((c, idx) => ({
+    token: c.token,
+    logit: c.logit,
+    scaledLogit: scaled[idx]!,
+    cutReason: !keepK[idx] ? 'top-k' : !keepP[idx] ? 'top-p' : null,
+    probability: finalProbs[idx]!,
+  }));
+}
 
 export default function TemperatureDemo({ lang }: { lang: Lang }) {
   const strings = temperatureStrings[lang];
   const [temperature, setTemperature] = useState(1);
+  const [topK, setTopK] = useState<number>(NEXT_TOKEN_CANDIDATES.length);
+  const [topP, setTopP] = useState(1);
   const [sampled, setSampled] = useState<string[]>([]);
 
-  const probs = softmax(
-    CANDIDATES.map((c) => c[1]),
+  const distribution = candidateDistribution(NEXT_TOKEN_CANDIDATES, {
     temperature,
-  );
+    topK,
+    topP,
+  });
 
   function handleSample() {
     const r = Math.random();
     let acc = 0;
-    let chosen = CANDIDATES[CANDIDATES.length - 1]![0];
-    for (let idx = 0; idx < probs.length; idx++) {
-      acc += probs[idx]!;
+    let chosen = distribution[distribution.length - 1]!.token;
+    for (const row of distribution) {
+      acc += row.probability;
       if (r <= acc) {
-        chosen = CANDIDATES[idx]![0];
+        chosen = row.token;
         break;
       }
     }
@@ -59,14 +133,10 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
       </span>
       <ChipStream ariaLabel={strings.promptStreamAria} live>
         {PROMPT.map((t, idx) => (
-          <Chip key={`prompt-${idx}`} variant='tok'>
-            {t}
-          </Chip>
+          <TokenChip key={`prompt-${idx}`} token={t} />
         ))}
         {sampled.map((t, idx) => (
-          <Chip key={`sampled-${idx}`} variant='tok'>
-            {t}
-          </Chip>
+          <TokenChip key={`sampled-${idx}`} token={t} />
         ))}
       </ChipStream>
       {sampled.length > 0 ? (
@@ -75,33 +145,122 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
         </div>
       ) : null}
 
-      <div className='flex flex-wrap items-center gap-3 my-3 font-mono text-sm'>
-        <label htmlFor='temperature-demo-slider'>{strings.tempLabel}</label>
+      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 my-3'>
+        {strings.projectionNote}
+      </div>
+
+      <div className='flex items-center gap-3 my-3 font-mono text-sm'>
+        <label htmlFor='temperature-demo-temp' className='w-24 shrink-0'>
+          {strings.tempLabel}
+        </label>
         <input
-          id='temperature-demo-slider'
+          id='temperature-demo-temp'
           type='range'
           min={0.05}
           max={2}
           step={0.01}
           value={temperature}
           onChange={(event) => setTemperature(parseFloat(event.target.value))}
-          className='flex-1 accent-cyan-700 dark:accent-cyan-400 focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2'
+          className={SLIDER_CLASSES}
         />
-        <span className='font-mono tabular-nums'>{temperature.toFixed(2)}</span>
+        <span className='font-mono tabular-nums w-10 text-right'>
+          {temperature.toFixed(2)}
+        </span>
       </div>
 
-      <div className='my-4'>
-        {CANDIDATES.map((c, idx) => {
-          const pct = probs[idx]! * 100;
+      <div className='flex items-center gap-3 my-3 font-mono text-sm'>
+        <label htmlFor='temperature-demo-topk' className='w-24 shrink-0'>
+          {strings.topKLabel}
+        </label>
+        <input
+          id='temperature-demo-topk'
+          type='range'
+          min={1}
+          max={NEXT_TOKEN_CANDIDATES.length}
+          step={1}
+          value={topK}
+          onChange={(event) => setTopK(parseInt(event.target.value, 10))}
+          className={SLIDER_CLASSES}
+        />
+        <span className='font-mono tabular-nums w-10 text-right'>{topK}</span>
+      </div>
+      {topK === 1 ? (
+        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 -mt-2 mb-2'>
+          {strings.greedyNote}
+        </div>
+      ) : null}
+
+      <div className='flex items-center gap-3 my-3 font-mono text-sm'>
+        <label htmlFor='temperature-demo-topp' className='w-24 shrink-0'>
+          {strings.topPLabel}
+        </label>
+        <input
+          id='temperature-demo-topp'
+          type='range'
+          min={0}
+          max={1}
+          step={0.01}
+          value={topP}
+          onChange={(event) => setTopP(parseFloat(event.target.value))}
+          className={SLIDER_CLASSES}
+        />
+        <span className='font-mono tabular-nums w-10 text-right'>
+          {topP.toFixed(2)}
+        </span>
+      </div>
+
+      <div
+        className={`sm:grid sm:items-center sm:gap-2 ${OUTER_COLUMNS_CLASS} font-mono text-xs text-slate-500 dark:text-slate-400 mt-4 mb-1`}
+      >
+        <span className={`grid ${LABEL_COLUMNS_CLASS} gap-1`}>
+          <span>{strings.columns.token}</span>
+          <span className='text-right'>{strings.columns.logit}</span>
+          <span className='hidden sm:block text-right'>
+            {strings.columns.scaled}
+          </span>
+          <span>{strings.columns.cut}</span>
+        </span>
+        <span className='hidden sm:block'>{strings.columns.softmax}</span>
+        <span className='hidden sm:block' />
+      </div>
+
+      <div>
+        {distribution.map((row) => {
+          const alive = row.cutReason === null;
+          const reason =
+            row.cutReason === 'top-k'
+              ? strings.cutTopK
+              : row.cutReason === 'top-p'
+                ? strings.cutTopP
+                : strings.kept;
+          const pct = row.probability * 100;
           return (
-            <ProbabilityBar
-              key={c[0]}
-              title={`${c[0].trim()}: ${pct.toFixed(3)}%`}
-              columns={BAR_COLUMNS}
-              label={<span className='font-mono text-sm'>{c[0]}</span>}
-              percent={pct}
-              valueText={`${pct.toFixed(1)}%`}
-            />
+            <div key={row.token} className={alive ? '' : 'opacity-40'}>
+              <ProbabilityBar
+                title={`${row.token.trim()}: ${pct.toFixed(3)}%`}
+                columnsClassName={OUTER_COLUMNS_CLASS}
+                label={
+                  <span
+                    className={`grid ${LABEL_COLUMNS_CLASS} gap-1 items-center font-mono text-sm`}
+                  >
+                    <span className={alive ? '' : 'line-through'}>
+                      {visibleSpaces(row.token)}
+                    </span>
+                    <span className='text-right tabular-nums text-xs'>
+                      {row.logit.toFixed(1)}
+                    </span>
+                    <span className='hidden sm:block text-right tabular-nums text-xs'>
+                      {row.scaledLogit.toFixed(1)}
+                    </span>
+                    <span className='text-[0.7rem] text-slate-500 dark:text-slate-400'>
+                      {reason}
+                    </span>
+                  </span>
+                }
+                percent={pct}
+                valueText={`${pct.toFixed(1)}%`}
+              />
+            </div>
           );
         })}
       </div>
@@ -110,14 +269,14 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
         <button
           type='button'
           onClick={handleSample}
-          className={PRIMARY_BUTTON_CLASSES.cyan}
+          className={PRIMARY_BUTTON_CLASSES.violet}
         >
           {strings.sampleBtn}
         </button>
         <button
           type='button'
           onClick={handleReset}
-          className={RESET_BUTTON_CLASSES.cyan}
+          className={RESET_BUTTON_CLASSES.violet}
         >
           {strings.resetBtn}
         </button>
@@ -129,6 +288,9 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
         <span className='align-sub text-[0.7em]'>i</span> / T) / Σ exp(l
         <span className='align-sub text-[0.7em]'>j</span> / T) —{' '}
         {strings.formulaNote}
+      </div>
+      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 mt-1'>
+        {strings.cuttingNote}
       </div>
     </div>
   );
