@@ -1,5 +1,5 @@
 import { FaLinkedin } from 'react-icons/fa';
-import { SiGithub, SiRss } from 'react-icons/si';
+import { SiGithub, SiMastodon, SiRss } from 'react-icons/si';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
 
@@ -19,19 +19,26 @@ export default function Footer({ lang }: { lang: Lang }) {
             href={config.LINKED_IN}
             aria-label={common[lang].linkedinProfile}
           >
-            <FaLinkedin />
+            <FaLinkedin aria-hidden focusable='false' />
           </UnstyledLink>
           <UnstyledLink
             href={config.GIT_HUB}
             aria-label={common[lang].githubProfile}
           >
-            <SiGithub />
+            <SiGithub aria-hidden focusable='false' />
+          </UnstyledLink>
+          <UnstyledLink
+            href={config.MASTODON}
+            rel='me noopener noreferrer'
+            aria-label={common[lang].mastodonProfile}
+          >
+            <SiMastodon aria-hidden focusable='false' />
           </UnstyledLink>
           <UnstyledLink
             href={`/${lang}/feed.xml`}
             aria-label={common[lang].rssFeed}
           >
-            <SiRss />
+            <SiRss aria-hidden focusable='false' />
           </UnstyledLink>
         </div>
       </div>

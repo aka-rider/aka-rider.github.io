@@ -16,7 +16,7 @@ export default function NotFound({ lang }: { lang: Lang }) {
         <TypingText text={'404 - ' + common[lang].notFound} />
       </h1>
       <nav>
-        <UnstyledLink className='btn' href={`/${lang}`}>
+        <UnstyledLink className='btn' href={`/${lang}/`}>
           {common[lang].returnHome}
         </UnstyledLink>
       </nav>

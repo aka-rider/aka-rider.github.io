@@ -11,7 +11,7 @@ export default function TLDR({
   if (!children && !title) {
     return (
       <div className='my-6 font-bold flex items-center gap-2'>
-        <ImForward3 className='shrink-0' />
+        <ImForward3 className='shrink-0' aria-hidden focusable='false' />
         <span>TL;DR</span>
       </div>
     );
@@ -19,17 +19,17 @@ export default function TLDR({
 
   if (!children) {
     return (
-      <h3 className='flex items-center gap-2'>
-        <ImForward3 className='shrink-0' />
+      <p className='my-6 font-bold flex items-center gap-2'>
+        <ImForward3 className='shrink-0' aria-hidden focusable='false' />
         <span>TL;DR — {title}</span>
-      </h3>
+      </p>
     );
   }
 
   return (
     <div className='my-6 rounded-xl border border-rule bg-code-bg p-6'>
       <div className='mb-4 flex items-center gap-2 font-bold text-lg'>
-        <ImForward3 className='shrink-0' />
+        <ImForward3 className='shrink-0' aria-hidden focusable='false' />
         <span>TL;DR{title ? ` — ${title}` : ''}</span>
       </div>
       <div className='[&>*:first-child]:mt-0 [&>*:last-child]:mb-0'>

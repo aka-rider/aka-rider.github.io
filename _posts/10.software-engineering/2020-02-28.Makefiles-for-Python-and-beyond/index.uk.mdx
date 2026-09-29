@@ -103,9 +103,9 @@ httpd.serve_forever()
 
 ```bash
 Traceback (most recent call last):
- File “./app.py”, line 3, in <module>
+ File "./app.py", line 3, in <module>
  import requests
- ModuleNotFoundError: No module named ‘requests’
+ ModuleNotFoundError: No module named 'requests'
 ```
 
 Зрозуміло, що простий `python3 app.py` не спрацює.
@@ -168,7 +168,7 @@ venv/bin/activate: requirements.txt
 
 ```bash
 $ make
-make: `venv/bin/activate’ is up to date.
+make: `venv/bin/activate' is up to date.
 ```
 
 Якщо ми відредагуємо `requirements.txt` — додамо або видалимо залежності, make автомагічно перезбере віртуальне середовище для нас:
@@ -208,7 +208,7 @@ run: venv/bin/activate
 ```make
 clean:
     rm -rf venv
-    find . -type f -name ‘*.pyc’ -delete
+    find . -type f -name '*.pyc' -delete
 ```
 
 Не забудьте, що ціль `clean` також не створює файл:

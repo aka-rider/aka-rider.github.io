@@ -19,8 +19,8 @@ export const rehypePlugins = [
     rehypePrettyCode,
     {
       theme: {
-        dark: 'vitesse-dark',
-        light: 'vitesse-light',
+        dark: 'github-dark-high-contrast',
+        light: 'github-light-high-contrast',
       },
       keepBackground: false,
     },

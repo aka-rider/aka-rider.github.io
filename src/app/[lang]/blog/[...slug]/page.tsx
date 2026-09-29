@@ -1,18 +1,23 @@
 import { Metadata } from 'next';
-import Link from 'next/link';
 import { notFound } from 'next/navigation';
 
 import { Blog } from '@/lib/blog/Blog';
+import { contentLangOf } from '@/lib/blog/summary';
 import { BlogNode } from '@/lib/blog/types';
+import { getLocalImageDimensions } from '@/lib/images';
+import { buildMetadata, PERSON_ID } from '@/lib/metadata';
 
 import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
 import BlogPost from '@/components/blog/BlogPost';
 import Breadcrumbs, { Crumb } from '@/components/blog/Breadcrumbs';
 import Giscus from '@/components/blog/Giscus';
 import PostNavigation from '@/components/blog/PostNavigation';
+import JsonLd from '@/components/JsonLd';
+import Main from '@/components/layout/Main';
 import Nav from '@/components/layout/Nav';
+import UnstyledLink from '@/components/links/UnstyledLink';
 
-import { Lang } from '@/i18n';
+import { common, Lang, Languages } from '@/i18n';
 
 import config from '/config';
 
@@ -26,6 +31,22 @@ function buildTrail(lang: Lang, node: BlogNode): Crumb[] {
     trail.unshift({ href: Blog.getLink(lang, n), title: n.title });
   }
   return trail;
+}
+
+function hasGenuineTranslation(node: BlogNode, lang: Lang): boolean {
+  return node.type === 'Post' && contentLangOf(node.filePath) === lang;
+}
+
+function postLanguagePaths(slug: string[]): Partial<Record<Lang, string>> {
+  const blog = new Blog();
+  const languagePaths: Partial<Record<Lang, string>> = {};
+  for (const otherLang of Languages.keys()) {
+    const otherNode = blog.getBySlug(otherLang, slug);
+    if (otherNode && hasGenuineTranslation(otherNode, otherLang)) {
+      languagePaths[otherLang] = `/${otherLang}/blog/${slug.join('/')}`;
+    }
+  }
+  return languagePaths;
 }
 
 export default async function BlogPage({
@@ -47,18 +68,40 @@ export default async function BlogPage({
         <>
           <meta httpEquiv='refresh' content={`0;url=${target}`} />
           <p>
-            <Link href={target}>{node.title}</Link>
+            <UnstyledLink href={target}>{node.title}</UnstyledLink>
           </p>
         </>
       );
     }
-    case 'Post':
+    case 'Post': {
+      const pageUrl = `${config.SITE_URL}/${lang}/blog/${slug.join('/')}/`;
+      const contentLang = contentLangOf(node.filePath) ?? lang;
       return (
         <>
+          <JsonLd
+            data={{
+              '@context': 'https://schema.org',
+              '@type': 'Article',
+              headline: node.title,
+              description: node.excerpt,
+              image: node.image,
+              inLanguage: contentLang,
+              ...(node.date ? { datePublished: node.date.toISOString() } : {}),
+              author: {
+                '@type': 'Person',
+                '@id': PERSON_ID,
+                name: common[lang].authorName,
+              },
+              mainEntityOfPage: {
+                '@type': 'WebPage',
+                '@id': pageUrl,
+              },
+            }}
+          />
           <Nav lang={lang}>
             <Breadcrumbs trail={buildTrail(lang, node)} current={node.title} />
           </Nav>
-          <main id='main-content' className='wrap'>
+          <Main className='wrap'>
             <BlogPost post={node} lang={lang} />
             <PostNavigation post={node} lang={lang} />
             <div className='post'>
@@ -75,18 +118,19 @@ export default async function BlogPage({
                 lang={lang}
               />
             </div>
-          </main>
+          </Main>
         </>
       );
+    }
     case 'LoadFailure':
       return (
         <>
           <Nav lang={lang}>
             <Breadcrumbs trail={buildTrail(lang, node)} current={node.title} />
           </Nav>
-          <main id='main-content' className='wrap'>
+          <Main className='wrap'>
             <BlogLoadFailure node={node} lang={lang} />
-          </main>
+          </Main>
         </>
       );
   }
@@ -106,33 +150,33 @@ export async function generateMetadata({
   const node = findNode(lang, slug);
 
   if (!node || node.type !== 'Post') {
-    return {
+    return buildMetadata({
+      lang,
+      path: `/${lang}/blog/${slug.join('/')}`,
       title: node?.title,
-    };
+    });
   }
 
-  const url = `/${lang}/blog/${slug.join('/')}`;
+  const dimensions = await getLocalImageDimensions(node.image);
+  const contentLang = contentLangOf(node.filePath);
+  const isFallback = contentLang !== null && contentLang !== lang;
 
-  return {
+  return buildMetadata({
+    lang,
+    path: `/${lang}/blog/${slug.join('/')}`,
+    canonicalPath: isFallback
+      ? `/${contentLang}/blog/${slug.join('/')}`
+      : undefined,
+    locale: contentLang ?? lang,
     title: node.title,
     description: node.excerpt,
-    openGraph: {
-      title: node.title,
-      description: node.excerpt,
-      url,
-      type: 'article',
-      publishedTime: node.date?.toISOString(),
-      images: [
-        {
-          url: node.image,
-        },
-      ],
+    type: 'article',
+    publishedTime: node.date?.toISOString(),
+    languagePaths: postLanguagePaths(slug),
+    image: {
+      url: node.image,
+      alt: node.title,
+      ...dimensions,
     },
-    twitter: {
-      card: 'summary_large_image',
-      title: node.title,
-      description: node.excerpt,
-      images: [node.image],
-    },
-  };
+  });
 }

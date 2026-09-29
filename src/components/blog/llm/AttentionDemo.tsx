@@ -10,6 +10,7 @@ import {
 import { EXAMPLE_TOKENS } from '@/components/blog/llm/example';
 import { visibleSpaces } from '@/components/blog/llm/format';
 import GuessGate from '@/components/blog/llm/GuessGate';
+import { PANEL_CLASSES } from '@/components/blog/llm/panel';
 import { attentionStrings } from '@/components/blog/llm/strings/attention';
 
 import type { Lang } from '@/i18n';
@@ -80,7 +81,7 @@ const GRID_WIDTH = LABEL_W + GRID_SIZE * CELL;
 const GRID_HEIGHT = LABEL_H + GRID_SIZE * CELL;
 
 const HEAD_BUTTON_CLASSES =
-  'font-mono text-sm rounded border px-3 py-1.5 border-cyan-700/60 dark:border-cyan-400/60 bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-400 focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2 transition-opacity motion-reduce:transition-none';
+  'font-mono text-sm rounded border px-3 py-1.5 border-cyan-700/60 dark:border-cyan-400/60 text-cyan-700 dark:text-cyan-400 focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2 transition-opacity motion-reduce:transition-none';
 
 const DEFAULT_ACTIVE_ROW: Record<AttentionHeadId, number> = {
   nameBuilder: 3,
@@ -97,7 +98,7 @@ const TOKEN_HOVERABLE_CLASSES = chipClasses(
 );
 
 const LABEL_CLASSES =
-  'block font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
+  'block font-mono text-xs uppercase tracking-wider text-muted mb-1';
 
 type AttentionStrings = (typeof attentionStrings)[Lang];
 
@@ -126,7 +127,7 @@ export default function AttentionDemo({ lang }: { lang: Lang }) {
   }
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+    <div className={PANEL_CLASSES}>
       <GuessGate lang={lang} guess={strings.guess}>
         <span className={LABEL_CLASSES}>{strings.headsLabel}</span>
         <div
@@ -199,7 +200,7 @@ export default function AttentionDemo({ lang }: { lang: Lang }) {
           )}
         </div>
 
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 mt-3 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5'>
+        <div className='font-mono text-xs text-muted mt-3 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5'>
           {strings.scaleNote}
         </div>
       </GuessGate>

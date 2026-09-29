@@ -16,11 +16,11 @@ Mostly static site, React, Next.js App Router, markdown blog with multiple langu
 
 **Readily available**: react-intl or i18next.
 
-#### Problem #1 
+### Problem #1 
 
 `output: "export"` means no middleware, no cookies, no runtime detection — we rely on the filesystem.
 
-#### Problem #2 (the showstopper)
+### Problem #2 (the showstopper)
 
 What you’re “supposed” to do is to create and maintain:
 
@@ -31,12 +31,12 @@ messages-fr.json
 ....
 ```
 
-#### That means
+### That means
 
 - I need to repeat the website structure in each of these files
 - Every time I need to add, tweak, or move a button, I need to modify all `messages-${lang}.json` files simultaneously
 
-#### Pragmatically
+### Pragmatically
 
 - I'm not too crazy about rendering "X user(s) (is/are) on the page"
 - I don’t outsource translations; I don’t need detachable files
@@ -225,7 +225,7 @@ Should I require this functionality at some point, I could easily generate the c
 
 ---
 
-<small className="text-xs text-gray-500" >
+<small className="text-xs text-muted" >
 Yours `-> 👍 <-` motivates to write
 
 Photo by [sunday Choi](https://unsplash.com/@gosunday85) on [Unsplash](https://unsplash.com/photos/danke-thanks-grazie-merci-RpXMySRW0AE)

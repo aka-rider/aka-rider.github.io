@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from 'next/server';
 
 import { Blog } from '@/lib/blog/Blog';
 import { BlogNode, Post } from '@/lib/blog/types';
+import { mdxToFeedHtml } from '@/lib/feed-html';
 
 import { common, Languages } from '@/i18n';
 
@@ -74,7 +75,7 @@ export async function GET(
       id: url,
       link: url,
       description: post.excerpt,
-      content: post.content,
+      content: mdxToFeedHtml(post.content, post.filePath, lang),
       author: [
         {
           name: common[lang].title,
@@ -86,7 +87,14 @@ export async function GET(
     });
   });
 
-  return new NextResponse(feed.atom1(), {
+  const atom = feed
+    .atom1()
+    .replace(
+      '<feed xmlns="http://www.w3.org/2005/Atom">',
+      `<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="${lang}">`,
+    );
+
+  return new NextResponse(atom, {
     headers: {
       'Content-Type': 'application/atom+xml; charset=utf-8',
     },

@@ -1,6 +1,5 @@
 'use client';
 
-import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -23,7 +22,7 @@ export default function LangSwitcher({ lang }: { lang: Lang }) {
   return (
     <div className='seg'>
       {Languages.map((code, info) => (
-        <Link
+        <a
           key={code}
           href={`/${code}/${rest}${query}`}
           hrefLang={code}
@@ -32,7 +31,7 @@ export default function LangSwitcher({ lang }: { lang: Lang }) {
           className={code === lang ? 'on' : undefined}
         >
           {code.toUpperCase()}
-        </Link>
+        </a>
       ))}
     </div>
   );

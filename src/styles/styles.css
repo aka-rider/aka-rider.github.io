@@ -3,6 +3,116 @@
 
 @variant dark (.dark &);
 
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-next-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: normal;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-next-latin-ext.woff2') format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-next-latin-italic.woff2')
+    format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next';
+  font-style: italic;
+  font-weight: 200 800;
+  font-display: swap;
+  src: url('/fonts/atkinson-hyperlegible-next-latin-ext-italic.woff2')
+    format('woff2');
+  unicode-range:
+    U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304,
+    U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB,
+    U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible Next Fallback';
+  src: local('Arial');
+  ascent-override: 98.8%;
+  descent-override: 31.73%;
+  line-gap-override: 0%;
+  size-adjust: 99.6%;
+}
+
+@font-face {
+  font-family: 'Wix Madefor Text';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/wix-madefor-text-latin.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Wix Madefor Text';
+  font-style: normal;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/wix-madefor-text-cyrillic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Wix Madefor Text';
+  font-style: italic;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/wix-madefor-text-latin-italic.woff2') format('woff2');
+  unicode-range:
+    U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC,
+    U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212,
+    U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Wix Madefor Text';
+  font-style: italic;
+  font-weight: 400 800;
+  font-display: swap;
+  src: url('/fonts/wix-madefor-text-cyrillic-italic.woff2') format('woff2');
+  unicode-range: U+0301, U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+
+@font-face {
+  font-family: 'Wix Madefor Text Fallback';
+  src: local('Arial');
+  ascent-override: 96.22%;
+  descent-override: 24.06%;
+  line-gap-override: 0%;
+  size-adjust: 104.76%;
+}
+
 @theme inline {
   --color-bg: var(--bg);
   --color-surface: var(--surface);
@@ -15,22 +125,24 @@
   --color-accent-ink: var(--accent-ink);
   --color-accent-soft: var(--accent-soft);
   --color-code-bg: var(--code-bg);
-  --font-sans: var(--f-en), var(--f-uk), system-ui, sans-serif;
+  --font-sans: var(--f-en), system-ui, sans-serif;
   --font-mono: var(--mono);
 }
 
 :root {
+  --f-en: 'Atkinson Hyperlegible Next', 'Atkinson Hyperlegible Next Fallback';
+  --f-uk: 'Wix Madefor Text', 'Wix Madefor Text Fallback';
   --bg: #faf8f4;
   --surface: #ffffff;
   --text: #1c1b18;
   --text-2: #4a4740;
-  --muted: #7a756b;
+  --muted: #645f56;
   --rule: #e7e2d9;
   --rule-2: #d9d3c8;
   --accent: oklch(0.52 0.1 190);
   --accent-ink: oklch(0.42 0.1 190);
   --accent-soft: oklch(0.52 0.1 190 / 0.1);
-  --code-bg: #f1ede6;
+  --code-bg: #f8f5f0;
   --sel: oklch(0.52 0.1 190 / 0.22);
   --measure: 68ch;
   --wrap: 1040px;
@@ -53,6 +165,12 @@ html.dark {
   color-scheme: dark;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+  @view-transition {
+    navigation: auto;
+  }
+}
+
 @layer base {
   * {
     box-sizing: border-box;
@@ -73,17 +191,23 @@ html.dark {
 
   body {
     margin: 0;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
     background: var(--bg);
     color: var(--text);
-    font-family: var(--f-en), var(--f-uk), system-ui, sans-serif;
     line-height: 1.65;
     font-feature-settings: 'kern', 'liga', 'calt';
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
 
-  html[lang='uk'] body {
-    font-family: var(--f-uk), var(--f-en), system-ui, sans-serif;
+  [lang='en'] {
+    font-family: var(--f-en), system-ui, sans-serif;
+  }
+
+  [lang='uk'] {
+    font-family: var(--f-uk), system-ui, sans-serif;
   }
 
   ::selection {
@@ -155,6 +279,14 @@ html.dark {
   ol {
     list-style: decimal;
   }
+
+  main {
+    flex: 1;
+  }
+
+  main:focus:not(:focus-visible) {
+    outline: none;
+  }
 }
 
 @keyframes blink {
@@ -169,35 +301,8 @@ html.dark {
   }
 }
 
-@keyframes flicker {
-  0%,
-  19.999%,
-  22%,
-  62.999%,
-  64%,
-  64.999%,
-  70%,
-  100% {
-    opacity: 0.99;
-  }
-
-  20%,
-  21.999%,
-  63%,
-  63.999%,
-  65%,
-  69.999% {
-    opacity: 0.4;
-    filter: none;
-  }
-}
-
 .animate-blink {
-  animation: blink 1s step-end infinite;
-}
-
-.animate-flicker {
-  animation: flicker 3s linear infinite;
+  animation: blink 1s step-end 5;
 }
 
 @layer base {
@@ -258,16 +363,22 @@ html.dark {
 .llm-anim .llm-phase-4 {
   animation-delay: -2s;
 }
+.llm-anim[data-paused] .llm-phase {
+  animation-play-state: paused;
+}
 
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
   .llm-anim .llm-phase {
     animation: none !important;
     opacity: 1;
   }
 
   .animate-blink,
-  .animate-shimmer,
-  .animate-flicker {
+  .animate-shimmer {
     animation: none;
   }
 
@@ -277,6 +388,11 @@ html.dark {
     transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
+  }
+
+  * {
+    animation: none !important;
+    transition: none !important;
   }
 }
 
@@ -303,7 +419,6 @@ html.dark {
     color: var(--muted);
     margin-left: 0.4em;
     vertical-align: 0.1em;
-    font-family: var(--f-uk), sans-serif;
   }
 
   .skip {
@@ -335,6 +450,7 @@ html.dark {
     z-index: 50;
     background: color-mix(in oklab, var(--bg) 82%, transparent);
     backdrop-filter: blur(14px);
+    view-transition-name: site-nav;
   }
 
   .nav .wrap {
@@ -959,7 +1075,7 @@ html.dark {
     padding: 3.5rem 0 2rem;
   }
 
-  .blog-head h1 {
+  .blog-head h2 {
     font-size: clamp(1.9rem, 1.3rem + 2vw, 2.6rem);
   }
 
@@ -1390,13 +1506,6 @@ html.dark {
     text-transform: uppercase;
     color: var(--muted);
     margin: 0 0 0.5rem 0.8rem;
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    * {
-      animation: none !important;
-      transition: none !important;
-    }
   }
 
   .toc-m {

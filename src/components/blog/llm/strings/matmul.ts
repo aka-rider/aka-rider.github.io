@@ -3,6 +3,8 @@ export const matmulStrings = {
     plain: {
       aria: 'Q/K/V projection as a matrix multiplication: seven token embeddings (7×768) times a weight matrix (768×2304) plus a bias give seven query/key/value vectors (7×2304), grouped into three coloured bands, Q, K and V; below, GELU shows what a nonlinearity would do to one of those rows',
       hint: 'hover or focus an output cell to see its column — one learned detector, applied to every token the same way',
+      prevColumn: 'previous column',
+      nextColumn: 'next column',
       inputLabel: 'embeddings (7, 768)',
       weightLabel: 'Q·K·V weights (768, 2304)',
       biasLabel: 'bias (2304)',
@@ -41,6 +43,8 @@ export const matmulStrings = {
     plain: {
       aria: 'Проєкція Q/K/V як матричне множення: сім вкладень токенів (7×768), помножені на матрицю ваг (768×2304) плюс зсув, дають сім векторів запит/ключ/значення (7×2304), згруповані в три кольорові смуги, Q, K і V; нижче GELU показує, що нелінійність зробила б з одним із цих рядків',
       hint: 'наведіть курсор або сфокусуйтеся на вихідній комірці, щоб побачити її стовпець — один вивчений детектор, застосований однаково до кожного токена',
+      prevColumn: 'попередній стовпець',
+      nextColumn: 'наступний стовпець',
       inputLabel: 'вкладення (7, 768)',
       weightLabel: 'ваги Q·K·V (768, 2304)',
       biasLabel: 'зсув (2304)',

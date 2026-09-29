@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import { TokenChip } from '@/components/blog/llm/Chip';
 import GuessGate from '@/components/blog/llm/GuessGate';
+import { PANEL_CLASSES, WELL_CLASSES } from '@/components/blog/llm/panel';
 import { ProbabilityBar } from '@/components/blog/llm/ProbabilityBar';
 import { worldPickerStrings } from '@/components/blog/llm/strings/worldPicker';
 
@@ -41,10 +42,10 @@ export const WORLD_PICKER_DISTRIBUTIONS: Record<
 };
 
 const FRAMING_BUTTON_CLASSES =
-  'font-mono text-sm rounded border px-3 py-1.5 border-violet-700/60 dark:border-violet-400/60 bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-400 focus-visible:outline-2 focus-visible:outline-violet-700 dark:focus-visible:outline-violet-400 focus-visible:outline-offset-2 transition-opacity motion-reduce:transition-none';
+  'font-mono text-sm rounded border px-3 py-1.5 border-violet-700/60 dark:border-violet-400/60 text-violet-700 dark:text-violet-400 focus-visible:outline-2 focus-visible:outline-violet-700 dark:focus-visible:outline-violet-400 focus-visible:outline-offset-2 transition-opacity motion-reduce:transition-none';
 
 const LABEL_CLASSES =
-  'block font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
+  'block font-mono text-xs uppercase tracking-wider text-muted mb-1';
 
 const BAR_COLUMNS_CLASS = 'sm:grid-cols-[7.5rem_minmax(0,1fr)_3rem]';
 
@@ -54,7 +55,7 @@ export default function WorldPickerDemo({ lang }: { lang: Lang }) {
   const rows = WORLD_PICKER_DISTRIBUTIONS[framing];
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+    <div className={PANEL_CLASSES}>
       <GuessGate lang={lang} guess={strings.guess}>
         <div
           role='group'
@@ -82,7 +83,7 @@ export default function WorldPickerDemo({ lang }: { lang: Lang }) {
         </div>
 
         <span className={LABEL_CLASSES}>{strings.continuationLabel}</span>
-        <div className='rounded bg-slate-50 dark:bg-slate-950/60 p-4 font-mono text-sm whitespace-pre-wrap mb-4'>
+        <div className={`${WELL_CLASSES} whitespace-pre-wrap mb-4`}>
           <span className='text-violet-700 dark:text-violet-400'>
             {strings.framings[framing].text}
           </span>
@@ -112,14 +113,11 @@ export default function WorldPickerDemo({ lang }: { lang: Lang }) {
           ))}
         </div>
 
-        <div
-          aria-live='polite'
-          className='font-mono text-xs text-slate-500 dark:text-slate-400 my-3'
-        >
+        <div aria-live='polite' className='font-mono text-xs text-muted my-3'>
           {strings.framings[framing].label} — {strings.readout}
         </div>
 
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4'>
+        <div className='font-mono text-xs text-muted border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4'>
           {strings.honesty}
         </div>
       </GuessGate>

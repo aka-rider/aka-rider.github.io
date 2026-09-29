@@ -31,9 +31,9 @@ I had an idea that a rewrite could be done much cheaper using some intermediate 
 
 This applies to any LLM, but Fable 5 specifically traces the data flow with insane precision. If you can rephrase your problem as a data problem, it can autonomously do complex refactorings, rewrite from one language to another, extract or merge services — in other words, make fundamental changes.
 
-### The three steps
+## The three steps
 
-#### 1. Extract the data representation
+### 1. Extract the data representation
 
 Ask the LLM to represent your code as any combination of:
 
@@ -44,15 +44,15 @@ Ask the LLM to represent your code as any combination of:
 - constraints
 - math formulae
 
-#### 2. Operate on the representation
+### 2. Operate on the representation
 
 At this point, you can ask it to simplify the state machine by reducing the number of states, or to remove hidden channels of communication (e.g. via a shared table, or by sharing addresses in RAM).
 
-#### 3. Put the representation back into code
+### 3. Put the representation back into code
 
 Now ask for the code — even in another programming language.
 
-### The secret sauce
+## The secret sauce
 
 > For some time now, agents have excelled at tool use, and insofar as they are able to treat other agents as tool invocations. --- a post by Anthropic [^multiagent]
 

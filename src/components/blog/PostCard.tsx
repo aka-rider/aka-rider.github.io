@@ -1,8 +1,9 @@
 import Image from 'next/image';
-import Link from 'next/link';
 
 import { PostSummary } from '@/lib/blog/summary';
 import { formatDate } from '@/lib/format';
+
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 import { Lang, Languages } from '@/i18n';
 
@@ -13,22 +14,24 @@ export default function PostCard({
   lang: Lang;
   post: PostSummary;
 }) {
-  const { contentLang } = post;
-  const tag =
-    contentLang && contentLang !== lang
-      ? Languages.data[contentLang].tag
-      : null;
+  const postLang = Languages.foreign(post.contentLang, lang);
 
   return (
-    <Link href={post.href} className='card'>
+    <UnstyledLink href={post.href} className='card'>
       <div className='thumb'>
         <Image src={post.image} alt={post.title} width={600} height={600} />
       </div>
-      <h3>
+      <h3 lang={postLang}>
         {post.title}
-        {tag && <span className='tag'>({tag})</span>}
+        {postLang && (
+          <span className='tag'>({Languages.data[postLang].tag})</span>
+        )}
       </h3>
-      <p>{post.date ? formatDate(post.date, lang, 'short') : post.excerpt}</p>
-    </Link>
+      {post.date ? (
+        <p>{formatDate(post.date, lang, 'short')}</p>
+      ) : (
+        <p lang={postLang}>{post.excerpt}</p>
+      )}
+    </UnstyledLink>
   );
 }

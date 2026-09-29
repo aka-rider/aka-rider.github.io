@@ -66,10 +66,20 @@ jobs:
       - name: Build with Next.js
         run: npm run build
 
+      - name: Verify WebFinger is exported
+        run: test -f out/.well-known/webfinger
+
+      # upload-pages-artifact excludes dotfiles, which drops .well-known/
+      - name: Archive site
+        run: tar --dereference --hard-dereference --directory out -cvf "$RUNNER_TEMP/artifact.tar" .
+
       - name: Upload artifact
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-artifact@v4
         with:
-          path: ./out
+          name: github-pages
+          path: ${{ runner.temp }}/artifact.tar
+          retention-days: 1
+          if-no-files-found: error
 
   # Deployment job
   deploy:

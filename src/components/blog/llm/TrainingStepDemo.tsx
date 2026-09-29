@@ -8,8 +8,9 @@ import {
 } from '@/components/blog/llm/buttons';
 import { ChipStream, TokenChip } from '@/components/blog/llm/Chip';
 import { EXAMPLE_TOKENS } from '@/components/blog/llm/example';
-import { visibleSpaces } from '@/components/blog/llm/format';
+import { fill, visibleSpaces } from '@/components/blog/llm/format';
 import { softmax } from '@/components/blog/llm/math';
+import { PANEL_CLASSES } from '@/components/blog/llm/panel';
 import { ProbabilityBar } from '@/components/blog/llm/ProbabilityBar';
 import { trainingStepStrings } from '@/components/blog/llm/strings/trainingStep';
 
@@ -26,7 +27,7 @@ const CONTEXT_TOKENS = EXAMPLE_TOKENS;
 const TRAINING_TEMPERATURE = 1;
 
 const LABEL_CLASSES =
-  'block font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
+  'block font-mono text-xs uppercase tracking-wider text-muted mb-1';
 
 const BAR_COLUMNS_CLASS = 'sm:grid-cols-[5.5rem_minmax(0,1fr)_3.4rem_4.5rem]';
 
@@ -37,6 +38,14 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
 
   const probs = softmax(logits, TRAINING_TEMPERATURE);
   const loss = -Math.log(probs[TARGET_INDEX]!);
+  const leadingIndex = probs.reduce(
+    (best, p, idx) => (p > probs[best]! ? idx : best),
+    0,
+  );
+  const leadingReadout = fill(strings.leadingReadout, {
+    token: visibleSpaces(CANDIDATES[leadingIndex]!),
+    pct: (probs[leadingIndex]! * 100).toFixed(1),
+  });
 
   function handleNudge() {
     const p = softmax(logits, TRAINING_TEMPERATURE);
@@ -54,7 +63,7 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
   }
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+    <div className={PANEL_CLASSES}>
       <span className={LABEL_CLASSES}>{strings.sampleLabel}</span>
       <ChipStream ariaLabel={strings.sampleLabel}>
         {CONTEXT_TOKENS.map((t, idx) => (
@@ -62,7 +71,7 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
         ))}
         <span className='inline-flex flex-col items-center'>
           <TokenChip token={CANDIDATES[TARGET_INDEX]} special />
-          <span className='font-mono text-[0.65rem] whitespace-nowrap text-slate-500 dark:text-slate-400'>
+          <span className='font-mono text-[0.65rem] whitespace-nowrap text-muted'>
             ↑ {strings.targetNote}
           </span>
         </span>
@@ -93,6 +102,9 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
             );
           })}
         </div>
+        <div aria-live='polite' className='font-mono text-xs text-muted mt-1'>
+          {leadingReadout}
+        </div>
       </div>
 
       <div
@@ -100,9 +112,7 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
         aria-label={strings.lossAria}
         className='font-mono my-4'
       >
-        <span className='text-sm text-slate-500 dark:text-slate-400'>
-          {strings.lossLabel}{' '}
-        </span>
+        <span className='text-sm text-muted'>{strings.lossLabel} </span>
         <span className='text-3xl tabular-nums text-cyan-700 dark:text-cyan-400'>
           {loss.toFixed(2)}
         </span>
@@ -123,7 +133,7 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
         >
           {strings.resetBtn}
         </button>
-        <span className='font-mono text-sm text-slate-500 dark:text-slate-400'>
+        <span className='font-mono text-sm text-muted'>
           {steps > 0 ? `${strings.stepWord} ${steps}` : ''}
         </span>
       </div>
@@ -138,7 +148,7 @@ export default function TrainingStepDemo({ lang }: { lang: Lang }) {
         {strings.mechanismNote}
       </div>
 
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-3'>
+      <div className='font-mono text-xs text-muted border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-3'>
         {strings.honesty}
       </div>
     </div>

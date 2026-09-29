@@ -33,7 +33,7 @@ export default function Foss({
               </div>
               <p>{project.description}</p>
               <UnstyledLink className='gh' href={project.github}>
-                <SiGithub />
+                <SiGithub aria-hidden focusable='false' />
                 GitHub
               </UnstyledLink>
             </div>

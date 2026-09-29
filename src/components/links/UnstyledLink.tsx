@@ -1,4 +1,3 @@
-import Link, { LinkProps } from 'next/link';
 import * as React from 'react';
 
 import { SITE_URL } from '/config';
@@ -8,11 +7,10 @@ export type UnstyledLinkProps = {
   children?: React.ReactNode;
   openNewTab?: boolean;
   className?: string;
-  nextLinkProps?: Omit<LinkProps, 'href'>;
 } & React.ComponentPropsWithRef<'a'>;
 
 const UnstyledLink = React.forwardRef<HTMLAnchorElement, UnstyledLinkProps>(
-  ({ children, href, openNewTab, className, nextLinkProps, ...rest }, ref) => {
+  ({ children, href, openNewTab, className, ...rest }, ref) => {
     const isLocal =
       !href ||
       href.startsWith('/') ||
@@ -22,15 +20,9 @@ const UnstyledLink = React.forwardRef<HTMLAnchorElement, UnstyledLinkProps>(
 
     if (!isNewTab) {
       return (
-        <Link
-          href={href || '#'}
-          ref={ref}
-          className={className}
-          {...rest}
-          {...nextLinkProps}
-        >
+        <a ref={ref} href={href || '#'} className={className} {...rest}>
           {children}
-        </Link>
+        </a>
       );
     }
 

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 
+import { PANEL_CLASSES, WELL_CLASSES } from '@/components/blog/llm/panel';
 import { chatTranscriptStrings } from '@/components/blog/llm/strings/chatTranscript';
 
 import type { Lang } from '@/i18n';
@@ -19,7 +20,7 @@ const ROLE_TAG_CLASSES: Record<Role, string> = {
   system: 'text-violet-700 dark:text-violet-400',
   user: 'text-amber-700 dark:text-amber-400',
   assistant: 'text-cyan-700 dark:text-cyan-400',
-  tool: 'text-slate-500 dark:text-slate-400',
+  tool: 'text-muted',
 };
 
 const ROLE_BORDER_CLASSES: Record<Role, string> = {
@@ -34,10 +35,12 @@ const TAG_BASE_CLASSES = 'font-mono text-[10px] uppercase tracking-widest';
 const THINKING_TAG_CLASSES =
   'inline-block rounded border border-cyan-700/60 dark:border-cyan-400/60 px-1 py-px text-cyan-700 dark:text-cyan-400';
 
-const DIM_CLASSES = 'opacity-45 dark:opacity-55';
+const DIM_BORDER_CLASSES = 'border-rule';
 
 const RAW_MARKER_CLASSES =
   'font-mono text-[0.8em] text-violet-700 dark:text-violet-400';
+
+const RAW_MARKER_DIM_CLASSES = 'font-mono text-[0.8em] text-muted';
 
 const TOGGLE_BUTTON_CLASSES =
   'font-mono text-xs text-violet-700 dark:text-violet-400 underline focus-visible:outline-2 focus-visible:outline-violet-700 dark:focus-visible:outline-violet-400 focus-visible:outline-offset-2';
@@ -68,30 +71,36 @@ export function TranscriptMessages({
         return (
           <div
             key={idx}
-            className={`border-l-2 pl-3 ${ROLE_BORDER_CLASSES[message.role]} ${
-              message.dim ? DIM_CLASSES : ''
+            className={`border-l-2 pl-3 ${
+              message.dim
+                ? DIM_BORDER_CLASSES
+                : ROLE_BORDER_CLASSES[message.role]
             }`}
           >
             <span className={`${TAG_BASE_CLASSES} block mb-1`}>
               <span
                 className={
-                  message.thinking
-                    ? THINKING_TAG_CLASSES
-                    : ROLE_TAG_CLASSES[message.role]
+                  message.dim
+                    ? 'text-muted'
+                    : message.thinking
+                      ? THINKING_TAG_CLASSES
+                      : ROLE_TAG_CLASSES[message.role]
                 }
               >
                 {tagText}
               </span>
               {message.dim ? (
-                <span className='ml-1.5 text-slate-500 dark:text-slate-400 normal-case tracking-normal'>
+                <span className='ml-1.5 text-muted normal-case tracking-normal'>
                   {strings.resent}
                 </span>
               ) : null}
             </span>
             <div
-              className={`text-sm leading-relaxed text-slate-900 dark:text-slate-100 whitespace-pre-wrap ${
-                message.thinking ? 'italic' : ''
-              }`}
+              className={`text-sm leading-relaxed whitespace-pre-wrap ${
+                message.dim
+                  ? 'text-muted'
+                  : 'text-slate-900 dark:text-slate-100'
+              } ${message.thinking ? 'italic' : ''}`}
             >
               {message.content}
             </div>
@@ -114,18 +123,34 @@ function RawTranscript({
     <div
       role='group'
       aria-label={strings.rawAria}
-      className='rounded bg-slate-50 dark:bg-slate-950/60 p-4 font-mono text-sm leading-relaxed whitespace-pre-wrap break-words'
+      className={`${WELL_CLASSES} leading-relaxed whitespace-pre-wrap break-words`}
     >
       {messages.map((message, idx) => (
-        <span key={idx} className={message.dim ? DIM_CLASSES : undefined}>
+        <span key={idx} className={message.dim ? 'text-muted' : undefined}>
           {idx === 0 || messages[idx - 1]?.role !== message.role ? (
-            <span className={RAW_MARKER_CLASSES}>{`<|${message.role}|>`}</span>
+            <span
+              className={
+                message.dim ? RAW_MARKER_DIM_CLASSES : RAW_MARKER_CLASSES
+              }
+            >{`<|${message.role}|>`}</span>
           ) : null}
           {message.thinking ? (
             <>
-              <span className={RAW_MARKER_CLASSES}>{'<think>'}</span>
+              <span
+                className={
+                  message.dim ? RAW_MARKER_DIM_CLASSES : RAW_MARKER_CLASSES
+                }
+              >
+                {'<think>'}
+              </span>
               {message.content}
-              <span className={RAW_MARKER_CLASSES}>{'</think>'}</span>
+              <span
+                className={
+                  message.dim ? RAW_MARKER_DIM_CLASSES : RAW_MARKER_CLASSES
+                }
+              >
+                {'</think>'}
+              </span>
             </>
           ) : (
             message.content
@@ -148,7 +173,7 @@ export default function ChatTranscript({
   const [showRaw, setShowRaw] = useState(false);
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+    <div className={PANEL_CLASSES}>
       {showRaw ? (
         <RawTranscript lang={lang} messages={messages} />
       ) : (

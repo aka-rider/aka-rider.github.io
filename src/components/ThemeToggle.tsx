@@ -15,8 +15,8 @@ export default function ThemeToggle({ lang }: { lang: Lang }) {
       aria-label={common[lang].switchTheme}
       onClick={() => setTheme(resolvedTheme === 'dark' ? 'light' : 'dark')}
     >
-      <FiMoon className='moon' />
-      <FiSun className='sun' />
+      <FiMoon className='moon' aria-hidden focusable='false' />
+      <FiSun className='sun' aria-hidden focusable='false' />
     </button>
   );
 }

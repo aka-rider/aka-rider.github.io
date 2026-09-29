@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
 import { compilePost } from '@/lib/blog/compile';
+import { contentLangOf } from '@/lib/blog/summary';
 import { Post } from '@/lib/blog/types';
 import { formatDate, formatReadingTime } from '@/lib/format';
 
@@ -8,7 +9,7 @@ import RssPrompt from '@/components/blog/RssPrompt';
 import TableOfContents from '@/components/blog/TableOfContents';
 import TocSidebar from '@/components/blog/TocSidebar';
 
-import { common, Lang } from '@/i18n';
+import { common, Lang, Languages } from '@/i18n';
 
 export default async function BlogPost({
   post,
@@ -22,12 +23,13 @@ export default async function BlogPost({
     post.filePath,
     lang,
   );
+  const articleLang = Languages.foreign(contentLangOf(post.filePath), lang);
 
   return (
     <>
-      <article className='post'>
+      <article className='post' lang={articleLang}>
         <h1>{post.title}</h1>
-        <p className='meta'>
+        <p className='meta' lang={articleLang && lang}>
           {post.date && (
             <>
               <time dateTime={post.date.toISOString().split('T')[0]}>
@@ -46,6 +48,7 @@ export default async function BlogPost({
               width={1350}
               height={1080}
               priority
+              fetchPriority='high'
             />
           </div>
         )}

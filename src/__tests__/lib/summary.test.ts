@@ -1,4 +1,4 @@
-import { toPostSummary } from '@/lib/blog/summary';
+import { contentLangOf, toPostSummary } from '@/lib/blog/summary';
 import { Post } from '@/lib/blog/types';
 
 function makePost(filePath: string): Post {
@@ -28,5 +28,19 @@ describe('toPostSummary', () => {
     const post = makePost('_posts/my-post/index.en.mdx');
 
     expect(toPostSummary('en', post).contentLang).toBe('en');
+  });
+});
+
+describe('contentLangOf', () => {
+  it('returns null for a bare index.mdx', () => {
+    expect(contentLangOf('_posts/my-post/index.mdx')).toBeNull();
+  });
+
+  it('returns the suffix language for index.uk.mdx', () => {
+    expect(contentLangOf('_posts/my-post/index.uk.mdx')).toBe('uk');
+  });
+
+  it('returns null for an unknown language suffix', () => {
+    expect(contentLangOf('_posts/my-post/index.fr.mdx')).toBeNull();
   });
 });

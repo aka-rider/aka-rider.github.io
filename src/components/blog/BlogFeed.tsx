@@ -7,6 +7,7 @@ import { PostSummary } from '@/lib/blog/summary';
 import PostCard from '@/components/blog/PostCard';
 import PostRow from '@/components/blog/PostRow';
 import TabNavigation from '@/components/blog/TabNavigation';
+import Main from '@/components/layout/Main';
 import Nav from '@/components/layout/Nav';
 
 import { Lang } from '@/i18n';
@@ -46,7 +47,13 @@ export default function BlogFeed({
   const handleSelect = (id: string) => {
     setActive(id);
     window.history.replaceState(null, '', `?category=${id}`);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    const prefersReducedMotion = window.matchMedia(
+      '(prefers-reduced-motion: reduce)',
+    ).matches;
+    window.scrollTo({
+      top: 0,
+      behavior: prefersReducedMotion ? 'auto' : 'smooth',
+    });
   };
 
   const rootHref = `/${lang}/blog/`;
@@ -62,7 +69,8 @@ export default function BlogFeed({
           onSelect={handleSelect}
         />
       </Nav>
-      <main id='main-content' className='wrap'>
+      <Main className='wrap'>
+        <h1 className='sr-only'>{rootTitle}</h1>
         {categories.map((category) => (
           <section
             key={category.slug}
@@ -71,7 +79,7 @@ export default function BlogFeed({
             hidden={category.slug !== active}
           >
             <div className='blog-head'>
-              <h1>{category.title}</h1>
+              <h2>{category.title}</h2>
             </div>
             {category.thumbnails ? (
               <div className='grid'>
@@ -88,7 +96,7 @@ export default function BlogFeed({
             )}
           </section>
         ))}
-      </main>
+      </Main>
     </>
   );
 }

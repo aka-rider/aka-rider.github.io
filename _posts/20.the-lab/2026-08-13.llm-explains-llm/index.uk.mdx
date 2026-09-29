@@ -147,7 +147,7 @@ tags: ['llm', 'ai', 'interactive']
 context = tokenize(prompt)
 loop:
   dist  = f(context)            // модель: один прямий прохід, без стану
-  token = sample(dist, T)       // обв’язка: ваша політика семплінгу
+  token = sample(dist, T)       // обв'язка: ваша політика семплінгу
   context.append(token)
   if token == STOP: break
 ```
@@ -348,6 +348,7 @@ tulip →
 - [nanoGPT model.py](https://github.com/karpathy/nanoGPT/blob/master/model.py) — увесь Акт 1 у ~300 рядках PyTorch; CausalSelfAttention займає ~60
 - [Attention Is All You Need](https://arxiv.org/abs/1706.03762) — стаття, яка представила трансформер
 - [3Blue1Brown — Transformers, the tech behind LLMs](https://www.youtube.com/watch?v=wjZofJX0v4M) та [Attention, step-by-step](https://www.youtube.com/watch?v=eMlx5fFNoYc)
+- [Polo Club — Transformer Explainer](https://poloclub.github.io/transformer-explainer/) — GPT-2 наживо у вашому браузері; введіть промпт і подивіться, як на ньому працює механізм Акту 1
 - [Anthropic — Toy Models of Superposition](https://transformer-circuits.pub/2022/toy_model/index.html) — чому детектори не сидять по одному на стовпець
 
 **Навчання та емерджентність**

@@ -7,7 +7,7 @@ import PostRow from '@/components/blog/PostRow';
 function makeSummary(overrides: Partial<PostSummary> = {}): PostSummary {
   return {
     slug: 'my-post',
-    href: '/en/blog/posts/my-post',
+    href: '/en/blog/posts/my-post/',
     title: 'My Post',
     excerpt: 'An excerpt.',
     image: '/images/my-post.png',

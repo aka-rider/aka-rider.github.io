@@ -39,6 +39,7 @@ export default function About({
           width={1200}
           height={900}
           priority
+          fetchPriority='high'
         />
       </div>
       <ul className='proofs'>
@@ -48,7 +49,7 @@ export default function About({
       </ul>
       <div className='cta'>
         <UnstyledLink className='btn' href={config.LINKED_IN}>
-          <FaLinkedin />
+          <FaLinkedin aria-hidden focusable='false' />
           {linkedinCta}
         </UnstyledLink>
         <span className='tag-line'>{cta}</span>

@@ -1,7 +1,7 @@
-import Link from 'next/link';
-
 import { PostSummary } from '@/lib/blog/summary';
 import { formatMeta } from '@/lib/format';
+
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 import { Lang, Languages } from '@/i18n';
 
@@ -14,22 +14,20 @@ export default function PostRow({
   post: PostSummary;
   lead?: boolean;
 }) {
-  const { contentLang } = post;
-  const tag =
-    contentLang && contentLang !== lang
-      ? Languages.data[contentLang].tag
-      : null;
+  const postLang = Languages.foreign(post.contentLang, lang);
 
   return (
-    <Link href={post.href} className={lead ? 'lead' : undefined}>
-      <h3>
+    <UnstyledLink href={post.href} className={lead ? 'lead' : undefined}>
+      <h3 lang={postLang}>
         {post.title}
-        {tag && <span className='tag'>({tag})</span>}
+        {postLang && (
+          <span className='tag'>({Languages.data[postLang].tag})</span>
+        )}
       </h3>
       <span className='meta'>
         {formatMeta(post.date, post.readingTime, lang)}
       </span>
-      {lead && <p>{post.excerpt}</p>}
-    </Link>
+      {lead && <p lang={postLang}>{post.excerpt}</p>}
+    </UnstyledLink>
   );
 }
