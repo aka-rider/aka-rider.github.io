@@ -25,6 +25,7 @@ export const temperatureStrings = {
     cutTopK: 'top-k',
     cutTopP: 'top-p',
     kept: '—',
+    leadingReadout: 'leading: {token} at {pct}%',
   },
   uk: {
     promptLabel: 'Промпт, поданий в f:',
@@ -52,5 +53,6 @@ export const temperatureStrings = {
     cutTopK: 'top-k',
     cutTopP: 'top-p',
     kept: '—',
+    leadingReadout: 'лідирує: {token} з {pct}%',
   },
 } as const;

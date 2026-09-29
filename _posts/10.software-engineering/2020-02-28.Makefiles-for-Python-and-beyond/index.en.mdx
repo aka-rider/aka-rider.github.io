@@ -100,15 +100,15 @@ So now you want to show this application to your buddies. No — the **whole Wor
 
 The application should render something like this:
 
-![random cat gif](cat.gif)
+![random cat gif](cat.webp)
 
 The only problem is:
 
 ```bash
 Traceback (most recent call last):
- File “./app.py”, line 3, in <module>
+ File "./app.py", line 3, in <module>
  import requests
- ModuleNotFoundError: No module named ‘requests’
+ ModuleNotFoundError: No module named 'requests'
 ```
 
 Okay, apparently simple `python3 app.py` may not work.
@@ -156,7 +156,7 @@ Now if we run make in the project’s directory, we’ll get virtual environment
 
 ```bash
 $ make
-make: `venv/bin/activate’ is up to date.
+make: `venv/bin/activate' is up to date.
 ```
 
 If we will edit `requirements.txt` — add or remove dependencies, make will rebuild the virtual environment for us automagically:
@@ -195,7 +195,7 @@ We may want to add the clean target to remove what we don’t need:
 ```make
 clean:
     rm -rf venv
-    find . -type f -name ‘*.pyc’ -delete
+    find . -type f -name '*.pyc' -delete
 ```
 
 Don’t forget that the clean target also doesn’t produce a file:

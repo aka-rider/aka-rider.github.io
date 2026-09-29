@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 export interface TabNavigationProps {
   rootHref: string;
@@ -17,26 +17,25 @@ export default function TabNavigation({
 }: TabNavigationProps) {
   return (
     <nav className='navlinks' aria-label={rootLabel}>
-      <Link className='root' href={rootHref}>
+      <UnstyledLink className='root' href={rootHref}>
         {rootLabel}
-      </Link>
+      </UnstyledLink>
       <span className='sep'>/</span>
       {tabs.map((tab) => {
         const isActive = tab.id === activeTab;
         return (
-          <Link
+          <a
             key={tab.id}
             href={`?category=${tab.id}`}
             className={isActive ? 'on' : undefined}
-            role='tab'
-            aria-selected={isActive}
+            aria-current={isActive ? 'true' : undefined}
             onClick={(event) => {
               event.preventDefault();
               onSelect(tab.id);
             }}
           >
             {tab.label}
-          </Link>
+          </a>
         );
       })}
     </nav>

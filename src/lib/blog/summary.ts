@@ -16,9 +16,13 @@ export interface PostSummary {
 
 const FILE_LANG = /\.(\w+)\.(mdx|md)$/;
 
+export function contentLangOf(filePath: string): Lang | null {
+  const suffix = FILE_LANG.exec(filePath)?.[1];
+  return suffix && Languages.has(suffix) ? (suffix as Lang) : null;
+}
+
 export function toPostSummary(lang: Lang, post: Post): PostSummary {
-  const suffix = FILE_LANG.exec(post.filePath)?.[1];
-  const contentLang = suffix && Languages.has(suffix) ? suffix : null;
+  const contentLang = contentLangOf(post.filePath);
 
   return {
     slug: post.slug,

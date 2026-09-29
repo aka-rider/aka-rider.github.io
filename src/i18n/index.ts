@@ -29,6 +29,7 @@ const en = {
   newer: 'Newer',
   linkedinProfile: 'LinkedIn profile',
   githubProfile: 'GitHub profile',
+  mastodonProfile: 'Mastodon profile',
   rssFeed: 'RSS feed',
   copy: 'Copy',
   copied: 'Copied',
@@ -46,6 +47,8 @@ const en = {
   footnotes: 'Footnotes',
   footnoteBack: 'Back to reference',
   noPosts: 'No posts yet.',
+  scrollableTable: 'Table',
+  scrollableCode: 'Code',
 } as const;
 
 type CommonStrings = Record<keyof typeof en, string>;
@@ -76,6 +79,7 @@ const uk = {
   newer: 'новіше',
   linkedinProfile: 'профіль у LinkedIn',
   githubProfile: 'профіль на GitHub',
+  mastodonProfile: 'профіль у Mastodon',
   rssFeed: 'стрічка RSS',
   copy: 'копіювати',
   copied: 'скопійовано',
@@ -93,6 +97,8 @@ const uk = {
   footnotes: 'Примітки',
   footnoteBack: 'Повернутися до тексту',
   noPosts: 'Ще немає дописів.',
+  scrollableTable: 'Таблиця',
+  scrollableCode: 'Код',
 } as const satisfies CommonStrings;
 
 export const common = { en, uk } satisfies Record<Lang, CommonStrings>;

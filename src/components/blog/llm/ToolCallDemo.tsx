@@ -11,6 +11,7 @@ import {
   TranscriptMessages,
 } from '@/components/blog/llm/ChatTranscript';
 import GuessGate from '@/components/blog/llm/GuessGate';
+import { PANEL_CLASSES } from '@/components/blog/llm/panel';
 import { toolCallStrings } from '@/components/blog/llm/strings/toolCall';
 
 import type { Lang } from '@/i18n';
@@ -91,20 +92,21 @@ const STEPS: PerStep<Step> = [
 type StepNotes = PerStep<string>;
 
 const BADGE_BASE_CLASSES =
-  'inline-block font-mono text-xs font-bold tracking-wide px-2 py-0.5 rounded mr-2';
+  'inline-block font-mono text-xs font-bold tracking-wide px-2 py-0.5 rounded border mr-2';
 
 const BADGE_VARIANT_CLASSES: Record<Actor, string> = {
-  model: 'bg-cyan-50 dark:bg-cyan-950/60 text-cyan-700 dark:text-cyan-400',
+  model:
+    'border-cyan-700 dark:border-cyan-400 text-cyan-700 dark:text-cyan-400',
   harness:
-    'bg-violet-50 dark:bg-violet-950/60 text-violet-700 dark:text-violet-400',
-  tool: 'bg-slate-200 dark:bg-slate-700 text-slate-900 dark:text-slate-100',
+    'border-violet-700 dark:border-violet-400 text-violet-700 dark:text-violet-400',
+  tool: 'border-slate-400 dark:border-slate-500 text-slate-900 dark:text-slate-100',
 };
 
 const CODE_BLOCK_CLASSES =
-  'block mt-2 text-xs text-slate-500 dark:text-slate-400 overflow-x-auto whitespace-pre font-mono';
+  'block mt-2 text-xs text-muted overflow-x-auto whitespace-pre font-mono';
 
 const LABEL_CLASSES =
-  'block font-mono text-xs uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-1';
+  'block font-mono text-xs uppercase tracking-wider text-muted mb-1';
 
 function StepAnnotation({
   step,
@@ -173,7 +175,7 @@ export default function ToolCallDemo({ lang }: { lang: Lang }) {
   }
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+    <div className={PANEL_CLASSES}>
       <GuessGate lang={lang} guess={strings.guess}>
         <div className='flex flex-wrap items-center gap-3 my-3'>
           <button
@@ -193,7 +195,7 @@ export default function ToolCallDemo({ lang }: { lang: Lang }) {
           >
             {strings.resetBtn}
           </button>
-          <span className='font-mono text-sm text-slate-500 dark:text-slate-400'>
+          <span className='font-mono text-sm text-muted'>
             {i >= 0 ? `${strings.stepWord} ${i + 1} / ${STEPS.length}` : ''}
           </span>
         </div>
@@ -230,7 +232,7 @@ export default function ToolCallDemo({ lang }: { lang: Lang }) {
           </div>
         </div>
 
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4'>
+        <div className='font-mono text-xs text-muted border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-4'>
           {strings.honesty}
         </div>
       </GuessGate>

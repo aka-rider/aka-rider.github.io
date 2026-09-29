@@ -1,3 +1,8 @@
+'use client';
+
+import { useState } from 'react';
+
+import { AnimToggle } from '@/components/blog/llm/AnimToggle';
 import FigCaption from '@/components/blog/llm/FigCaption';
 import { agentLoopStrings } from '@/components/blog/llm/strings/agentLoop';
 
@@ -6,11 +11,9 @@ import type { Lang } from '@/i18n';
 type NodeColor = 'model' | 'harness' | 'tool';
 
 const NODE_RECT_CLASSES: Record<NodeColor, string> = {
-  model:
-    'fill-cyan-50 dark:fill-cyan-950/60 stroke-cyan-700 dark:stroke-cyan-400',
-  harness:
-    'fill-violet-50 dark:fill-violet-950/60 stroke-violet-700 dark:stroke-violet-400',
-  tool: 'fill-slate-100 dark:fill-slate-800 stroke-slate-400 dark:stroke-slate-500',
+  model: 'fill-none stroke-cyan-700 dark:stroke-cyan-400',
+  harness: 'fill-none stroke-violet-700 dark:stroke-violet-400',
+  tool: 'fill-none stroke-slate-400 dark:stroke-slate-500',
 };
 
 const NODE_TEXT_CLASSES: Record<NodeColor, string> = {
@@ -19,6 +22,47 @@ const NODE_TEXT_CLASSES: Record<NodeColor, string> = {
   tool: '',
 };
 
+const NODE_WIDTH = 120;
+const NODE_HEIGHT = 52;
+const ARROW_GAP = 4;
+
+type Point = { x: number; y: number };
+
+const NODES = {
+  model: { x: 120, y: 24 },
+  harnessParse: { x: 236, y: 180 },
+  tool: { x: 120, y: 336 },
+  harnessAppend: { x: 4, y: 180 },
+} as const satisfies Record<string, Point>;
+
+function topOf(node: Point): Point {
+  return { x: node.x + NODE_WIDTH / 2, y: node.y - ARROW_GAP };
+}
+
+function bottomOf(node: Point): Point {
+  return { x: node.x + NODE_WIDTH / 2, y: node.y + NODE_HEIGHT + ARROW_GAP };
+}
+
+function leftOf(node: Point): Point {
+  return { x: node.x - ARROW_GAP, y: node.y + NODE_HEIGHT / 2 };
+}
+
+function rightOf(node: Point): Point {
+  return { x: node.x + NODE_WIDTH + ARROW_GAP, y: node.y + NODE_HEIGHT / 2 };
+}
+
+function horizontalThenVertical(from: Point, to: Point) {
+  return `M ${from.x} ${from.y} Q ${to.x} ${from.y} ${to.x} ${to.y}`;
+}
+
+function verticalThenHorizontal(from: Point, to: Point) {
+  return `M ${from.x} ${from.y} Q ${from.x} ${to.y} ${to.x} ${to.y}`;
+}
+
+function arrowMarkerId(color: NodeColor) {
+  return `llmLoopArrow-${color}`;
+}
+
 const ARROW_STROKE_CLASSES: Record<NodeColor, string> = {
   model: 'stroke-cyan-700 dark:stroke-cyan-400',
   harness: 'stroke-violet-700 dark:stroke-violet-400',
@@ -26,14 +70,12 @@ const ARROW_STROKE_CLASSES: Record<NodeColor, string> = {
 };
 
 function LoopNode({
-  x,
-  y,
+  node: { x, y },
   color,
   title,
   sub,
 }: {
-  x: number;
-  y: number;
+  node: Point;
   color: NodeColor;
   title: string;
   sub: readonly string[];
@@ -45,14 +87,14 @@ function LoopNode({
       <rect
         x={x}
         y={y}
-        width={120}
-        height={52}
+        width={NODE_WIDTH}
+        height={NODE_HEIGHT}
         rx={8}
         strokeWidth={1.25}
         className={NODE_RECT_CLASSES[color]}
       />
       <text
-        x={x + 60}
+        x={x + NODE_WIDTH / 2}
         y={y + 20}
         textAnchor='middle'
         fontSize={12}
@@ -65,7 +107,7 @@ function LoopNode({
       {sub.map((line, idx) => (
         <text
           key={idx}
-          x={x + 60}
+          x={x + NODE_WIDTH / 2}
           y={y + (sub.length === 1 ? 37 : 33 + idx * 10)}
           textAnchor='middle'
           fontSize={8}
@@ -85,7 +127,7 @@ function LoopArrow({ d, color }: { d: string; color: NodeColor }) {
       d={d}
       fill='none'
       strokeWidth={1.5}
-      markerEnd='url(#llmLoopArrow)'
+      markerEnd={`url(#${arrowMarkerId(color)})`}
       stroke={color === 'tool' ? 'currentColor' : undefined}
       className={ARROW_STROKE_CLASSES[color]}
     />
@@ -120,6 +162,7 @@ function StepNumber({
 
 export default function AgentLoopFigure({ lang }: { lang: Lang }) {
   const dict = agentLoopStrings[lang];
+  const [paused, setPaused] = useState(false);
 
   return (
     <figure className='my-8'>
@@ -127,68 +170,96 @@ export default function AgentLoopFigure({ lang }: { lang: Lang }) {
         viewBox='0 0 360 420'
         role='img'
         aria-label={dict.aria}
+        data-paused={paused || undefined}
         className='w-full h-auto max-w-[400px] mx-auto block llm-anim'
       >
         <defs>
-          <marker
-            id='llmLoopArrow'
-            viewBox='0 0 10 10'
-            refX={9}
-            refY={5}
-            markerWidth={6}
-            markerHeight={6}
-            orient='auto-start-reverse'
-          >
-            <path d='M0,0 L10,5 L0,10 z' fill='currentColor' />
-          </marker>
+          {(Object.keys(NODE_TEXT_CLASSES) as NodeColor[]).map((color) => (
+            <marker
+              key={color}
+              id={arrowMarkerId(color)}
+              viewBox='0 0 10 10'
+              refX={9}
+              refY={5}
+              markerWidth={6}
+              markerHeight={6}
+              orient='auto'
+            >
+              <path
+                d='M0,0 L10,5 L0,10 z'
+                fill={color === 'tool' ? 'currentColor' : undefined}
+                className={NODE_TEXT_CLASSES[color]}
+              />
+            </marker>
+          ))}
         </defs>
 
         <g fontFamily='var(--font-mono)'>
           <g className='llm-phase llm-phase-1'>
             <LoopNode
-              x={120}
-              y={24}
+              node={NODES.model}
               color='model'
               title={dict.nodes.model.title}
               sub={dict.nodes.model.sub}
             />
-            <LoopArrow d='M 232 68 Q 300 100 296 176' color='model' />
+            <LoopArrow
+              d={horizontalThenVertical(
+                rightOf(NODES.model),
+                topOf(NODES.harnessParse),
+              )}
+              color='model'
+            />
             <StepNumber x={322} y={126} glyph='①' color='model' />
           </g>
 
           <g className='llm-phase llm-phase-2'>
             <LoopNode
-              x={236}
-              y={180}
+              node={NODES.harnessParse}
               color='harness'
               title={dict.nodes.harnessParse.title}
               sub={dict.nodes.harnessParse.sub}
             />
-            <LoopArrow d='M 296 236 Q 300 312 232 344' color='harness' />
+            <LoopArrow
+              d={verticalThenHorizontal(
+                bottomOf(NODES.harnessParse),
+                rightOf(NODES.tool),
+              )}
+              color='harness'
+            />
             <StepNumber x={322} y={296} glyph='②' color='harness' />
           </g>
 
           <g className='llm-phase llm-phase-3'>
             <LoopNode
-              x={120}
-              y={336}
+              node={NODES.tool}
               color='tool'
               title={dict.nodes.tool.title}
               sub={dict.nodes.tool.sub}
             />
-            <LoopArrow d='M 128 344 Q 60 312 64 236' color='tool' />
+            <LoopArrow
+              d={horizontalThenVertical(
+                leftOf(NODES.tool),
+                bottomOf(NODES.harnessAppend),
+              )}
+              color='tool'
+            />
             <StepNumber x={38} y={296} glyph='③' color='tool' />
           </g>
 
           <g className='llm-phase llm-phase-4'>
             <LoopNode
-              x={4}
-              y={180}
+              node={NODES.harnessAppend}
               color='harness'
               title={dict.nodes.harnessAppend.title}
               sub={dict.nodes.harnessAppend.sub}
             />
-            <LoopArrow d='M 64 176 Q 60 100 128 68' color='harness' />
+            <LoopArrow
+              d={verticalThenHorizontal(
+                topOf(NODES.harnessAppend),
+                leftOf(NODES.model),
+              )}
+              color='harness'
+            />
             <StepNumber x={38} y={126} glyph='④' color='harness' />
           </g>
 
@@ -259,6 +330,11 @@ export default function AgentLoopFigure({ lang }: { lang: Lang }) {
           </g>
         </g>
       </svg>
+      <AnimToggle
+        lang={lang}
+        paused={paused}
+        onToggle={() => setPaused((p) => !p)}
+      />
       <FigCaption>{dict.caption}</FigCaption>
     </figure>
   );

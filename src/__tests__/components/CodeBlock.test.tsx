@@ -26,7 +26,9 @@ describe('CodeBlock', () => {
 
     fireEvent.click(screen.getByRole('button'));
 
-    expect(await screen.findByText('Copied')).toBeInTheDocument();
+    expect(
+      await screen.findByRole('button', { name: 'Copied' }),
+    ).toBeInTheDocument();
     expect(navigator.clipboard.writeText).toHaveBeenCalledWith('const x = 1;');
 
     act(() => {

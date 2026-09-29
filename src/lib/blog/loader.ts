@@ -3,7 +3,7 @@ import matter from 'gray-matter';
 import * as path from 'path';
 import readingTime from 'reading-time';
 
-import { defaultLang, Lang } from '@/i18n';
+import { defaultLang, Lang, Languages } from '@/i18n';
 
 import { plainExcerpt } from './excerpt';
 import { BlogNode, Category, LoadFailure, Post } from './types';
@@ -256,11 +256,15 @@ function loadLocalizedPost(
   parent?: BlogNode,
 ): Post | LoadFailure {
   const { slug, sortKey } = parseFilePath(dirname);
+  const fallbackLangs = Languages.keys().filter(
+    (other) => other !== lang && other !== defaultLang,
+  );
+  const langPriority = [lang, defaultLang, ...fallbackLangs];
   const variants = [
-    `${dirname}/index.${lang}.mdx`,
-    `${dirname}/index.${lang}.md`,
-    `${dirname}/index.${defaultLang}.mdx`,
-    `${dirname}/index.${defaultLang}.md`,
+    ...langPriority.flatMap((variantLang) => [
+      `${dirname}/index.${variantLang}.mdx`,
+      `${dirname}/index.${variantLang}.md`,
+    ]),
     `${dirname}/index.mdx`,
     `${dirname}/index.md`,
   ];

@@ -8,6 +8,10 @@ import * as devRuntime from 'react/jsx-dev-runtime';
 import * as runtime from 'react/jsx-runtime';
 import { visit } from 'unist-util-visit';
 
+import {
+  SCROLL_REGION_CLASSES,
+  scrollRegionProps,
+} from '@/lib/blog/scrollRegion';
 import remarkReplaceLinks from '@/lib/remark-i18n-links';
 import remarkImagePaths from '@/lib/remark-image-paths';
 
@@ -134,6 +138,9 @@ function bindLang(lang: Lang) {
 }
 
 function mdxComponents(lang: Lang) {
+  let tableCount = 0;
+  let codeCount = 0;
+
   return {
     a: (props: React.ComponentProps<'a'>) => {
       const { href, children, ...rest } = props;
@@ -159,11 +166,39 @@ function mdxComponents(lang: Lang) {
     ActTransition,
     Chip,
     ChipStream,
-    table: (props: React.ComponentProps<'table'>) => (
-      <div className='overflow-x-auto my-6'>
-        <table className='w-full border-collapse' {...props} />
-      </div>
-    ),
+    table: (props: React.ComponentProps<'table'>) => {
+      tableCount += 1;
+      const label = `${common[lang].scrollableTable} ${tableCount}`;
+      return (
+        <div
+          className={`overflow-x-auto my-6 ${SCROLL_REGION_CLASSES}`}
+          {...scrollRegionProps(label)}
+        >
+          <table className='w-full border-collapse' {...props} />
+        </div>
+      );
+    },
+    pre: ({
+      className,
+      ...rest
+    }: React.ComponentProps<'pre'> & { 'data-language'?: string }) => {
+      codeCount += 1;
+      const language = rest['data-language'];
+      const label = language
+        ? `${common[lang].scrollableCode} ${codeCount}: ${language}`
+        : `${common[lang].scrollableCode} ${codeCount}`;
+      return (
+        <pre
+          className={
+            className
+              ? `${className} ${SCROLL_REGION_CLASSES}`
+              : SCROLL_REGION_CLASSES
+          }
+          {...scrollRegionProps(label)}
+          {...rest}
+        />
+      );
+    },
     th: (props: React.ComponentProps<'th'>) => (
       <th
         className='border-b border-rule text-left font-semibold px-3 py-2 align-top'

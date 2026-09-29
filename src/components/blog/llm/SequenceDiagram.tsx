@@ -1,3 +1,8 @@
+import {
+  SCROLL_REGION_CLASSES,
+  scrollRegionProps,
+} from '@/lib/blog/scrollRegion';
+
 import FigCaption from '@/components/blog/llm/FigCaption';
 import { sequenceStrings } from '@/components/blog/llm/strings/sequence';
 
@@ -111,7 +116,10 @@ export default function SequenceDiagram({ lang }: { lang: Lang }) {
 
   return (
     <figure className='my-8'>
-      <div className='overflow-x-auto'>
+      <div
+        className={`overflow-x-auto ${SCROLL_REGION_CLASSES}`}
+        {...scrollRegionProps(dict.aria)}
+      >
         <svg
           viewBox='0 0 820 510'
           role='img'

@@ -27,6 +27,10 @@ class Languages {
     return lang in this.data;
   }
 
+  static foreign(contentLang: Lang | null, lang: Lang): Lang | undefined {
+    return contentLang && contentLang !== lang ? contentLang : undefined;
+  }
+
   static map<T>(fn: (lang: Lang, info: LanguageInfo) => T): T[] {
     return this.keys().map((lang) => fn(lang, this.data[lang]));
   }

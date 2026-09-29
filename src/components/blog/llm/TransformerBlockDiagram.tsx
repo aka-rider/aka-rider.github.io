@@ -44,10 +44,9 @@ const AMBER_STROKE = 'stroke-amber-700 dark:stroke-amber-400';
 const AMBER_TEXT = 'fill-amber-700 dark:fill-amber-400';
 const CYAN_STROKE = 'stroke-cyan-700 dark:stroke-cyan-400';
 const CYAN_TEXT = 'fill-cyan-700 dark:fill-cyan-400';
-const CYAN_BOX =
-  'fill-cyan-50 dark:fill-cyan-950/60 stroke-cyan-700 dark:stroke-cyan-400';
+const CYAN_BOX = 'fill-bg stroke-cyan-700 dark:stroke-cyan-400';
 const SLATE_STROKE = 'stroke-slate-300 dark:stroke-slate-600';
-const NODE_FILL = 'fill-white dark:fill-slate-900';
+const NODE_FILL = 'fill-bg';
 
 const LN_WIDTH = 32;
 const LN_HEIGHT = 20;

@@ -1,5 +1,6 @@
-import Link from 'next/link';
 import { Fragment } from 'react';
+
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 export interface Crumb {
   href: string;
@@ -17,7 +18,7 @@ export default function Breadcrumbs({
     <nav className='crumbs' aria-label='Breadcrumb'>
       {trail.map((crumb) => (
         <Fragment key={crumb.href}>
-          <Link href={crumb.href}>{crumb.title}</Link>
+          <UnstyledLink href={crumb.href}>{crumb.title}</UnstyledLink>
           <span className='sep'>/</span>
         </Fragment>
       ))}

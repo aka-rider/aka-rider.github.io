@@ -1,4 +1,4 @@
-import Link from 'next/link';
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 import { common, Lang } from '@/i18n';
 
@@ -14,7 +14,7 @@ export default function RssPrompt({ lang }: { lang: Lang }) {
   return (
     <p className='rss'>
       {before}
-      <Link href={`/${lang}${href}`}>{linkText}</Link>
+      <UnstyledLink href={`/${lang}${href}`}>{linkText}</UnstyledLink>
       {after}
     </p>
   );

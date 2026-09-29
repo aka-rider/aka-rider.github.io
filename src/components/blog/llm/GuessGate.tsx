@@ -29,7 +29,7 @@ const CORRECT_OPTION_CLASSES =
   'outline-2 outline-cyan-700 dark:outline-cyan-400 outline-offset-2';
 
 const SKIP_LINK_CLASSES =
-  'font-mono text-sm text-slate-500 dark:text-slate-400 underline focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2 cursor-pointer disabled:cursor-default disabled:no-underline disabled:opacity-70';
+  'font-mono text-sm text-muted underline focus-visible:outline-2 focus-visible:outline-cyan-700 dark:focus-visible:outline-cyan-400 focus-visible:outline-offset-2 cursor-pointer disabled:cursor-default disabled:no-underline disabled:opacity-70';
 
 type GuessGateProps = {
   lang: Lang;
@@ -61,9 +61,7 @@ export default function GuessGate({
 
   return (
     <div className='mb-4'>
-      <div className='font-mono text-sm text-slate-500 dark:text-slate-400 mb-2'>
-        {guess.question}
-      </div>
+      <div className='font-mono text-sm text-muted mb-2'>{guess.question}</div>
       <div
         role='group'
         aria-label={guess.question}

@@ -13,7 +13,7 @@ function lerp(from: number, to: number, t: number) {
 }
 
 function rungWidth(i: number) {
-  return lerp(200, 300, i / (RUNG_COUNT - 1));
+  return lerp(250, 340, i / (RUNG_COUNT - 1));
 }
 
 function rungHeight(i: number) {
@@ -77,6 +77,7 @@ function LadderRung({
 function LadderArrow({ gapAbove, text }: { gapAbove: number; text: string }) {
   const y1 = rungY(gapAbove + 1) - 5;
   const y2 = rungBottom(gapAbove);
+  const labelY = (rungBottom(gapAbove) + rungY(gapAbove + 1)) / 2 + 4;
   return (
     <>
       <line
@@ -87,7 +88,7 @@ function LadderArrow({ gapAbove, text }: { gapAbove: number; text: string }) {
         stroke='currentColor'
         markerEnd='url(#llmLadderArrow)'
       />
-      <text x={345} y={y1 - 9} fontSize={11} fill='currentColor'>
+      <text x={CENTER_X + 10} y={labelY} fontSize={11} fill='currentColor'>
         {text}
       </text>
     </>

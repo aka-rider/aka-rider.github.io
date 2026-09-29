@@ -34,7 +34,7 @@ export class Blog {
     for (let n = node.parent; n; n = n.parent) {
       path.unshift(n.slug);
     }
-    return `/${lang}/blog/${path.join('/')}`;
+    return `/${lang}/blog/${path.join('/')}/`;
   }
 
   generateStaticParams(): { lang: Lang; slug?: string[] }[] {

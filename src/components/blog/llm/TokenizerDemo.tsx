@@ -11,6 +11,7 @@ import {
 } from '@/components/blog/llm/Chip';
 import { fill, visibleSpaces } from '@/components/blog/llm/format';
 import GuessGate from '@/components/blog/llm/GuessGate';
+import { PANEL_CLASSES } from '@/components/blog/llm/panel';
 import { tokenizerStrings } from '@/components/blog/llm/strings/tokenizer';
 import {
   BARE_TOWER_PRESET,
@@ -91,11 +92,9 @@ const STEP_BUTTON_CLASSES = chipClasses(
   'disabled:cursor-default disabled:opacity-40',
 );
 
-const ROW_LABEL_CLASSES =
-  'font-mono text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap';
+const ROW_LABEL_CLASSES = 'font-mono text-xs text-muted whitespace-nowrap';
 
-const MUTED_TEXT_CLASSES =
-  'font-mono text-xs text-slate-500 dark:text-slate-400';
+const MUTED_TEXT_CLASSES = 'font-mono text-xs text-muted';
 
 export default function TokenizerDemo({ lang }: { lang: Lang }) {
   const strings = tokenizerStrings[lang];
@@ -121,7 +120,7 @@ export default function TokenizerDemo({ lang }: { lang: Lang }) {
         });
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+    <div className={PANEL_CLASSES}>
       <GuessGate lang={lang} guess={strings.guess}>
         <div
           role='group'
@@ -205,7 +204,7 @@ export default function TokenizerDemo({ lang }: { lang: Lang }) {
               className='inline-flex flex-col items-center gap-0.5'
             >
               <Chip variant={pieceVariant(piece)}>{pieceLabel(piece)}</Chip>
-              <span className='font-mono text-[0.65rem] text-slate-500 dark:text-slate-400'>
+              <span className='font-mono text-[0.65rem] text-muted'>
                 {piece.id}
               </span>
             </span>

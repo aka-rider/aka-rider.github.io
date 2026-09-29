@@ -45,6 +45,9 @@ export default function CodeBlock({
         >
           {common[lang][label]}
         </button>
+        <span aria-live='polite' className='sr-only'>
+          {label === 'copy' ? '' : common[lang][label]}
+        </span>
       </figcaption>
       {children}
     </figure>

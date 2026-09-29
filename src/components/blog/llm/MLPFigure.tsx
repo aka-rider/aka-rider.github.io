@@ -391,7 +391,7 @@ function WideMLP({ strings }: { strings: (typeof mlpStrings)[Lang] }) {
           r={9}
           strokeWidth={1.5}
           stroke='currentColor'
-          className='fill-white dark:fill-slate-900'
+          className='fill-bg'
         />
         <text
           x={MERGE_X}
@@ -538,7 +538,7 @@ function NarrowMLP({ strings }: { strings: (typeof mlpStrings)[Lang] }) {
           r={9}
           strokeWidth={1.5}
           stroke='currentColor'
-          className='fill-white dark:fill-slate-900'
+          className='fill-bg'
         />
         <text
           x={N_CENTER_X}
@@ -625,15 +625,15 @@ export default function MLPFigure({ lang }: { lang: Lang }) {
       <WideMLP strings={strings} />
       <NarrowMLP strings={strings} />
 
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 mt-3 text-center'>
+      <div className='font-mono text-xs text-muted mt-3 text-center'>
         {strings.shapes}
       </div>
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 mt-3 space-y-0.5 max-w-[560px] mx-auto'>
+      <div className='font-mono text-xs text-muted mt-3 space-y-0.5 max-w-[560px] mx-auto'>
         {strings.legend.map((line) => (
           <div key={line}>{line}</div>
         ))}
       </div>
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-3 max-w-[560px] mx-auto'>
+      <div className='font-mono text-xs text-muted border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-3 max-w-[560px] mx-auto'>
         {strings.honesty}
       </div>
       <FigCaption>{strings.caption}</FigCaption>

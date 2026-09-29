@@ -404,12 +404,12 @@ export default function EmbeddingFigure({ lang }: { lang: Lang }) {
             ))}
           </g>
         </svg>
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 mt-3 space-y-0.5 max-w-[460px] mx-auto'>
+        <div className='font-mono text-xs text-muted mt-3 space-y-0.5 max-w-[460px] mx-auto'>
           {strings.legend.map((line) => (
             <div key={line}>{line}</div>
           ))}
         </div>
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-3 max-w-[460px] mx-auto'>
+        <div className='font-mono text-xs text-muted border-t border-dashed border-slate-300 dark:border-slate-600 pt-2.5 mt-3 max-w-[460px] mx-auto'>
           {strings.honesty}
         </div>
         <FigCaption>{strings.processCaption}</FigCaption>

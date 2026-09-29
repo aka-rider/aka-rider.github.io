@@ -2,6 +2,7 @@
 
 import { useTheme } from 'next-themes';
 import { useEffect, useRef, useState } from 'react';
+import ReactDOM from 'react-dom';
 
 import { common, Lang } from '@/i18n';
 
@@ -30,21 +31,52 @@ export default function Giscus({
   inputPosition = 'bottom',
   lang,
 }: GiscusProps) {
-  const ref = useRef<HTMLDivElement>(null);
+  ReactDOM.prefetchDNS('https://giscus.app');
+
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { theme, systemTheme } = useTheme();
   const [mounted, setMounted] = useState(false);
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
 
+  useEffect(() => {
+    if (!mounted || ready) return;
+
+    const node = wrapperRef.current;
+    if (!node) return;
+
+    let isNear = false;
+    const tryActivate = () => {
+      if (isNear && !document.prerendering) setReady(true);
+    };
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        isNear = entries.some((entry) => entry.isIntersecting);
+        tryActivate();
+      },
+      { rootMargin: '100% 0px' },
+    );
+    observer.observe(node);
+    document.addEventListener('prerenderingchange', tryActivate);
+
+    return () => {
+      observer.disconnect();
+      document.removeEventListener('prerenderingchange', tryActivate);
+    };
+  }, [mounted, ready]);
+
   const resolvedTheme = theme === 'system' ? systemTheme : theme;
   const giscusTheme = resolvedTheme === 'dark' ? 'dark' : 'light';
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!ready) return;
 
-    const container = ref.current;
+    const container = containerRef.current;
     if (!container) return;
 
     const existingScript = container.querySelector('script');
@@ -76,7 +108,7 @@ export default function Giscus({
       }
     };
   }, [
-    mounted,
+    ready,
     repo,
     repoId,
     category,
@@ -90,9 +122,9 @@ export default function Giscus({
     lang,
   ]);
 
-  if (!mounted) {
+  if (!ready) {
     return (
-      <div className='giscus-container mt-8 p-4'>
+      <div ref={wrapperRef} className='giscus-container mt-8 p-4'>
         <div className='h-32 animate-pulse bg-code-bg rounded-lg' />
         <div className='mt-2 text-center text-sm text-muted'>
           {common[lang].loadingComments}
@@ -101,5 +133,5 @@ export default function Giscus({
     );
   }
 
-  return <div ref={ref} className='giscus-container mt-8' />;
+  return <div ref={containerRef} className='giscus-container mt-8' />;
 }

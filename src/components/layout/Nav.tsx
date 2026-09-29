@@ -1,4 +1,3 @@
-import Link from 'next/link';
 import { ReactNode } from 'react';
 
 import LangSwitcher from '@/components/LangSwitcher';
@@ -14,17 +13,17 @@ export default function Nav({
   children?: ReactNode;
 }) {
   return (
-    <div className='nav'>
+    <header className='nav'>
       <div className='wrap'>
-        <Link className='brand' href={`/${lang}/`}>
+        <a className='brand' href={`/${lang}/`}>
           {common[lang].authorName}
-        </Link>
+        </a>
         {children}
         <div className='tools'>
           <LangSwitcher lang={lang} />
           <ThemeToggle lang={lang} />
         </div>
       </div>
-    </div>
+    </header>
   );
 }

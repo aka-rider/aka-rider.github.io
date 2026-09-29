@@ -11,8 +11,9 @@ import {
   EXAMPLE_TOKENS,
   NEXT_TOKEN_CANDIDATES,
 } from '@/components/blog/llm/example';
-import { visibleSpaces } from '@/components/blog/llm/format';
+import { fill, visibleSpaces } from '@/components/blog/llm/format';
 import { softmax } from '@/components/blog/llm/math';
+import { PANEL_CLASSES } from '@/components/blog/llm/panel';
 import { ProbabilityBar } from '@/components/blog/llm/ProbabilityBar';
 import { temperatureStrings } from '@/components/blog/llm/strings/temperature';
 
@@ -107,6 +108,13 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
     topK,
     topP,
   });
+  const leading = distribution.reduce((best, row) =>
+    row.probability > best.probability ? row : best,
+  );
+  const leadingReadout = fill(strings.leadingReadout, {
+    token: visibleSpaces(leading.token),
+    pct: (leading.probability * 100).toFixed(1),
+  });
 
   function handleSample() {
     const r = Math.random();
@@ -127,8 +135,8 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
   }
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
-      <span className='block font-mono text-xs text-slate-500 dark:text-slate-400 mb-1'>
+    <div className={PANEL_CLASSES}>
+      <span className='block font-mono text-xs text-muted mb-1'>
         {strings.promptLabel}
       </span>
       <ChipStream ariaLabel={strings.promptStreamAria} live>
@@ -140,12 +148,12 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
         ))}
       </ChipStream>
       {sampled.length > 0 ? (
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400'>
+        <div className='font-mono text-xs text-muted'>
           {strings.sampledNote}
         </div>
       ) : null}
 
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 my-3'>
+      <div className='font-mono text-xs text-muted my-3'>
         {strings.projectionNote}
       </div>
 
@@ -185,7 +193,7 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
         <span className='font-mono tabular-nums w-10 text-right'>{topK}</span>
       </div>
       {topK === 1 ? (
-        <div className='font-mono text-xs text-slate-500 dark:text-slate-400 -mt-2 mb-2'>
+        <div className='font-mono text-xs text-muted -mt-2 mb-2'>
           {strings.greedyNote}
         </div>
       ) : null}
@@ -210,7 +218,7 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
       </div>
 
       <div
-        className={`sm:grid sm:items-center sm:gap-2 ${OUTER_COLUMNS_CLASS} font-mono text-xs text-slate-500 dark:text-slate-400 mt-4 mb-1`}
+        className={`sm:grid sm:items-center sm:gap-2 ${OUTER_COLUMNS_CLASS} font-mono text-xs text-muted mt-4 mb-1`}
       >
         <span className={`grid ${LABEL_COLUMNS_CLASS} gap-1`}>
           <span>{strings.columns.token}</span>
@@ -252,9 +260,7 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
                     <span className='hidden sm:block text-right tabular-nums text-xs'>
                       {row.scaledLogit.toFixed(1)}
                     </span>
-                    <span className='text-[0.7rem] text-slate-500 dark:text-slate-400'>
-                      {reason}
-                    </span>
+                    <span className='text-[0.7rem] text-muted'>{reason}</span>
                   </span>
                 }
                 percent={pct}
@@ -263,6 +269,10 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
             </div>
           );
         })}
+      </div>
+
+      <div aria-live='polite' className='font-mono text-xs text-muted my-2'>
+        {leadingReadout}
       </div>
 
       <div className='flex flex-wrap items-center gap-3 my-3'>
@@ -282,14 +292,14 @@ export default function TemperatureDemo({ lang }: { lang: Lang }) {
         </button>
       </div>
 
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400'>
+      <div className='font-mono text-xs text-muted'>
         <span>p</span>
         <span className='align-sub text-[0.7em]'>i</span> = exp(l
         <span className='align-sub text-[0.7em]'>i</span> / T) / Σ exp(l
         <span className='align-sub text-[0.7em]'>j</span> / T) —{' '}
         {strings.formulaNote}
       </div>
-      <div className='font-mono text-xs text-slate-500 dark:text-slate-400 mt-1'>
+      <div className='font-mono text-xs text-muted mt-1'>
         {strings.cuttingNote}
       </div>
     </div>

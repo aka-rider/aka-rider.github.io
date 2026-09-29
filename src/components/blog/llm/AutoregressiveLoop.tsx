@@ -1,3 +1,8 @@
+'use client';
+
+import { useState } from 'react';
+
+import { AnimToggle } from '@/components/blog/llm/AnimToggle';
 import {
   EXAMPLE_ANSWER_TOKENS,
   EXAMPLE_TOKENS,
@@ -12,13 +17,10 @@ import type { Lang } from '@/i18n';
 
 const AMBER_STROKE = 'stroke-amber-700 dark:stroke-amber-400';
 const AMBER_FILL = 'fill-amber-700 dark:fill-amber-400';
-const AMBER_BG = 'fill-amber-50 dark:fill-amber-950/60';
 const CYAN_STROKE = 'stroke-cyan-700 dark:stroke-cyan-400';
 const CYAN_FILL = 'fill-cyan-700 dark:fill-cyan-400';
-const CYAN_BG = 'fill-cyan-50 dark:fill-cyan-950/60';
 const VIOLET_STROKE = 'stroke-violet-700 dark:stroke-violet-400';
 const VIOLET_FILL = 'fill-violet-700 dark:fill-violet-400';
-const VIOLET_BG = 'fill-violet-50 dark:fill-violet-950/60';
 
 const TOKEN_ROW_START_X = 50;
 const TOKEN_ROW_GAP = 4;
@@ -96,7 +98,8 @@ function TokenBox({ x, w, label }: { x: number; w: number; label: string }) {
         width={w}
         height={26}
         rx={5}
-        className={`${AMBER_BG} ${AMBER_STROKE}`}
+        fill='none'
+        className={AMBER_STROKE}
       />
       <text
         x={x + w / 2}
@@ -114,6 +117,7 @@ function TokenBox({ x, w, label }: { x: number; w: number; label: string }) {
 export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
   const dict = autoregressiveStrings[lang];
   const sampled = BAR_PROBS[0]!;
+  const [paused, setPaused] = useState(false);
 
   return (
     <figure className='my-8'>
@@ -121,6 +125,7 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
         viewBox={`0 0 ${VIEWBOX_WIDTH} ${VIEWBOX_HEIGHT}`}
         role='img'
         aria-label={dict.aria}
+        data-paused={paused || undefined}
         className='llm-anim w-full h-auto max-w-[400px] mx-auto block'
       >
         <defs>
@@ -182,7 +187,8 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
               width={76}
               height={48}
               rx={7}
-              className={`${CYAN_BG} ${CYAN_STROKE}`}
+              fill='none'
+              className={CYAN_STROKE}
             />
             <text
               x={180}
@@ -276,7 +282,7 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
               width={56}
               height={18}
               rx={4}
-              className={`${AMBER_BG} ${AMBER_STROKE}`}
+              className={`fill-bg ${AMBER_STROKE}`}
             />
             <text
               x={328}
@@ -335,7 +341,8 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
                   width={box.w}
                   height={20}
                   rx={4}
-                  className={`${AMBER_BG} ${AMBER_STROKE}`}
+                  fill='none'
+                  className={AMBER_STROKE}
                 />
                 <text
                   x={box.x + box.w / 2}
@@ -354,7 +361,8 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
               width={ANSWER_LAYOUT.stop.w}
               height={20}
               rx={4}
-              className={`${VIOLET_BG} ${VIOLET_STROKE}`}
+              fill='none'
+              className={VIOLET_STROKE}
             />
             <text
               x={ANSWER_LAYOUT.stop.x + ANSWER_LAYOUT.stop.w / 2}
@@ -380,6 +388,11 @@ export default function AutoregressiveLoop({ lang }: { lang: Lang }) {
           </g>
         </g>
       </svg>
+      <AnimToggle
+        lang={lang}
+        paused={paused}
+        onToggle={() => setPaused((p) => !p)}
+      />
       <FigCaption>{dict.caption}</FigCaption>
     </figure>
   );

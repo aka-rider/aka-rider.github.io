@@ -19,7 +19,7 @@ of details.
 
 Now it is time to write some code and it will be the damn glorious!
 
-### Be vigilant
+## Be vigilant
 
 Good code is a product of a good mental effort but our brain tries to
 trick us into the energy-saving mode all the time. Instead of working on
@@ -28,7 +28,7 @@ provide some immediate answer --- a stereotype. Experts are better at
 pattern recognition and intuitive problem solving, although
 overconfidence never does any good.
 
-#### Start big
+### Start big
 
 Good code is a sane compromise between simplicity, performance,
 user-friendliness, hardware support, legacy, resources --- a thousand
@@ -46,7 +46,7 @@ polishing and readiness. Even if the code was deliberately hacked
 quick'n'dirty, a simplification step may save time on
 debugging --- maybe not.
 
-#### Think about the next person
+### Think about the next person
 
 > Programs must be written for people to read, and only incidentally for
 > machines to execute.
@@ -65,7 +65,7 @@ to bottom, line by line, without crazy jumps over pages.
 
 Beautiful code is the one that easy to read and safe to modify.
 
-#### Consider rewriting a clever code
+### Consider rewriting a clever code
 
 The clever code also happens to be extremely resistant for changes,
 painfully hard to read understand and debug. Every optimization is
@@ -73,7 +73,7 @@ almost certainly a clever code, and that's why premature optimizations
 are bad --- a definite sacrifice for the benefit that may not even
 exist.
 
-#### Do not chant mantras
+### Do not chant mantras
 
 In programming, there are plenty of principles: DRY, KISS, SOLID. They
 are helpful unless one follows them blindly. It is important to ask:
@@ -90,7 +90,7 @@ obstacles led to this implementation, and assertions: hey buddy, you
 added a parameter here but not there. Text editors and IDE nowadays also
 know some trick or two.
 
-#### What the hype?
+### What the hype?
 
 Ask the right questions. What are "best practices" anyway --- best for
 whom? X does it? --- Why? How big is the company? What is the workflow,
@@ -108,14 +108,14 @@ There is no such thing as "technology X vs Y" without a context.
 Programming language A is better than B --- sure. Better for what? And
 all the questions above.
 
-### Be a samurai --- never write code unless you mean to use it
+## Be a samurai --- never write code unless you mean to use it
 
 You have implemented "insert_after" function, now it is time for
 "insert_before" --- but is it used anywhere? If not --- why increase the
 amount of code required to be maintained, reviewed, tested, ported and
 refactored for nothing?
 
-#### Don't try to be a prophet
+### Don't try to be a prophet
 
 Don't solve nonexistent problems from the future, be an engineer, solve
 real-life problems your team is struggling with right now. Don't try to
@@ -131,11 +131,11 @@ git and other version control systems made for that. Do not make someone
 
 If the codebase is small then future changes are few.
 
-#### Be afraid of flexibility
+### Be afraid of flexibility
 
 That flexibility is on the cover of this post. Everything has a price, flexibility in software development is a luxury.
 
-#### Stop writing those libraries already
+### Stop writing those libraries already
 
 It is a well-known programmer's fetish --- to create generic code that
 will be used across the whole team, company, World, Universe.
@@ -170,7 +170,7 @@ most suitable one, review it thoroughly, and make a merge request if
 needed. See what pitfalls have shaped this implementation. There are
 non-obvious reasons rather than "other people are dumb."
 
-### Don't do bugs (I'm dead serious)
+## Don't do bugs (I'm dead serious)
 
 > Every line of code is a bug.
 
@@ -191,7 +191,7 @@ can modify the same piece and know what to expect of it.
 There will be bugs, but at least you won't create them half-consciously
 following false assumptions.
 
-#### Tests are not the ultimate answer
+### Tests are not the ultimate answer
 
 Tests are literally more code, hence hello: review, debugging,
 refactoring, porting, and everything else involved with the code. Adding
@@ -213,7 +213,7 @@ scenarios.
 At the end of the day, QA processes define a product's quality. But
 tests per se are not the QA.
 
-#### Don't wait until refactoring
+### Don't wait until refactoring
 
 Refactoring is like a Jesus of programming --- it will come and wash
 away all our sins.
@@ -223,7 +223,7 @@ code in questionable shape. There is no need to suffer until
 refactoring. Do not wait for the Perfect Solution, make small constant
 changes that improve overall codebase health.
 
-### Be a craftsman --- avoid coding for the sake of coding
+## Be a craftsman --- avoid coding for the sake of coding
 
 > Code is a Tool --- not the Goal.
 
@@ -235,9 +235,9 @@ the problem.
 Code might not be the prettiest or the most performant while it does the
 job and fits the bill.
 
-### Rules of thumb
+## Rules of thumb
 
-#### Be awake
+### Be awake
 
 Good code is a product of a mental effort. Evaluate decisions you make,
 do not follow the patterns blindly. Doubt every advice. Ask "Why?" "How
@@ -246,12 +246,12 @@ does it work?" "What problem does it solve?"
 A code and technologies don't exist on their own --- there are real-life
 problems behind.
 
-#### Write a code only as a last resort
+### Write a code only as a last resort
 
 Oh gosh, we have so many problems in our code, let's solve them by
 writing even more code.
 
-#### Keep an eye on measurable metrics
+### Keep an eye on measurable metrics
 
 - Number of function parameters (width of a function)
 - Length of a function in lines of code
@@ -264,6 +264,6 @@ If you like this post, please share it so others may enjoy it.
 If you hate this post, please reach me out so we can figure out our
 differences and work on improvements.
 
-1. [A Better Programmer: Part 1 --- Software Design](_posts/10.software-engineering/2020-03-18.A-Better-Programmer--Part-1---Software-Design.md)
+1. [A Better Programmer: Part 1 --- Software Design](/posts/software-engineering/a-better-programmer--part-1---software-design)
 
 Exported from [Medium](https://medium.com) on May 26, 2025.

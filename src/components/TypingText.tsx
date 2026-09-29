@@ -35,11 +35,11 @@ export default function TypingText({
   }, [displayedText, text, typingSpeed]);
 
   return (
-    <div
-      className={clsx('flex flex-row gap-2 mb-10  animate-flicker', className)}
-    >
-      <span>{displayedText}</span>
+    <div className={clsx('flex flex-row gap-2 mb-10', className)}>
+      <span className='sr-only'>{text}</span>
+      <span aria-hidden>{displayedText}</span>
       <span
+        aria-hidden
         className={clsx('inline-block font-bold', {
           'animate-blink': isTypingComplete,
         })}

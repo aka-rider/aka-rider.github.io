@@ -1,12 +1,13 @@
 import { FiArrowLeft, FiArrowRight } from 'react-icons/fi';
 
 import { Blog } from '@/lib/blog/Blog';
+import { contentLangOf } from '@/lib/blog/summary';
 import { Post } from '@/lib/blog/types';
 import { formatReadingTime } from '@/lib/format';
 
 import UnstyledLink from '@/components/links/UnstyledLink';
 
-import { common, Lang } from '@/i18n';
+import { common, Lang, Languages } from '@/i18n';
 
 export default function PostNavigation({
   post,
@@ -33,11 +34,15 @@ export default function PostNavigation({
       {olderPost && (
         <UnstyledLink href={Blog.getLink(lang, olderPost)}>
           <span className='k'>
-            <FiArrowLeft />
+            <FiArrowLeft aria-hidden focusable='false' />
             {common[lang].older}
           </span>
           <span className='t'>
-            {olderPost.title}
+            <span
+              lang={Languages.foreign(contentLangOf(olderPost.filePath), lang)}
+            >
+              {olderPost.title}
+            </span>
             <span className='meta'>
               {formatReadingTime(olderPost.readingTime, lang)}
             </span>
@@ -48,10 +53,14 @@ export default function PostNavigation({
         <UnstyledLink href={Blog.getLink(lang, newerPost)} className='right'>
           <span className='k'>
             {common[lang].newer}
-            <FiArrowRight />
+            <FiArrowRight aria-hidden focusable='false' />
           </span>
           <span className='t'>
-            {newerPost.title}
+            <span
+              lang={Languages.foreign(contentLangOf(newerPost.filePath), lang)}
+            >
+              {newerPost.title}
+            </span>
             <span className='meta'>
               {formatReadingTime(newerPost.readingTime, lang)}
             </span>

@@ -1,4 +1,5 @@
 import Layout from '@/components/layout/Layout';
+import Main from '@/components/layout/Main';
 import Nav from '@/components/layout/Nav';
 import NotFound from '@/components/NotFound';
 
@@ -8,9 +9,9 @@ export default function NotFoundPage() {
   return (
     <Layout lang={defaultLang}>
       <Nav lang={defaultLang} />
-      <main id='main-content' className='wrap'>
+      <Main className='wrap'>
         <NotFound lang={defaultLang} />
-      </main>
+      </Main>
     </Layout>
   );
 }

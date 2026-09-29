@@ -1,11 +1,10 @@
-import Link from 'next/link';
-
 import { Blog } from '@/lib/blog/Blog';
 import { selectPreview } from '@/lib/blog/preview';
 import { toPostSummary } from '@/lib/blog/summary';
 
 import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
 import PostRow from '@/components/blog/PostRow';
+import UnstyledLink from '@/components/links/UnstyledLink';
 
 import { common, Lang } from '@/i18n';
 
@@ -21,7 +20,7 @@ export default function BlogPreview({
 
   const heading = (
     <h2>
-      <Link href={archiveHref}>{title}</Link>
+      <UnstyledLink href={archiveHref}>{title}</UnstyledLink>
     </h2>
   );
 
@@ -70,7 +69,9 @@ export default function BlogPreview({
         ))}
       </div>
       <div className='more'>
-        <Link href={archiveHref}>{common[lang].viewArchive}</Link>
+        <UnstyledLink href={archiveHref}>
+          {common[lang].viewArchive}
+        </UnstyledLink>
       </div>
     </section>
   );

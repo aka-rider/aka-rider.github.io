@@ -19,6 +19,10 @@ module.exports = {
     return 'https://github.com/aka-rider';
   },
 
+  get MASTODON() {
+    return 'https://mastodon.world/@iurii';
+  },
+
   get GISCUS() {
     return {
       repo: 'aka-rider/aka-rider.github.io',

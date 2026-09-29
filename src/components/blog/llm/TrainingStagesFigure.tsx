@@ -5,10 +5,8 @@ import type { Lang } from '@/i18n';
 
 const AMBER_STROKE = 'stroke-amber-700 dark:stroke-amber-400';
 const AMBER_FILL = 'fill-amber-700 dark:fill-amber-400';
-const AMBER_BG = 'fill-amber-50 dark:fill-amber-950/60';
 const CYAN_STROKE = 'stroke-cyan-700 dark:stroke-cyan-400';
 const CYAN_FILL = 'fill-cyan-700 dark:fill-cyan-400';
-const CYAN_BG = 'fill-cyan-50 dark:fill-cyan-950/60';
 
 const CENTER_X = 170;
 
@@ -44,7 +42,8 @@ function Stage({
         width={barWidth}
         height={7}
         rx={3}
-        className={`${AMBER_BG} ${AMBER_STROKE}`}
+        fill='none'
+        className={AMBER_STROKE}
       />
       <line
         x1={CENTER_X}
@@ -60,7 +59,8 @@ function Stage({
         width={284}
         height={44}
         rx={7}
-        className={`${CYAN_BG} ${CYAN_STROKE}`}
+        fill='none'
+        className={CYAN_STROKE}
       />
       <text
         x={CENTER_X}

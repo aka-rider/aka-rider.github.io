@@ -10,6 +10,7 @@ import {
 import { EXAMPLE_TOKENS } from '@/components/blog/llm/example';
 import { fill, visibleSpaces } from '@/components/blog/llm/format';
 import GuessGate from '@/components/blog/llm/GuessGate';
+import { PANEL_CLASSES } from '@/components/blog/llm/panel';
 import { moeStrings } from '@/components/blog/llm/strings/moe';
 
 import type { Lang } from '@/i18n';
@@ -46,13 +47,11 @@ const TOKEN_BUTTON_BASE_CLASSES = chipClasses('tok', CHIP_INTERACTIVE_CLASSES);
 const EXPERT_CARD_BASE_CLASSES =
   'rounded-lg border p-2 transition-all duration-[250ms] ease-out motion-reduce:transition-none';
 
-const EXPERT_ACTIVE_CLASSES =
-  'border-cyan-700 dark:border-cyan-400 bg-cyan-50 dark:bg-cyan-950/60';
+const EXPERT_ACTIVE_CLASSES = 'border-cyan-700 dark:border-cyan-400';
 
 const EXPERT_IDLE_CLASSES = 'border-slate-300 dark:border-slate-600 opacity-40';
 
-const MUTED_TEXT_CLASSES =
-  'font-mono text-xs text-slate-500 dark:text-slate-400';
+const MUTED_TEXT_CLASSES = 'font-mono text-xs text-muted';
 
 export default function MoERoutingDemo({ lang }: { lang: Lang }) {
   const strings = moeStrings[lang];
@@ -71,7 +70,7 @@ export default function MoERoutingDemo({ lang }: { lang: Lang }) {
   });
 
   return (
-    <div className='rounded-xl border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 p-5 my-6'>
+    <div className={PANEL_CLASSES}>
       <GuessGate
         lang={lang}
         guess={strings.guess}
@@ -82,7 +81,7 @@ export default function MoERoutingDemo({ lang }: { lang: Lang }) {
           aria-label={strings.tokensAria}
           className='flex flex-wrap items-center gap-1.5'
         >
-          <span className='font-mono text-sm text-slate-500 dark:text-slate-400 mr-1'>
+          <span className='font-mono text-sm text-muted mr-1'>
             {strings.pickLabel}
           </span>
           {TOKENS.map((token, i) => (
@@ -124,9 +123,7 @@ export default function MoERoutingDemo({ lang }: { lang: Lang }) {
                 >
                   E{i + 1}
                 </div>
-                <div className='font-mono text-[10px] text-slate-500 dark:text-slate-400'>
-                  {hint}
-                </div>
+                <div className='font-mono text-[10px] text-muted'>{hint}</div>
                 <div className='mt-1.5 h-1.5 rounded bg-slate-200 dark:bg-slate-700'>
                   <div
                     style={{ width: `${score * 100}%` }}

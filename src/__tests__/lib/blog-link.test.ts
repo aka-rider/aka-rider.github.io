@@ -64,7 +64,7 @@ describe('Blog.getLink', () => {
     const category = makeSubCategory(root);
     const post = makePost(category);
 
-    expect(Blog.getLink('en', post)).toBe('/en/blog/posts/the-lab/my-post');
+    expect(Blog.getLink('en', post)).toBe('/en/blog/posts/the-lab/my-post/');
   });
 
   it('links the blog index when no node is given', () => {

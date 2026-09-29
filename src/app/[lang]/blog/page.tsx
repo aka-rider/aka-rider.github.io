@@ -3,12 +3,21 @@ import { notFound } from 'next/navigation';
 
 import { Blog } from '@/lib/blog/Blog';
 import { toPostSummary } from '@/lib/blog/summary';
+import {
+  blogRootLanguagePaths,
+  buildMetadata,
+  PERSON_ID,
+} from '@/lib/metadata';
 
 import BlogFeed, { FeedCategory } from '@/components/blog/BlogFeed';
 import BlogLoadFailure from '@/components/blog/BlogLoadFailure';
+import JsonLd from '@/components/JsonLd';
+import Main from '@/components/layout/Main';
 import Nav from '@/components/layout/Nav';
 
 import { common, Lang } from '@/i18n';
+
+import config from '/config';
 
 export async function generateMetadata({
   params,
@@ -19,9 +28,13 @@ export async function generateMetadata({
   const root = new Blog().getRoot(lang);
   const title = root?.title ?? common[lang].title;
 
-  return {
+  return buildMetadata({
+    lang,
+    path: `/${lang}/blog/`,
     title: `${title} · ${common[lang].authorName}`,
-  };
+    description: common[lang].description,
+    languagePaths: blogRootLanguagePaths(),
+  });
 }
 
 export default async function BlogPage({
@@ -36,9 +49,9 @@ export default async function BlogPage({
     return (
       <>
         <Nav lang={lang} />
-        <main id='main-content' className='wrap'>
+        <Main className='wrap'>
           <p className='muted'>{common[lang].noPosts}</p>
-        </main>
+        </Main>
       </>
     );
   }
@@ -47,9 +60,9 @@ export default async function BlogPage({
     return (
       <>
         <Nav lang={lang} />
-        <main id='main-content' className='wrap'>
+        <Main className='wrap'>
           <BlogLoadFailure node={root} lang={lang} />
-        </main>
+        </Main>
       </>
     );
   }
@@ -69,14 +82,38 @@ export default async function BlogPage({
     return (
       <>
         <Nav lang={lang} />
-        <main id='main-content' className='wrap'>
+        <Main className='wrap'>
           <p className='muted'>{common[lang].noPosts}</p>
-        </main>
+        </Main>
       </>
     );
   }
 
+  const pageUrl = `${config.SITE_URL}/${lang}/blog/`;
+
   return (
-    <BlogFeed lang={lang} rootTitle={root.title} categories={categories} />
+    <>
+      <JsonLd
+        data={{
+          '@context': 'https://schema.org',
+          '@type': 'Blog',
+          name: root.title,
+          description: common[lang].description,
+          url: pageUrl,
+          inLanguage: lang,
+          author: {
+            '@type': 'Person',
+            '@id': PERSON_ID,
+            name: common[lang].authorName,
+          },
+          publisher: {
+            '@type': 'Person',
+            '@id': PERSON_ID,
+            name: common[lang].authorName,
+          },
+        }}
+      />
+      <BlogFeed lang={lang} rootTitle={root.title} categories={categories} />
+    </>
   );
 }
