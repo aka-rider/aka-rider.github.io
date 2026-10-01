@@ -26,6 +26,8 @@ import MLPFigure from '@/components/blog/llm/MLPFigure';
 import SequenceDiagram from '@/components/blog/llm/SequenceDiagram';
 import TrainingStagesFigure from '@/components/blog/llm/TrainingStagesFigure';
 import TransformerBlockDiagram from '@/components/blog/llm/TransformerBlockDiagram';
+import UmlClassDiagram from '@/components/blog/oop/UmlClassDiagram';
+import UmlSequenceDiagram from '@/components/blog/oop/UmlSequenceDiagram';
 import RssPrompt from '@/components/blog/RssPrompt';
 import Spoiler from '@/components/blog/Spoiler';
 import TLDR from '@/components/blog/TLDR';
@@ -166,6 +168,8 @@ function mdxComponents(lang: Lang) {
     ActTransition,
     Chip,
     ChipStream,
+    UmlClassDiagram,
+    UmlSequenceDiagram,
     table: (props: React.ComponentProps<'table'>) => {
       tableCount += 1;
       const label = `${common[lang].scrollableTable} ${tableCount}`;
