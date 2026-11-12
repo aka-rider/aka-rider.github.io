@@ -3,7 +3,6 @@ import { ReactNode } from 'react';
 
 import { fontClassName } from '@/lib/fonts';
 
-import Analytics from '@/components/Analytics';
 import Footer from '@/components/layout/Footer';
 import SpeculationRules from '@/components/SpeculationRules';
 
@@ -37,8 +36,6 @@ export default function Layout({
             href={href}
           />
         ))}
-        <link rel='dns-prefetch' href='//scripts.simpleanalyticscdn.com' />
-        <link rel='dns-prefetch' href='//queue.simpleanalyticscdn.com' />
         <SpeculationRules />
         <ThemeProvider attribute='class' defaultTheme='system' enableSystem>
           <a href='#main-content' className='skip'>
@@ -47,7 +44,6 @@ export default function Layout({
           {children}
           <Footer lang={lang} />
         </ThemeProvider>
-        <Analytics />
       </body>
     </html>
   );
